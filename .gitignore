@@ -1,0 +1,12 @@
+﻿# Python
+.venv/
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+*.class
+*.pytest_cache/
+.pytest_cache/
+
+# Project output
+output/
