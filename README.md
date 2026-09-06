@@ -45,24 +45,47 @@ O **PyToJava** é um compilador desenvolvido como parte da disciplina de Compila
 
 ```text
 pytojava/
-├── docs/                 # Documentação formal e relatórios
-├── examples/             # Códigos Python de teste (.py)
+├── docs/                     # Documentação formal e relatórios (MkDocs)
+│   ├── arch/
+│   │   └── scanner.md
+│   ├── specs/
+│   │   └── lexico.md
+│   └── GLOSSARY.md
+├── examples/                 # Códigos Python de entrada (.py)
 │   ├── basic_math.py
 │   └── control_flow.py
-├── src/                  # Código-fonte do compilador
-│   ├── lexer/            # Analisador léxico
-│   ├── parser/           # Analisador sintático e gramáticas (ex: ANTLR/Lark/PLY)
-│   ├── semantic/         # Tabela de símbolos e verificação de tipos
-│   ├── codegen/          # Gerador de código Java
-│   └── main.py           # Ponto de entrada (CLI)
-├── tests/                # Suíte de testes unitários e de integração
-│   ├── test_lexer.py
+├── output/                   # Arquivos .java gerados (adicionar ao .gitignore)
+├── src/                      # Código-fonte do compilador
+│   ├── __init__.py
+│   ├── lexer/
+│   │   ├── __init__.py
+│   │   ├── char_stream.py
+│   │   ├── errors.py
+│   │   ├── indent_manager.py
+│   │   ├── scanner.py
+│   │   ├── symbol_table.py
+│   │   ├── token.py
+│   │   └── token_type.py
+│   ├── parser/
+│   │   └── __init__.py
+│   ├── semantic/
+│   │   └── __init__.py
+│   ├── codegen/
+│   │   └── __init__.py
+│   └── main.py               # Ponto de entrada (CLI)
+├── tests/                    # Suíte de testes unitários (pytest)
+│   ├── __init__.py
+│   ├── test_lexer_happy_path.py
+│   ├── test_lexer_edge_cases.py
 │   ├── test_parser.py
 │   └── test_codegen.py
-├── output/               # Arquivos .java gerados pela compilação
-├── requirements.txt      # Dependências do projeto
+├── .gitignore                # Ignora .venv/, __pycache__/, output/
+├── CONTRIBUTING.md           # Guia de contribuição da equipe
+├── LICENSE
+├── mkdocs.yml                # Configuração do site da documentação
+├── pyproject.toml            # Configuração do projeto e do pytest
 ├── README.md
-└── LICENSE
+└── requirements.txt          # Dependências (pytest, mkdocs, etc.)
 ```
 
 ## 1. Clonar e Instalar Dependências
