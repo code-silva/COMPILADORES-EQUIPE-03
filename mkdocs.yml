@@ -1,0 +1,48 @@
+site_name: PyToJava
+site_url: https://documentacao.compiladores
+theme:
+  name: material
+  language: pt-BR
+  icon:
+    logo: simple/python
+  favicon: assets/favicon.ico
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: green
+      toggle:
+        icon: material/weather-night
+        name: Alterar para o modo escuro
+
+    - scheme: slate
+      primary: deep purple
+      accent: green
+      toggle:
+        icon: material/weather-sunny
+        name: Alterar para modo claro
+  features:
+    - content.code.copy
+    - navigation.tabs
+    - toc.integrate
+    - navigation.top
+
+markdown_extensions:
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - attr_list
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: telainicial.md
+  - Contribuição: contribuicao.md
+  - Estrutura: estrutura.md
+  - Compiladores: compiladores.md
