@@ -110,6 +110,79 @@ pip install -r requirements.txt
 # Passos a definir
 ```
 
+## 🚀 Como Executar a Documentação
+
+Você pode executar o servidor local da documentação de duas formas: **via Docker** (recomendado para evitar divergências de ambiente) ou **localmente via Python/Pipenv**.
+
+---
+
+### 🐳 Opção 1: Via Docker (Recomendado)
+
+Esta abordagem garante que você rode exatamente a mesma versão do Python e das dependências sem precisar configurar o ambiente na sua máquina.
+
+#### Pré-requisitos
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e em execução.
+
+#### Passos
+
+1. Suba o container da documentação, no terminal, o caminho estar na raiz do projeto:
+
+   ```bash
+   docker compose up
+   ```
+
+   (Caso queira liberar o terminal, utilize `docker compose up -d`)
+
+2. Acesse a documentação no navegador:
+
+   👉 http://localhost:8000
+
+3. Para parar o servidor:
+
+   ```bash
+   docker compose down
+   ```
+
+---
+
+### 💻 Opção 2: Execução Local (Sem Docker)
+
+Caso prefira rodar a documentação diretamente no seu sistema operacional.
+
+#### Pré-requisitos
+
+- Python 3.10+ (recomendado Python 3.12)
+- Pipenv (gerenciador de ambientes virtuais)
+
+#### Passos
+
+1. Instalar o Pipenv (caso ainda não tenha instalado):
+
+   ```bash
+   pip install pipenv
+   ```
+
+2. Instalar as dependências do projeto na raiz do repositório:
+
+   ```bash
+   pipenv install --skip-lock
+   ```
+
+3. Iniciar o servidor do MkDocs:
+
+   ```bash
+   pipenv run mkdocs serve
+   ```
+
+4. Acesse a documentação no navegador:
+
+   👉 http://127.0.0.1:8000
+
+---
+
+> 💡 **Nota:** Qualquer alteração nos arquivos da pasta `docs/` ou no `mkdocs.yml` será atualizada automaticamente no navegador em tempo real (hot-reload) em ambos os métodos.
+
 # 📄 Licença
 
 A definir

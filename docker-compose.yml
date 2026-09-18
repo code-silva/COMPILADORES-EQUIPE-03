@@ -1,0 +1,10 @@
+services:
+  docs:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # Sincroniza as alterações de arquivos em tempo real (live reload)
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
