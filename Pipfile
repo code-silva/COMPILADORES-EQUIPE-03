@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 mkdocs = "*"
+mkdocs-material = "*"
 
 [dev-packages]
 
