@@ -56,4 +56,5 @@ nav:
   - Estrutura: estrutura.md
   - Compiladores: 
     - Visão Geral: compiladores.md
-    - Analisador Léxico: specs/lexico.md
+    - Analisador Léxico: 
+      - Especificador Léxico: specs/lexico.md

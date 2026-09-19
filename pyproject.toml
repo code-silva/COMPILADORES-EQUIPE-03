@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pytojava"
+version = "0.1.0"
+description = "Compilador/transpilador de um subconjunto de Python para código-fonte Java."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.setuptools]
+packages = ["src", "src.lexer", "src.parser", "src.semantic", "src.codegen"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
