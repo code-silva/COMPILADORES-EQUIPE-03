@@ -5,6 +5,20 @@
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 ![Coverage](https://img.shields.io/badge/coverage-85%25-yellowgreen?style=flat-square)
 
+<div class="banner-hero">
+  <!-- Imagem de fundo -->
+  <img src="img/capa_java_to_python.jpg" class="banner-img" />
+
+  <!-- Camada com o gradiente e os textos sobrepostos -->
+  <div class="banner-overlay">
+    <div class="banner-content">
+      <span class="banner-subtitle">UnB</span>
+      <h2 class="banner-title">PyToJava</h2>
+    </div>
+    <span class="banner-badge">☕</span>
+  </div>
+</div>
+
 ## 📌Sobre o Projeto
 
 O projeto **PyToJava** é desenvolvido como parte da disciplina **Compiladores 1**, ministrada pelo professor **Sergio Freitas**, com o objetivo de construir um compilador funcional que traduza código da linguagem Python para Java.

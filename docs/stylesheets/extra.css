@@ -1,7 +1,7 @@
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color:        #1f0170;
+  --md-primary-fg-color:        #2c0f7a;
   --md-primary-fg-color--light: #4e0beb;
-  --md-primary-fg-color--dark:  #1f0170;
+  --md-primary-fg-color--dark:  #2c0f7a;
 }
 
 /* Altera a cor do Admonition 'info' para Roxo */
@@ -119,9 +119,9 @@
   align-items: center;
   justify-content: center;
   gap: 0.3rem;
-  background-color: rgba(126, 87, 194, 0.12);
-  color: #b388ff !important;
-  border: 1px solid rgba(179, 136, 255, 0.25);
+  background-color: #7e57c2;
+  color: #ffffff !important;
+  border: 1px solid #7e57c2;
   border-radius: 4px;
   padding: 0.25rem 0.5rem;
   font-size: 0.72rem;
@@ -131,7 +131,52 @@
 }
 
 .btn-card-doc:hover {
-  background-color: #7e57c2;
+  background-color: #b388ff;
   color: #ffffff !important;
-  border-color: #7e57c2;
+  border-color: #b388ff;
+}
+
+.banner-hero {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  border-radius: 12px;
+  background: url('../assets/cobra-coffee.png') center/cover no-repeat;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(15, 17, 23, 0.9) 0%, rgba(15, 17, 23, 0.4) 60%, rgba(15, 17, 23, 0.8) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 1.25rem;
+}
+
+.banner-subtitle {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #00e676;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.banner-title {
+  color: #ffffff !important;
+  margin: 0.2rem 0 0 0 !important;
+  font-size: 1.4rem !important;
+  font-weight: 700;
+}
+
+.banner-badge {
+  background: rgba(26, 29, 36, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #b388ff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-family: var(--md-font-code), monospace;
 }
