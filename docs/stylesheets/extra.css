@@ -21,6 +21,14 @@
   background-color: #7e57c2; /* Cor do ícone */
 }
 
+/* Cabeçalho padrão das tabelas de conteúdo (identidade roxa) */
+.md-typeset table:not([class]) thead,
+.md-typeset table:not([class]) th {
+  background-color: #7c4dff;
+  color: #ffffff;
+  font-weight: 700;
+}
+
 /* Container em Grid */
 .grid-cards {
   display: grid;

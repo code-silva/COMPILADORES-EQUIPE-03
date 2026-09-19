@@ -41,7 +41,7 @@ Para saber mais sobre compiladores, [clique aqui](compiladores.md).
     <div class="card-footer-action">
       <div class="progress-bar"><div class="progress-fill green" style="width: 100%;"></div></div>
       <span class="progress-text">Lexer ativo (100%)</span>
-      <a href="../compiladores/#analisador-lexico" class="btn-card-doc">Ver Documentação ➔</a>
+      <a href="specs/lexico/" class="btn-card-doc">Ver Documentação ➔</a>
     </div>
   </div>
 

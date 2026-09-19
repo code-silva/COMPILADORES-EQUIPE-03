@@ -1,4 +1,4 @@
-## Oque é um Compilador?
+## O que é um Compilador?
 Um compilador é um programa de computador que atua como um tradutor, convertendo código escrito em uma linguagem de programação de alto nível (como Python) para outra linguagem, geralmente de mais baixo nível, como código de máquina, assembly ou bytecode.
 
 Esse processo mantém o significado original do programa, permitindo que ele seja executado em diferentes ambientes. Além da tradução, o compilador também verifica erros de sintaxe e semântica, garantindo que o código fonte esteja correto antes da geração do código final.

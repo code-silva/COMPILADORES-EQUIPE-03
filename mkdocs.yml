@@ -54,4 +54,6 @@ nav:
   - Home: index.md
   - Contribuição: contribuicao.md
   - Estrutura: estrutura.md
-  - Compiladores: compiladores.md
+  - Compiladores: 
+    - Visão Geral: compiladores.md
+    - Analisador Léxico: specs/lexico.md
