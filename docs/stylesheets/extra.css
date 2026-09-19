@@ -29,6 +29,14 @@
   font-weight: 700;
 }
 
+/* Tema roxo global dos diagramas Mermaid (identidade do projeto) */
+:root > * {
+  --md-mermaid-node-bg-color: #7c4dff;
+  --md-mermaid-node-fg-color: #b388ff;
+  --md-mermaid-label-fg-color: #ffffff;
+  --md-mermaid-edge-color: #7c4dff;
+}
+
 /* Container em Grid */
 .grid-cards {
   display: grid;
