@@ -1,0 +1,65 @@
+site_name: PyToJava
+site_url: https://documentacao.compiladores
+theme:
+  name: material
+  language: pt-BR
+  icon:
+    logo: simple/python
+  favicon: assets/favicon.ico
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: green
+      toggle:
+        icon: material/weather-night
+        name: Alterar para o modo escuro
+
+    - scheme: slate
+      primary: deep purple
+      accent: green
+      toggle:
+        icon: material/weather-sunny
+        name: Alterar para modo claro
+  features:
+    - content.code.copy
+    - navigation.tabs
+    - toc.integrate
+    - navigation.top
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - md_in_html
+  - attr_list
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Contribuição: contribuicao.md
+  - Estrutura: estrutura.md
+  - Compiladores: 
+    - Visão Geral: compiladores.md
+    - Analisador Léxico: 
+      - Especificador Léxico: specs/lexico.md
+      - Arquitetura do Scanner: arch/scanner.md

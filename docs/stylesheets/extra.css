@@ -1,0 +1,198 @@
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:        #2c0f7a;
+  --md-primary-fg-color--light: #4e0beb;
+  --md-primary-fg-color--dark:  #2c0f7a;
+}
+
+/* Altera a cor do Admonition 'info' para Roxo */
+.md-typeset .admonition.info,
+.md-typeset details.info {
+  border-color: #7e57c2; /* Cor da borda lateral */
+}
+
+.md-typeset .info > .admonition-title,
+.md-typeset .info > summary {
+  background-color: rgba(126, 87, 194, 0.1); /* Fundo do título */
+  border-color: #7e57c2;
+}
+
+.md-typeset .info > .admonition-title::before,
+.md-typeset .info > summary::before {
+  background-color: #7e57c2; /* Cor do ícone */
+}
+
+/* Cabeçalho padrão das tabelas de conteúdo (identidade roxa) */
+.md-typeset table:not([class]) thead,
+.md-typeset table:not([class]) th {
+  background-color: #7c4dff;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* Tema roxo global dos diagramas Mermaid (identidade do projeto) */
+:root > * {
+  --md-mermaid-node-bg-color: #7c4dff;
+  --md-mermaid-node-fg-color: #b388ff;
+  --md-mermaid-label-fg-color: #ffffff;
+  --md-mermaid-edge-color: #7c4dff;
+}
+
+/* Container em Grid */
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+  margin: 1rem 0;
+}
+
+@media (max-width: 768px) {
+  .grid-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card Compacto */
+.card-fases {
+  background-color: var(--md-code-bg-color, #1a1d24);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.85rem 1rem; /* Reduzido o espaçamento interno */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Cabeçalho Compacto */
+.card-fases .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.card-fases .card-icon {
+  background-color: rgba(126, 87, 194, 0.15);
+  color: #b388ff;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.card-fases .badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.badge-green { background: rgba(0, 230, 118, 0.15); color: #00e676; border: 1px solid rgba(0, 230, 118, 0.3); }
+.badge-purple { background: rgba(179, 136, 255, 0.15); color: #b388ff; border: 1px solid rgba(179, 136, 255, 0.3); }
+
+/* Tipografia */
+.card-fases h3 {
+  margin: 0 0 0.3rem 0 !important;
+  font-size: 0.95rem !important;
+  font-weight: 700;
+}
+
+.card-fases p {
+  font-size: 0.8rem;
+  color: var(--md-default-fg-color--light, #a0a0a0);
+  line-height: 1.3;
+  margin-bottom: 0.75rem;
+}
+
+/* Rodapé com Progresso e Botão */
+.card-footer-action {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.progress-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill { height: 100%; border-radius: 2px; }
+.progress-fill.green { background: #00e676; }
+.progress-fill.purple { background: #b388ff; }
+
+.progress-text {
+  font-size: 0.7rem;
+  font-family: var(--md-font-code), monospace;
+  color: var(--md-default-fg-color--light);
+}
+
+/* Botão de Acesso à Documentação */
+.btn-card-doc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  background-color: #7e57c2;
+  color: #ffffff !important;
+  border: 1px solid #7e57c2;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+.btn-card-doc:hover {
+  background-color: #b388ff;
+  color: #ffffff !important;
+  border-color: #b388ff;
+}
+
+.banner-hero {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  border-radius: 12px;
+  background: url('../assets/cobra-coffee.png') center/cover no-repeat;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(15, 17, 23, 0.9) 0%, rgba(15, 17, 23, 0.4) 60%, rgba(15, 17, 23, 0.8) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 1.25rem;
+}
+
+.banner-subtitle {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #00e676;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.banner-title {
+  color: #ffffff !important;
+  margin: 0.2rem 0 0 0 !important;
+  font-size: 1.4rem !important;
+  font-weight: 700;
+}
+
+.banner-badge {
+  background: rgba(26, 29, 36, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #b388ff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-family: var(--md-font-code), monospace;
+}
