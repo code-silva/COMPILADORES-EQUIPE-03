@@ -1,5 +1,7 @@
 """Testes do gerenciador de indentação (estado global, reinicialização e transições)."""
 
+import pytest
+
 from src.lexer import indent_manager
 from src.lexer.token import Token
 from src.lexer.token_type import TokenType
@@ -104,3 +106,29 @@ def test_finalize_indentation_at_root_level() -> None:
 
     assert result == []
     assert indent_manager.INDENT_STACK == [0]
+
+
+def test_public_api_exports() -> None:
+    """Verifica que a API pública do indent_manager é exportada pelo pacote src.lexer."""
+    from src.lexer import (
+        finalize_indentation,
+        get_current_indent_level,
+        process_indentation,
+        reset_indent_manager,
+    )
+
+    assert reset_indent_manager is indent_manager.reset_indent_manager
+    assert get_current_indent_level is indent_manager.get_current_indent_level
+    assert process_indentation is indent_manager.process_indentation
+    assert finalize_indentation is indent_manager.finalize_indentation
+
+
+def test_process_indentation_rejects_negative_level() -> None:
+    """Verifica que nível de indentação negativo lança ValueError sem mutar a pilha."""
+    indent_manager.reset_indent_manager()
+    indent_manager.process_indentation(4, 1, 1)
+
+    with pytest.raises(ValueError, match="O nível de indentação não pode ser negativo."):
+        indent_manager.process_indentation(-1, 2, 1)
+
+    assert indent_manager.INDENT_STACK == [0, 4]

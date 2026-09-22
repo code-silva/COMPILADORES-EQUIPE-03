@@ -1,7 +1,7 @@
 """Gerenciador de indentação do analisador léxico.
 
-(Mantém o estado global da pilha de níveis de recuo e o buffer de tokens
-pendentes, seguindo as normas do projeto).
+Mantém o estado global da pilha de níveis de recuo e o buffer de tokens
+pendentes, seguindo as normas do projeto.
 """
 
 from src.lexer.token import Token
@@ -54,6 +54,9 @@ def process_indentation(indent_level: int, line: int, col: int) -> list[Token]:
         ``ERROR`` em caso de indentação desalinhada ou lista vazia quando o
         nível não muda.
     """
+    if indent_level < 0:
+        raise ValueError("O nível de indentação não pode ser negativo.")
+
     if indent_level > INDENT_STACK[-1]:
         INDENT_STACK.append(indent_level)
         return [
