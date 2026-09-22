@@ -34,7 +34,7 @@ O **PyToJava** é um compilador desenvolvido como parte da disciplina de Compila
 * **Anderson Fernandes da Silva** - Matrícula: `232000679` - [GitHub](https://github.com/code-silva)
 * **Pedro Henrique Gomes Rodrigues** - Matrícula: `241025828` - [GitHub](https://github.com/usuario2)
 * **Matheus Rodrigues Pontes** - Matrícula: `242024478` - [GitHub](https://github.com/matheus0346)
-* **Nome do Integrante 4** - Matrícula: `000000000` - [GitHub](https://github.com/usuario3)
+* **Marcely do Nascimento Silva** - Matrícula: `241025701` - [GitHub](https://github.com/NSMarcely)
 * **Nome do Integrante 5** - Matrícula: `000000000` - [GitHub](https://github.com/usuario3)
 
 
