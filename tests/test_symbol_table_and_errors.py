@@ -3,7 +3,13 @@
 import unittest
 
 from src.lexer.errors import LexicalError
-from src.lexer.symbol_table import Symbol, SymbolTable
+from src.lexer.symbol_table import (
+    Symbol,
+    contains_symbol,
+    create_symbol_table,
+    insert_symbol,
+    lookup_symbol,
+)
 from src.lexer.token_type import TokenType
 
 
@@ -16,42 +22,72 @@ class LexicalErrorTests(unittest.TestCase):
         self.assertEqual(error.column, 11)
         self.assertEqual(
             str(error),
-            "LexicalError[3:11]: Caractere inesperado '@'",
+            "Erro Léxico [Linha 3, Coluna 11]: Caractere inesperado '@'",
         )
 
 
 class SymbolTableTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.table = SymbolTable()
+        self.table = create_symbol_table()
 
     def test_inserts_and_finds_symbol(self) -> None:
-        symbol = self.table.insert("total", TokenType.IDENTIFIER, 2, 5)
+        symbol = insert_symbol(
+            self.table,
+            "total",
+            TokenType.IDENTIFIER,
+            2,
+            5,
+        )
 
         self.assertEqual(
             symbol,
             Symbol("total", TokenType.IDENTIFIER, 2, 5),
         )
-        self.assertTrue(self.table.contains("total"))
-        self.assertIs(self.table.lookup("total"), symbol)
+        self.assertTrue(contains_symbol(self.table, "total"))
+        self.assertIs(lookup_symbol(self.table, "total"), symbol)
 
     def test_preserves_first_occurrence(self) -> None:
-        first = self.table.insert("total", TokenType.IDENTIFIER, 2, 5)
-        repeated = self.table.insert("total", TokenType.IDENTIFIER, 9, 3)
+        first = insert_symbol(
+            self.table,
+            "total",
+            TokenType.IDENTIFIER,
+            2,
+            5,
+        )
+        repeated = insert_symbol(
+            self.table,
+            "total",
+            TokenType.IDENTIFIER,
+            9,
+            3,
+        )
 
         self.assertIs(repeated, first)
         self.assertEqual(repeated.first_declared_line, 2)
         self.assertEqual(repeated.first_declared_col, 5)
-        self.assertEqual(len(self.table.all_symbols()), 1)
+        self.assertEqual(len(self.table), 1)
 
     def test_returns_none_for_unknown_symbol(self) -> None:
-        self.assertIsNone(self.table.lookup("ausente"))
-        self.assertFalse(self.table.contains("ausente"))
+        self.assertIsNone(lookup_symbol(self.table, "ausente"))
+        self.assertFalse(contains_symbol(self.table, "ausente"))
 
     def test_lists_symbols_in_insertion_order(self) -> None:
-        first = self.table.insert("x", TokenType.IDENTIFIER, 1, 1)
-        second = self.table.insert("y", TokenType.IDENTIFIER, 2, 1)
+        first = insert_symbol(
+            self.table,
+            "x",
+            TokenType.IDENTIFIER,
+            1,
+            1,
+        )
+        second = insert_symbol(
+            self.table,
+            "y",
+            TokenType.IDENTIFIER,
+            2,
+            1,
+        )
 
-        self.assertEqual(self.table.all_symbols(), [first, second])
+        self.assertEqual(list(self.table.values()), [first, second])
 
 
 if __name__ == "__main__":
