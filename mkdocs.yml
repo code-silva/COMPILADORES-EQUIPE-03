@@ -56,7 +56,7 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Contribuição: contribuicao.md
+  - Glossário: GLOSSARY.md
   - Estrutura: estrutura.md
   - Compiladores: 
     - Visão Geral: compiladores.md
