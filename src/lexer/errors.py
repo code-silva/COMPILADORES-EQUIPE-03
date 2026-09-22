@@ -12,4 +12,7 @@ class LexicalError(Exception):
 
     def __str__(self) -> str:
         """Retorna o erro no formato padronizado definido pela issue #8."""
-        return f"LexicalError[{self.line}:{self.column}]: {self.message}"
+        return (
+            f"Erro Léxico [Linha {self.line}, Coluna {self.column}]: "
+            f"{self.message}"
+        )
