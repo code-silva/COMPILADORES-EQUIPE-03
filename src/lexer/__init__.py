@@ -1,14 +1,14 @@
 """Módulo do analisador léxico do compilador PyToJava."""
 
 from .char_stream import CharStream
-from .token import Token
-from .token_type import TokenType
-from src.lexer.indent_manager import (
+from .indent_manager import (
     finalize_indentation,
     get_current_indent_level,
     process_indentation,
     reset_indent_manager,
 )
+from .token import Token
+from .token_type import TokenType
 
 __all__ = [
     "CharStream",
