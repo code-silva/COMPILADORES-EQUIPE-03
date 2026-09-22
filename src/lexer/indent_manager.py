@@ -97,3 +97,33 @@ def process_indentation(indent_level: int, line: int, col: int) -> list[Token]:
         return generated_tokens
 
     return []
+
+
+def finalize_indentation(line: int, col: int) -> list[Token]:
+    """Fecha todos os blocos ainda abertos ao alcançar o fim do arquivo (EOF).
+
+    Desempilha os níveis de recuo superiores ao nível base ``0``, emitindo um
+    token ``DEDENT`` para cada escopo encerrado. Se a pilha já estiver no
+    nível base, nenhum token é gerado.
+
+    Args:
+        line: Linha do código-fonte onde o fim de arquivo foi atingido.
+        col: Coluna do código-fonte onde o fim de arquivo foi atingido.
+
+    Returns:
+        Lista de tokens ``DEDENT`` acumulados para fechar os blocos abertos,
+        ou lista vazia quando não há blocos pendentes.
+    """
+    dedent_tokens: list[Token] = []
+    while len(INDENT_STACK) > 1:
+        INDENT_STACK.pop()
+        dedent_tokens.append(
+            Token(
+                type=TokenType.DEDENT,
+                lexeme="",
+                literal=None,
+                line=line,
+                column=col,
+            )
+        )
+    return dedent_tokens

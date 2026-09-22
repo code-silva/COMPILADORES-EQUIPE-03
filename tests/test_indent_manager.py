@@ -78,3 +78,29 @@ def test_process_indentation_same_level() -> None:
 
     assert result == []
     assert indent_manager.INDENT_STACK == [0, 4]
+
+
+def test_finalize_indentation_with_multiple_open_blocks() -> None:
+    """Verifica que finalize fecha todos os blocos abertos emitindo DEDENTs."""
+    indent_manager.reset_indent_manager()
+    indent_manager.process_indentation(4, 1, 1)
+    indent_manager.process_indentation(8, 2, 1)
+    assert indent_manager.INDENT_STACK == [0, 4, 8]
+
+    result = indent_manager.finalize_indentation(10, 1)
+
+    assert len(result) == 2
+    assert [t.type for t in result] == [TokenType.DEDENT, TokenType.DEDENT]
+    assert all(t.line == 10 and t.column == 1 for t in result)
+    assert indent_manager.INDENT_STACK == [0]
+
+
+def test_finalize_indentation_at_root_level() -> None:
+    """Verifica que finalize no nível base não emite tokens nem modifica a pilha."""
+    indent_manager.reset_indent_manager()
+    assert indent_manager.INDENT_STACK == [0]
+
+    result = indent_manager.finalize_indentation(5, 1)
+
+    assert result == []
+    assert indent_manager.INDENT_STACK == [0]
