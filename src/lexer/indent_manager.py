@@ -1,10 +1,11 @@
 """Gerenciador de indentação do analisador léxico.
 
-Mantém o estado global da pilha de níveis de recuo e o buffer de tokens
+(Mantém o estado global da pilha de níveis de recuo e o buffer de tokens
 pendentes, seguindo as normas do projeto).
 """
 
 from src.lexer.token import Token
+from src.lexer.token_type import TokenType
 
 # Pilha de níveis de recuo, iniciada com o nível base 0 (escopo global).
 INDENT_STACK: list[int] = [0]
@@ -31,3 +32,68 @@ def get_current_indent_level() -> int:
         O nível de recuo vigente (topo de ``INDENT_STACK``).
     """
     return INDENT_STACK[-1]
+
+
+def process_indentation(indent_level: int, line: int, col: int) -> list[Token]:
+    """Processa o nível de recuo de uma linha e emite os tokens sintéticos devidos.
+
+    Compara ``indent_level`` com o topo da pilha e executa a transição de estado:
+
+    - Aumento de recuo: empilha o novo nível e emite um ``INDENT``.
+    - Redução de recuo: desempilha os níveis superiores, emitindo um ``DEDENT``
+      para cada, e valida o alinhamento do nível final.
+    - Recuo inalterado: mantém a pilha e não emite token algum.
+
+    Args:
+        indent_level: Quantidade de espaços/tabulações do início da linha.
+        line: Linha do código-fonte onde o recuo foi medido (iniciando em 1).
+        col: Coluna do código-fonte onde o recuo foi medido (iniciando em 1).
+
+    Returns:
+        Lista de tokens ``INDENT``/``DEDENT`` gerados na transição, um token
+        ``ERROR`` em caso de indentação desalinhada ou lista vazia quando o
+        nível não muda.
+    """
+    if indent_level > INDENT_STACK[-1]:
+        INDENT_STACK.append(indent_level)
+        return [
+            Token(
+                type=TokenType.INDENT,
+                lexeme="",
+                literal=None,
+                line=line,
+                column=col,
+            )
+        ]
+
+    if indent_level < INDENT_STACK[-1]:
+        generated_tokens: list[Token] = []
+        while indent_level < INDENT_STACK[-1]:
+            INDENT_STACK.pop()
+            generated_tokens.append(
+                Token(
+                    type=TokenType.DEDENT,
+                    lexeme="",
+                    literal=None,
+                    line=line,
+                    column=col,
+                )
+            )
+
+        if indent_level != INDENT_STACK[-1]:
+            return [
+                Token(
+                    type=TokenType.ERROR,
+                    lexeme=(
+                        f"Erro Léxico [Linha {line}, Coluna {col}]: "
+                        "Indentação desalinhada"
+                    ),
+                    literal=None,
+                    line=line,
+                    column=col,
+                )
+            ]
+
+        return generated_tokens
+
+    return []
