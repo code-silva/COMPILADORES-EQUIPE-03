@@ -2,6 +2,12 @@
 
 from .char_stream import CharStream
 from .errors import LexicalError
+from .indent_manager import (
+    finalize_indentation,
+    get_current_indent_level,
+    process_indentation,
+    reset_indent_manager,
+)
 from .symbol_table import (
     Symbol,
     SymbolTable,
@@ -24,4 +30,8 @@ __all__ = [
     "lookup_symbol",
     "Token",
     "TokenType",
+    "reset_indent_manager",
+    "get_current_indent_level",
+    "process_indentation",
+    "finalize_indentation",
 ]
