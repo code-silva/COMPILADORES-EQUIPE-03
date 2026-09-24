@@ -57,7 +57,29 @@ class Scanner:
     #verifica abertura e fechamento de " e ' até mesmo em caso de uso da \
     #bem como deve emitir ERROR se não estiver fechada(verifica a existencia de uma string)
     def _scan_string(self, start_line: int, start_col: int) -> Token:
-        pass    
+        quote_type = self.stream.peek() 
+        self.stream.advance() 
+        value = ""
+
+        #aqui roda encquanto o caractere encontrado não é " ou '
+        while not self.stream.is_at_end() and self.stream.peek() != quote_type:
+            character = self.stream.peek()
+            if character == '\\':
+                self.stream.advance()
+                if self.stream.is_at_end():
+                    break
+                next_char = self.stream.peek()
+                escapes = {'n': '\n', '\\': '\\', '"': '"', "'": "'"}
+                value += escapes.get(next_char, next_char)
+            else:
+                value += character
+            self.stream.advance()
+
+        #aqui só executa se chegar ao fim sem ter fechado as aspas    
+        if self.stream.is_at_end():    
+            return Token(TokenType.ERROR, value, "String não fechada", start_line, start_col)
+        self.stream.advance()
+        return Token(TokenType.STRING_LITERAL, value, value, start_line, start_col) 
    
     #verifica ':', '(' e ')'
     def _scan_demiliter(self, line: int, column: int):
@@ -68,7 +90,7 @@ class Scanner:
         elif character == '(':
                 return Token(TokenType.LPAREN, "(", None,  line, column)
         elif character == ')':
-                 return Token(TokenType.LPAREN, ")", None, line, column)
+                 return Token(TokenType.RPAREN, ")", None, line, column)
 
     #verifica '+', '+=', '-=', '*' e '/'
     def _scan_operator(self, line: int, column: int):
@@ -163,7 +185,9 @@ class Scanner:
             token = self._scan_number(line, column)
             return token
         elif character.isalpha() or character == '_':
-            return self._scan_identifier(line, column)    
+            return self._scan_identifier(line, column)
+        elif character in ('"', "'"):
+            return self._scan_string(line, column)    
         elif character in ['+', '-', '*', '/']:
             token = self._scan_operator(line, column)
             return token
