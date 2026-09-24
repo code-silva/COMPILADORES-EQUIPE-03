@@ -29,20 +29,20 @@ class Scanner:
     
         #aqui ele roda enquanto não chega no final do código. EX: x = 45 ou enquanto é um digito (aqui ele lê só a parte inteira)
         while not self.stream.is_at_end() and self.stream.peek().isdigit():
-            lexeme += self.stream.peek
-            self.stream.advance
+            lexeme += self.stream.peek()
+            self.stream.advance()
 
         #aqui ele checa se não tá no final e se o caractere é um ponto (.)    
         if not self.stream.is_at_end() and self.stream.peek() == ".":
             if self.stream.peek_next().isdigit():
                 lexeme += self.stream.peek()
                 self.stream.advance()
-                while not self.stream.is_at_end and self.stream.peek().isdigit():
+                while not self.stream.is_at_end() and self.stream.peek().isdigit():
                     lexeme += self.stream.peek()
                     self.stream.advance()
         if '.' in lexeme:
             return Token(TokenType.FLOAT_LITERAL, lexeme, float(lexeme), line, column)
-        return Token(TokenType.FLOAT_LITERAL, lexeme, float(lexeme), line, column)
+        return Token(TokenType.INT_LITERAL, lexeme, int(lexeme), line, column)
         
     #verifica se é um id ou uma palavra reservada    
     def _scan_identifier(self, line: int, column: int) -> Token:
@@ -118,7 +118,7 @@ class Scanner:
                     self.stream.advance()
                     return Token(TokenType.OP_NEQ, "!=", None, line, column)
             self.stream.advance()
-            return Token(TokenType.ERROR, "!", None, line, column) 
+            return Token(TokenType.ERROR, "!", f"Caractere inválido: '{character}'", line, column) 
        
        elif character == "<":
             character = self.stream.peek_next()
@@ -137,27 +137,42 @@ class Scanner:
                 return Token(TokenType.OP_GTE , ">=", None, line, column)
             self.stream.advance()
             return Token(TokenType.OP_GT, ">", None, line, column)
+       
+    #aqui ignora linha de comentário e espaços em branco
+    def _skip_whitespace_and_comments(self) -> None:
+        while not self.stream.is_at_end():
+            char = self.stream.peek()
+            if char in (' ', '\t', '\n', '\r'):
+                self.stream.advance()
+            elif char == '#':
+                while not self.stream.is_at_end() and self.stream.peek() != '\n':
+                    self.stream.advance()
+            else:        
+                break        
 
     def next_token(self) -> Token:
-        #o loop é executado enquanto não for o fim do código
-        while not self.stream.is_at_end():
+        self._skip_whitespace_and_comments()
+        if self.stream.is_at_end():
+            return Token(TokenType.EOF, "", None, self.stream.line, self.stream.column)
 
-            character = self.stream.peek()
+        character = self.stream.peek()
+        line = self.stream.line
+        column = self.stream.column
 
-            if character == ' ' or character == '\n':
-                self.stream.advance()
-                continue
-
-            line = self.stream.line
-            column = self.stream.column
-            
-            if character in ['+', '-', '*', '/']:
-                token = self._scan_operator(line, column)
-                return token
-            elif character in [':', '(', ')']:
-                token = self._scan_demiliter(line, column)
-                return token
-            elif character in ['=', '!', '<', '>']:
-                token = self._scan_RelationalOperator(line, column)
-            self.stream.advance()
-        return Token(TokenType.EOF, "", None, self.stream.line, self.stream.column)
+        if character.isdigit():
+            token = self._scan_number(line, column)
+            return token
+        elif character.isalpha() or character == '_':
+            return self._scan_identifier(line, column)    
+        elif character in ['+', '-', '*', '/']:
+            token = self._scan_operator(line, column)
+            return token
+        elif character in [':', '(', ')']:
+            token = self._scan_demiliter(line, column)
+            return token
+        elif character in ['=', '!', '<', '>']:
+            token = self._scan_RelationalOperator(line, column)
+            return token
+        
+        self.stream.advance()
+        return Token(TokenType.ERROR, "", f"Caractere inválido: '{character}'", self.stream.line, self.stream.column)
