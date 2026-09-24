@@ -24,20 +24,45 @@ class Scanner:
         self.stream = CharStream(source_code)
 
     #verifica se é int ou float 
-    def _scan_number(self, start_line: int, start_col: int) -> Token:    
-        pass
+    def _scan_number(self, line: int, column: int) -> Token:    
+        lexeme = ""
+    
+        #aqui ele roda enquanto não chega no final do código. EX: x = 45 ou enquanto é um digito (aqui ele lê só a parte inteira)
+        while not self.stream.is_at_end() and self.stream.peek().isdigit():
+            lexeme += self.stream.peek
+            self.stream.advance
 
+        #aqui ele checa se não tá no final e se o caractere é um ponto (.)    
+        if not self.stream.is_at_end() and self.stream.peek() == ".":
+            if self.stream.peek_next().isdigit():
+                lexeme += self.stream.peek()
+                self.stream.advance()
+                while not self.stream.is_at_end and self.stream.peek().isdigit():
+                    lexeme += self.stream.peek()
+                    self.stream.advance()
+        if '.' in lexeme:
+            return Token(TokenType.FLOAT_LITERAL, lexeme, float(lexeme), line, column)
+        return Token(TokenType.FLOAT_LITERAL, lexeme, float(lexeme), line, column)
+        
     #verifica se é um id ou uma palavra reservada    
-    def _scan_identifier(self, start_line: int, start_col: int) -> Token:
-        pass
+    def _scan_identifier(self, line: int, column: int) -> Token:
+        lexeme = ""
+        while not self.stream.is_at_end() and (self.stream.peek().isalnum() or self.stream.peek() == "_"):
+             lexeme += self.stream.peek()
+             self.stream.advance()
+        tokenType = self.KEYWORDS.get(lexeme, TokenType.IDENTIFIER)
+        return Token(tokenType, lexeme, None, line, column)
 
+        
     #verifica abertura e fechamento de " e ' até mesmo em caso de uso da \
     #bem como deve emitir ERROR se não estiver fechada(verifica a existencia de uma string)
-    def _scan_string(self, delimiter: str, start_line: int, start_col: int) -> Token:
-        pass 
+    def _scan_string(self, start_line: int, start_col: int) -> Token:
+        pass    
    
     #verifica ':', '(' e ')'
-    def _scan_demiliter(self, character: str, line: int, column: int):
+    def _scan_demiliter(self, line: int, column: int):
+        character = self.stream.peek()
+        self.stream.advance()
         if character == ':':
                 return Token(TokenType.COLON, ":", None,  line, column )
         elif character == '(':
@@ -46,51 +71,71 @@ class Scanner:
                  return Token(TokenType.LPAREN, ")", None, line, column)
 
     #verifica '+', '+=', '-=', '*' e '/'
-    def _scan_operator(self, character: str, line: int, column: int):
+    def _scan_operator(self, line: int, column: int):
+            character = self.stream.peek()
             if character == '+':
                 character = self.stream.peek_next()
                 if character == '=':
                      self.stream.advance()
+                     self.stream.advance()
                      return Token(TokenType.OP_ADD_ASSIGN, "+=", None, line, column)
+                self.stream.advance()
                 return Token(TokenType.OP_PLUS, "+", None, line, column)
                 
             elif character == '-':
                 character = self.stream.peek_next()
                 if character == '=':
                     self.stream.advance()
+                    self.stream.advance()
                     return Token(TokenType.OP_SUB_ASSIGN, "-=", None, line, column)
+                self.stream.advance()
                 return Token(TokenType.OP_MINUS, "-", None, line, column)
             
             elif character == '*':
+                 self.stream.advance()
                  return Token(TokenType.OP_MULT, "*", None, line, column)
             
             elif character == '/':
+                self.stream.advance()
                 return Token(TokenType.OP_DIV, "/", None, line, column)
 
     #verifica '=', '==', '!=', '<', '<=', '>' e '>='
-    def _scan_RelationalOperator(self, character: str, line: int, column: int):
+    def _scan_RelationalOperator(self, line: int, column: int):
+       character = self.stream.peek()
        if character == "=":
             character = self.stream.peek_next()
             if character == "=":
+                 self.stream.advance()
+                 self.stream.advance()
                  return Token(TokenType.OP_EQ, "==", None, line, column)
+            self.stream.advance()
             return Token(TokenType.OP_ASSIGN, "=", None, line, column) 
        
        elif character == "!":
             character = self.stream.peek_next()
             if character == "=":
+                    self.stream.advance()
+                    self.stream.advance()
                     return Token(TokenType.OP_NEQ, "!=", None, line, column)
+            self.stream.advance()
             return Token(TokenType.ERROR, "!", None, line, column) 
        
        elif character == "<":
             character = self.stream.peek_next()
             if character == "=":
+                self.stream.advance()
+                self.stream.advance()
                 return Token(TokenType.OP_LTE , "<=", None, line, column)
+            self.stream.advance()
             return Token(TokenType.OP_LT, "<", None, line, column)
        
        elif character == ">":
             character = self.stream.peek_next()
             if character == "=":
+                self.stream.advance()
+                self.stream.advance()
                 return Token(TokenType.OP_GTE , ">=", None, line, column)
+            self.stream.advance()
             return Token(TokenType.OP_GT, ">", None, line, column)
 
     def next_token(self) -> Token:
@@ -105,15 +150,14 @@ class Scanner:
 
             line = self.stream.line
             column = self.stream.column
-
-            self.stream.advance()
             
             if character in ['+', '-', '*', '/']:
-                token = self._scan_operator(character, line, column)
+                token = self._scan_operator(line, column)
                 return token
             elif character in [':', '(', ')']:
-                token = self._scan_demiliter(character, line, column)
+                token = self._scan_demiliter(line, column)
                 return token
             elif character in ['=', '!', '<', '>']:
-                token = self._scan_RelationalOperator(character, line, column)
+                token = self._scan_RelationalOperator(line, column)
+            self.stream.advance()
         return Token(TokenType.EOF, "", None, self.stream.line, self.stream.column)
