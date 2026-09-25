@@ -176,11 +176,15 @@ class Scanner:
             self.stream.advance()
 
     #aqui scanea nova linha e indica que vai inicializar uma nova 
-    def _scan_newline(self) -> None:
+    def _scan_newline(self) -> Token:
+        line = self.stream.line
+        column = self.stream.column
+
         char = self.stream.advance()
         if char == "\r" and self.stream.peek() == "\n":
             self.stream.advance()
-        self.at_line_start = True    
+        self.at_line_start = True 
+        return Token(TokenType.NEWLINE, "\n", None, line, column)   
 
     #esse metodo processa a indentação
     def _process_line_indentation(self) -> None:
@@ -205,37 +209,40 @@ class Scanner:
 
     #envia DEDENT pedentes e retorna o token EOF
     def _finalize_and_get_eof(self) -> Token:
-        dedent_tokens = finalize_indentation(self.stream.line, self.stream.column)
+        line = self.stream.line
+        column = self.stream.column
+        dedent_tokens = finalize_indentation(line, column)
         if dedent_tokens:
             self.pending_tokens.extend(dedent_tokens)
             return self.pending_tokens.popleft()
-        return Token(TokenType.EOF, "", None, self.stream.line, self.stream.column)
+        return Token(TokenType.EOF, "", None, line, column)
 
     #esse metodo é o coração do scanner ele roda todos os outros scanners 
     def next_token(self) -> Token:
         #aqui é onde guarda  tokens de identação na fila 
-        if self.pending_tokens:
-            return self.pending_tokens.popleft()
-
-        #roda toda vez que inicializa uma linha
-        if self.at_line_start:
-            self._process_line_indentation()
+        while True:
             if self.pending_tokens:
-                return self.pending_tokens.popleft() 
-             
-        if self.stream.is_at_end():
-            return self._finalize_and_get_eof()
+                return self.pending_tokens.popleft()
 
-        self._skip_whitespace()
+            #roda toda vez que inicializa uma linha
+            if self.at_line_start:
+                self._process_line_indentation()
+                if self.pending_tokens:
+                    return self.pending_tokens.popleft() 
+                
+            if self.stream.is_at_end():
+                return self._finalize_and_get_eof()
 
-        if self.stream.peek() == "#":
-            self._skip_comment()
-            return self.next_token()
+            self._skip_whitespace()
 
-        if self.stream.peek() in ("\r", "\n"):
-            self._scan_newline()
-            return self.next_token()
-        
+            if self.stream.peek() == "#":
+                self._skip_comment()
+                continue
+
+            if self.stream.peek() in ("\r", "\n"):
+                return self._scan_newline()
+            break
+            
         character = self.stream.peek()
         line = self.stream.line
         column = self.stream.column
