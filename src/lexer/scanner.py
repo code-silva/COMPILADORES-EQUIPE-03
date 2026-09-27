@@ -1,8 +1,11 @@
 from src.lexer.char_stream import CharStream
+from src.lexer.errors import LexicalError
 from src.lexer.token import Token
 from src.lexer.token_type import TokenType
 from collections import deque
 from src.lexer.indent_manager import (finalize_indentation, process_indentation, reset_indent_manager)
+from src.lexer.errors import LexicalError
+
 
 class Scanner:
 
@@ -145,7 +148,7 @@ class Scanner:
                     self.stream.advance()
                     return Token(TokenType.OP_NEQ, "!=", None, line, column)
             self.stream.advance()
-            return Token(TokenType.ERROR, "!", f"Caractere inválido: '{character}'", line, column) 
+            raise LexicalError("caractere inválido '!'", line, column)
        
        elif character == "<":
             character = self.stream.peek_next()
