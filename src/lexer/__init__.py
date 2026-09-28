@@ -18,6 +18,7 @@ from .symbol_table import (
 )
 from .token import Token
 from .token_type import TokenType
+from .scanner import Scanner
 
 __all__ = [
     "CharStream",
@@ -34,4 +35,5 @@ __all__ = [
     "get_current_indent_level",
     "process_indentation",
     "finalize_indentation",
+    "Scanner",
 ]
