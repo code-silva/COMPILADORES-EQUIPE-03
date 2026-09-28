@@ -272,3 +272,9 @@ def test_spec_example_unterminated_string_position() -> None:
     assert err.line == 2
     assert err.column == 13
     assert "literal de string não terminado" in str(err)
+
+def test_many_blank_lines_do_not_cause_recursion_error() -> None:
+    """Verifica que muitas linhas vazias consecutivas não estouram a pilha de recursão."""
+    src = "\n" * 1500 + "x = 1\n"
+    tokens = scan_all(src)
+    assert any(t.type == TokenType.IDENTIFIER and t.lexeme == "x" for t in tokens)

@@ -90,7 +90,7 @@ class Scanner:
         return Token(TokenType.STRING_LITERAL, value, value, start_line, start_col) 
    
     #verifica ':', '(' e ')'
-    def _scan_demiliter(self, line: int, column: int):
+    def _scan_delimiter(self, line: int, column: int):
         character = self.stream.peek()
         self.stream.advance()
         if character == ':':
@@ -128,7 +128,7 @@ class Scanner:
                 return Token(TokenType.OP_DIV, "/", None, line, column)
 
     #verifica '=', '==', '!=', '<', '<=', '>' e '>='
-    def _scan_RelationalOperator(self, line: int, column: int):
+    def _scan_relational_operator(self, line: int, column: int):
         character = self.stream.peek()
         if character == "=":
             if self.stream.peek_next() == "=":
@@ -173,7 +173,7 @@ class Scanner:
             self.stream.advance()
 
     #aqui scanea nova linha e indica que vai inicializar uma nova 
-    def _scan_newline(self) -> Token:
+    def _scan_newline(self) -> Token | None:
         line = self.stream.line
         column = self.stream.column
 
@@ -184,7 +184,7 @@ class Scanner:
         self.at_line_start = True
         self.line_has_tokens = False
         if not had_tokens:
-            return self.next_token()
+            return None
         return Token(TokenType.NEWLINE, "\n", None, line, column)   
 
     #esse metodo processa a indentação
@@ -239,7 +239,10 @@ class Scanner:
                 return self._finalize_and_get_eof()
 
             if self.stream.peek() in ("\r", "\n"):
-                return self._scan_newline()
+                newline_token = self._scan_newline()
+                if newline_token is not None:
+                    return newline_token
+                continue
 
             if self.stream.peek() == "#":
                 self._skip_comment()
@@ -259,9 +262,9 @@ class Scanner:
         elif character in ['+', '-', '*', '/']:
             token = self._scan_operator(line, column)
         elif character in [':', '(', ')']:
-            token = self._scan_demiliter(line, column)
+            token = self._scan_delimiter(line, column)
         elif character in ['=', '!', '<', '>']:
-            token = self._scan_RelationalOperator(line, column)
+            token = self._scan_relational_operator(line, column)
         else:
             self.stream.advance()
             raise LexicalError(f"caractere inválido '{character}'", line, column)
