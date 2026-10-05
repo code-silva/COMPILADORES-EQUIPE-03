@@ -63,3 +63,5 @@ nav:
     - Analisador Léxico: 
       - Especificador Léxico: specs/lexico.md
       - Arquitetura do Scanner: arch/scanner.md
+    - Analisador Sintático:
+      - Gramática Inicial: specs/sintatico.md
