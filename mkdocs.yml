@@ -63,3 +63,5 @@ nav:
     - Analisador Léxico: 
       - Especificador Léxico: specs/lexico.md
       - Arquitetura do Scanner: arch/scanner.md
+    - Analisador Sintático:
+      - Árvore Sintática Abstrata (AST): parser/ast.md
