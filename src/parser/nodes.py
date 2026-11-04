@@ -1,6 +1,9 @@
 """Estrutura de nós da Árvore Sintática Abstrata (AST) do compilador PyToJava."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
+
 
 @dataclass(kw_only=True)
 class Node:
@@ -17,6 +20,7 @@ class Node:
 
     line: int = 0
     column: int = 0
+
 
 @dataclass
 class ProgramNode(Node):
@@ -49,6 +53,78 @@ class BinOpNode(Node):
     left: Node | None = None
     op: str = ""
     right: Node | None = None
+
+
+@dataclass
+class IdentifierNode(Node):
+    """Nó folha da AST que representa um identificador (nome de variável ou símbolo).
+
+    Atributos:
+        name: Nome textual do identificador no código-fonte.
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    name: str = ""
+
+
+@dataclass
+class IntLiteralNode(Node):
+    """Nó folha da AST que armazena um literal numérico inteiro.
+
+    Atributos:
+        value: Valor inteiro representado pelo literal.
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    value: int = 0
+
+
+@dataclass
+class FloatLiteralNode(Node):
+    """Nó folha da AST que armazena um literal numérico de ponto flutuante.
+
+    Atributos:
+        value: Valor float representado pelo literal.
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    value: float = 0.0
+
+
+@dataclass
+class StringLiteralNode(Node):
+    """Nó folha da AST que armazena um literal de texto (string).
+
+    Atributos:
+        value: Conteúdo textual da string (sem as aspas delimitadoras).
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    value: str = ""
+
+
+@dataclass
+class BoolLiteralNode(Node):
+    """Nó folha da AST que armazena um literal booleano (``True`` ou ``False``).
+
+    Atributos:
+        value: Valor booleano nativo (``True`` ou ``False``).
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    value: bool = False
+
+
+@dataclass
+class NoneLiteralNode(Node):
+    """Nó folha da AST que representa o literal nulo (``None``)."""
+
+
 """como bloco de códico de elif, else,
     if ou while pode ter mais de uma instrução 
     vamos utilizar aqui listas"""
@@ -92,3 +168,33 @@ class IfNode(Node):
 class WhileNode(Node):
     condition: Node | None = None
     body: list[Node] = field(default_factory=list)
+
+
+@dataclass
+class AssignNode(Node):
+    """Nó da AST que representa operações de atribuição (=, +=, -=).
+
+    Atributos:
+        target: Identificador ou alvo da atribuição.
+        op: Operador de atribuição ('=', '+=', '-=').
+        value: Expressão atribuída ao alvo.
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    target: str = ""
+    op: str = ""
+    value: Node | None = None
+
+
+@dataclass
+class ReturnNode(Node):
+    """Nó da AST que representa instruções de retorno (return expr ou return).
+
+    Atributos:
+        value: Expressão opcional retornada pela instrução.
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    value: Node | None = None

@@ -8,7 +8,7 @@ Cada nó da árvore é modelado com `@dataclass` no módulo `src/parser/nodes.py
 
 ## Hierarquia da AST
 
-A infraestrutura da AST é composta pela superclasse `Node`, pelo nó raiz `ProgramNode` (que agrupa todas as instruções de nível superior do programa) e pelos nós de expressões, como `BinOpNode`:
+A infraestrutura da AST é composta pela superclasse `Node`, pelo nó raiz `ProgramNode` (que agrupa todas as instruções de nível superior do programa) pelos nós de expressões, como `BinOpNode`, e pelos nós de instruções imperativas (`AssignNode` e `ReturnNode`):
 
 ```mermaid
 classDiagram
@@ -24,8 +24,18 @@ classDiagram
         +str op = ""
         +Node | None right = None
     }
+    class AssignNode {
+        +str target = ""
+        +str op = ""
+        +Node | None value = None
+    }
+    class ReturnNode {
+        +Node | None value = None
+    }
     Node <|-- ProgramNode
     Node <|-- BinOpNode
+    Node <|-- AssignNode
+    Node <|-- ReturnNode
 ```
 
 Também podemos visualizar como um `ProgramNode` organiza as instruções em tempo de execução na forma de árvore:
@@ -100,6 +110,148 @@ class BinOpNode(Node):
 | `right` | `Node \| None` | `None` | Sub-árvore ou nó folha correspondente ao operando direito. |
 | `line` | `int` | `0` | Herdado de `Node`. Linha no código-fonte onde a operação é avaliada. |
 | `column` | `int` | `0` | Herdado de `Node`. Coluna no código-fonte onde a operação é avaliada. |
+
+---
+
+## Instruções Imperativas
+
+Os nós de instruções imperativas modelam operações de atribuição de variáveis e instruções de fluxo de controle básicas (retorno de valores).
+
+### `AssignNode`
+
+Representa operações de atribuição (`=`, `+=`, `-=`) a variáveis ou alvos no código-fonte.
+
+```python
+@dataclass
+class AssignNode(Node):
+    target: str = ""
+    op: str = ""
+    value: Node | None = None
+```
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `target` | `str` | `""` | Identificador da variável ou alvo da atribuição. |
+| `op` | `str` | `""` | Operador de atribuição utilizado (`=`, `+=`, `-=`). |
+| `value` | `Node \| None` | `None` | Expressão da AST atribuída ao alvo. |
+| `line` | `int` | `0` | Herdado de `Node`. Linha onde a atribuição ocorre. |
+| `column` | `int` | `0` | Herdado de `Node`. Coluna onde a atribuição ocorre. |
+
+---
+
+### `ReturnNode`
+
+Representa instruções de retorno de valores (`return expr` ou `return` vazio).
+
+```python
+@dataclass
+class ReturnNode(Node):
+    value: Node | None = None
+```
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `value` | `Node \| None` | `None` | Expressão opcional retornada pela instrução (`None` quando não há valor). |
+| `line` | `int` | `0` | Herdado de `Node`. Linha onde a instrução `return` ocorre. |
+| `column` | `int` | `0` | Herdado de `Node`. Coluna onde a instrução `return` ocorre. |
+
+---
+
+## Exemplos Práticos: Código Python vs. Estrutura AST
+
+Abaixo estão exemplos práticos demonstrando como o código Python para instruções imperativas é mapeado para a estrutura da AST:
+
+### 1. Atribuição Simples (`x = 10`)
+* **Código Python:**
+  ```python
+  x = 10
+  ```
+* **Representação na AST:**
+  ```python
+  AssignNode(
+      target="x",
+      op="=",
+      value=LiteralNode(value=10),
+      line=1,
+      column=1
+  )
+  ```
+
+### 2. Atribuições Acumulativas (`x += 1` e `x -= 5`)
+* **Código Python:**
+  ```python
+  x += 1
+  x -= 5
+  ```
+* **Representação na AST:**
+  ```python
+  # x += 1
+  AssignNode(
+      target="x",
+      op="+=",
+      value=LiteralNode(value=1),
+      line=1,
+      column=1
+  )
+
+  # x -= 5
+  AssignNode(
+      target="x",
+      op="-=",
+      value=LiteralNode(value=5),
+      line=2,
+      column=1
+  )
+  ```
+
+### 3. Retorno com Valor (`return x`)
+* **Código Python:**
+  ```python
+  return x
+  ```
+* **Representação na AST:**
+  ```python
+  ReturnNode(
+      value=IdentifierNode(name="x"),
+      line=1,
+      column=1
+  )
+  ```
+
+### 4. Retorno Vazio (`return`)
+* **Código Python:**
+  ```python
+  return
+  ```
+* **Representação na AST:**
+  ```python
+  ReturnNode(
+      value=None,
+      line=1,
+      column=1
+  )
+  ```
+
+---
+
+## Exemplo de Uso: Instruções Imperativas
+
+```python
+from src.parser import AssignNode, Node, ProgramNode, ReturnNode
+
+# Instanciação padrão (programa vazio)
+empty_program = ProgramNode()
+assert empty_program.stmts == []
+assert (empty_program.line, empty_program.column) == (0, 0)
+
+# Instanciação de nós de atribuição e retorno
+assign_stmt = AssignNode(target="x", op="=", line=1, column=1)
+return_stmt = ReturnNode(line=2, column=1)
+
+# Composição do programa no ProgramNode
+program = ProgramNode(stmts=[assign_stmt, return_stmt], line=1, column=1)
+assert len(program.stmts) == 2
+```
 
 ---
 

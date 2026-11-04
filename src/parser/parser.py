@@ -1,4 +1,4 @@
-"""Analisador sintático (Parser) de expressões e precedência de operadores."""
+"""Analisador sintático (Parser): expressões, instruções simples e programa."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ from src.lexer.token_type import TokenType
 
 from .errors import ParserError
 from .nodes import (
+    AssignNode,
     BinOpNode,
     BoolLiteralNode,
     FloatLiteralNode,
@@ -15,6 +16,8 @@ from .nodes import (
     IntLiteralNode,
     Node,
     NoneLiteralNode,
+    ProgramNode,
+    ReturnNode,
     StringLiteralNode,
 )
 
@@ -43,6 +46,20 @@ class Parser:
     UNARY_OPERATORS: set[TokenType] = {
         TokenType.OP_PLUS,
         TokenType.OP_MINUS,
+    }
+
+    ASSIGNMENT_OPERATORS: set[TokenType] = {
+        TokenType.OP_ASSIGN,
+        TokenType.OP_ADD_ASSIGN,
+        TokenType.OP_SUB_ASSIGN,
+    }
+
+    # Tokens que encerram uma instrução simples. ``DEDENT`` e ``EOF`` não são
+    # consumidos pela instrução: pertencem a quem fecha o bloco ou o programa.
+    STATEMENT_TERMINATORS: set[TokenType] = {
+        TokenType.NEWLINE,
+        TokenType.DEDENT,
+        TokenType.EOF,
     }
 
     def __init__(self, tokens: list[Token] | str) -> None:
@@ -211,3 +228,125 @@ class Parser:
             )
 
         return left
+
+    # ==========================================================================
+    # Ponto de Entrada
+    # ==========================================================================
+
+    def parse(self) -> ProgramNode:
+        """Analisa o programa inteiro e devolve o nó raiz ``ProgramNode``.
+
+        Consome tokens até encontrar ``EOF``, ignorando quebras de linha
+        (``NEWLINE``) extras no escopo global e delegando cada instrução a
+        ``parse_statement()``.
+
+        Raises:
+            ParserError: se houver indentação inesperada no escopo global ou
+                qualquer violação gramatical nas instruções.
+        """
+        program = ProgramNode(line=1, column=1)
+
+        while True:
+            while self.match(TokenType.NEWLINE):
+                pass
+
+            token = self.peek()
+            if token.type == TokenType.EOF:
+                return program
+
+            if token.type in (TokenType.INDENT, TokenType.DEDENT):
+                raise ParserError(
+                    "Indentação inesperada no escopo global",
+                    token.line,
+                    token.column,
+                )
+
+            program.stmts.append(self.parse_statement())
+
+    # ==========================================================================
+    # Parsing de Instruções Simples
+    # ==========================================================================
+
+    def parse_statement(self) -> Node:
+        """Identifica o tipo de instrução no token atual e delega o parsing.
+
+        - ``return`` → ``parse_return_statement()``;
+        - ``IDENTIFIER`` seguido de ``=``, ``+=`` ou ``-=`` → ``parse_assignment()``;
+        - qualquer outra construção é analisada como expressão.
+
+        Ao final, exige que a instrução termine em ``NEWLINE`` (consumido),
+        ``DEDENT`` ou ``EOF`` (não consumidos).
+        """
+        token = self.peek()
+
+        if token.type == TokenType.KW_RETURN:
+            node = self.parse_return_statement()
+        elif (
+            token.type == TokenType.IDENTIFIER
+            and self.peek(1).type in self.ASSIGNMENT_OPERATORS
+        ):
+            node = self.parse_assignment()
+        else:
+            node = self.parse_expression()
+
+        self._end_simple_statement()
+        return node
+
+    def parse_assignment(self) -> AssignNode:
+        """Analisa ``IDENTIFIER ("=" | "+=" | "-=") expressao``.
+
+        Returns:
+            ``AssignNode`` com o nome do alvo, o operador e a expressão
+            atribuída, posicionado no identificador de destino.
+        """
+        target = self.expect(
+            TokenType.IDENTIFIER, "Esperado identificador no início da atribuição"
+        )
+
+        op_token = self.peek()
+        if op_token.type not in self.ASSIGNMENT_OPERATORS:
+            raise ParserError(
+                f"Esperado operador de atribuição ('=', '+=' ou '-='), "
+                f"mas encontrado '{op_token.lexeme}' ({op_token.type.name})",
+                op_token.line,
+                op_token.column,
+            )
+        self.advance()
+
+        value = self.parse_expression()
+        return AssignNode(
+            target=target.lexeme,
+            op=op_token.lexeme,
+            value=value,
+            line=target.line,
+            column=target.column,
+        )
+
+    def parse_return_statement(self) -> ReturnNode:
+        """Analisa ``"return" expressao?``.
+
+        Se o token após ``return`` já encerrar a instrução, gera um retorno
+        vazio (``value=None``); caso contrário, analisa a expressão retornada.
+        """
+        keyword = self.expect(TokenType.KW_RETURN, "Esperado 'return'")
+
+        value = None
+        if self.peek().type not in self.STATEMENT_TERMINATORS:
+            value = self.parse_expression()
+
+        return ReturnNode(value=value, line=keyword.line, column=keyword.column)
+
+    def _end_simple_statement(self) -> None:
+        """Garante que a instrução simples terminou no token atual."""
+        token = self.peek()
+        if token.type == TokenType.NEWLINE:
+            self.advance()
+            return
+        if token.type in (TokenType.DEDENT, TokenType.EOF):
+            return
+        raise ParserError(
+            f"Esperado fim de linha após a instrução, mas encontrado "
+            f"'{token.lexeme}' ({token.type.name})",
+            token.line,
+            token.column,
+        )

@@ -1,24 +1,41 @@
 """Módulo do analisador sintático e estrutura da AST do compilador PyToJava."""
 
-from .nodes import BinOpNode, Node, ProgramNode
+from .errors import ParserError
+from .nodes import (
+    AssignNode,
+    BinOpNode,
+    BoolLiteralNode,
+    ElifClauseNode,
+    ElseClauseNode,
+    FloatLiteralNode,
+    IdentifierNode,
+    IfNode,
+    IntLiteralNode,
+    Node,
+    NoneLiteralNode,
+    ProgramNode,
+    ReturnNode,
+    StringLiteralNode,
+    WhileNode,
+)
+from .parser import Parser
 
 __all__ = [
-    "BinOpNode",
-from .nodes import Node, ProgramNode, IfNode, ElifClauseNode, ElseClauseNode, WhileNode
-
-__all__ = [
+    "AssignNode",
     "BinOpNode",
     "BoolLiteralNode",
+    "ElifClauseNode",
+    "ElseClauseNode",
     "FloatLiteralNode",
     "IdentifierNode",
+    "IfNode",
     "IntLiteralNode",
     "Node",
     "NoneLiteralNode",
     "Parser",
     "ParserError",
     "ProgramNode",
-    "IfNode",
-    "ElifClauseNode",
-    "ElseClauseNode",
+    "ReturnNode",
+    "StringLiteralNode",
     "WhileNode",
 ]
