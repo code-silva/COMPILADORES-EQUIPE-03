@@ -32,7 +32,7 @@ O **PyToJava** é um compilador desenvolvido como parte da disciplina de Compila
 * **Pedro Henrique Gomes Rodrigues** - Matrícula: `241025828` - [GitHub](https://github.com/usuario2)
 * **Matheus Rodrigues Pontes** - Matrícula: `242024478` - [GitHub](https://github.com/matheus0346)
 * **Marcely do Nascimento Silva** - Matrícula: `241025701` - [GitHub](https://github.com/NSMarcely)
-* **Nome do Integrante 5** - Matrícula: `000000000` - [GitHub](https://github.com/usuario3)
+* **Sauhan Ferreira Melo** - Matrícula: `242024923` - [GitHub](https://github.com/usuario3)
 
 
 
@@ -180,10 +180,7 @@ Caso prefira rodar a documentação diretamente no seu sistema operacional.
 
 > 💡 **Nota:** Qualquer alteração nos arquivos da pasta `docs/` ou no `mkdocs.yml` será atualizada automaticamente no navegador em tempo real (hot-reload) em ambos os métodos.
 
-# 📄 Licença
-
 ## 📜 Licença
 
 Este projeto está licenciado sob a Licença MIT - consulte o arquivo [LICENSE](./LICENSE) para mais detalhes.
 
----
