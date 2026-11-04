@@ -198,3 +198,34 @@ class ReturnNode(Node):
     """
 
     value: Node | None = None
+
+"""essa classe é responsável armazenar o nome dos nossos atributos"""
+@dataclass
+class IdentifierNode(Node):
+    """o nome usado como indentificador é do tipo string, pois pode ser com números e letras"""
+    name: str = ""
+
+"""essa é responsável por armazenar os número inteiros com, por exemplo, 1 ou 2"""
+@dataclass(kw_only=True)
+class IntLiteralNode(Node):
+    value: int = 0
+
+"""essa responsável por armazenar os números com ponto flutuante, por exemplo, 3.14"""
+@dataclass(kw_only=True)
+class FloatLiteralNode(Node):
+    value: float = 0.0
+
+"""essa armazena texto dentro de aspas simples ou duplas"""
+@dataclass(kw_only=True)
+class StringLiteralNode(Node):
+    value: str = ""
+
+"""essa responsável por armazenar valores boobleanos com TRUE ou FALSE"""
+@dataclass(kw_only=True)
+class BoolLiteralNode(Node):
+    value: bool = False
+
+"""essa armazena valores NULL ou NONE"""
+@dataclass(kw_only=True)
+class NoneLiteralNode(Node):
+    pass
