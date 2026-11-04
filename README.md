@@ -1,19 +1,16 @@
 <img width="1584" height="396" alt="download" src="https://github.com/user-attachments/assets/829163ec-e84f-457b-a690-30b5bcbae7d9" />
 
----
-
-# COMPILADORES-EQUIPE-03
-
 # PyToJava Compiler 🐍 ➔ ☕
 
 > Um compilador/transpilador de subconjunto de Python para código-fonte Java legível e executável.
 
-<!-- Badges Sugeridas -->
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)
-![Language](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python)
-![Target](https://img.shields.io/badge/Java-17%2B-orange?style=flat-square&logo=openjdk)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-![Coverage](https://img.shields.io/badge/coverage-85%25-yellowgreen?style=flat-square)
+<p align="center">
+  <img src="https://img.shields.io/badge/build-passing-success?style=flat&logo=github-actions&logoColor=white" alt="Build" />
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/Java-17%2B-ED8B00?style=flat&logo=openjdk&logoColor=white" alt="Java" />
+  <img src="https://img.shields.io/badge/license-MIT-informational?style=flat" alt="License" />
+  <img src="https://img.shields.io/badge/coverage-85%25-a4c639?style=flat" alt="Coverage" />
+</p>
 
 ---
 
@@ -104,7 +101,7 @@ source .venv/bin/activate   # Linux/macOS
 # Instale os pacotes
 pip install -r requirements.txt
 ```
-# 2. Compilar um arquivo Python para Java
+## 2. Compilar um arquivo Python para Java
 
 ```bash
 # Passos a definir
