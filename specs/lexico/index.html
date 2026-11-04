@@ -1,0 +1,1256 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://documentacao.compiladores/specs/lexico/">
+      
+      
+        <link rel="prev" href="../../compiladores/">
+      
+      
+        <link rel="next" href="../../arch/scanner/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Especificador Léxico - PyToJava</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#analisador-lexico" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../.." title="PyToJava" class="md-header__button md-logo" aria-label="PyToJava" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.25.18.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PyToJava
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Especificador Léxico
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="green"  aria-label="Alterar para o modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Alterar para o modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="green"  aria-label="Alterar para modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Alterar para modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../GLOSSARY/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Glossário
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../estrutura/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Estrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../compiladores/" class="md-tabs__link">
+          
+  
+  
+  Compiladores
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PyToJava" class="md-nav__button md-logo" aria-label="PyToJava" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.25.18.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z"/></svg>
+
+    </a>
+    PyToJava
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../GLOSSARY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossário
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../estrutura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Estrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compiladores
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Compiladores
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../compiladores/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão Geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analisador Léxico
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Analisador Léxico
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Especificador Léxico
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Especificador Léxico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-e-um-token-entendimento-rapido" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que é um Token? (Entendimento Rápido)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tabela-de-tokens" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tabela de Tokens
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regras-especiais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regras Especiais
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Regras Especiais">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#descarte-de-comentarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descarte de Comentários
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#descarte-de-linhas-vazias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descarte de Linhas Vazias
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pilha-de-indentacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pilha de Indentação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#padrao-de-erro-lexico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Padrão de Erro Léxico
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exemplos-praticos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemplos Práticos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exemplos Práticos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#codigos-validos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Códigos Válidos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#codigos-invalidos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Códigos Inválidos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../arch/scanner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura do Scanner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="analisador-lexico">Analisador Léxico</h1>
+<p>O <strong>Analisador Léxico</strong> é a <strong>primeira fase</strong> da pipeline do compilador <strong>PyToJava</strong>. Ele lê o código-fonte Python como uma sequência bruta de caracteres e o converte em uma sequência de <strong>tokens</strong> — unidades lexicais mínimas com significado para a linguagem —, cada uma com o seu tipo, o lexema original e a posição (linha e coluna).</p>
+<p>Durante a varredura, o léxico <strong>descarta comentários</strong> (tudo a partir de <code>#</code> até o fim da linha) e <strong>linhas vazias ou compostas apenas por espaços</strong>, pois não alteram a semântica do programa. Ao mesmo tempo, mantém a emissão dos tokens <strong>sintéticos</strong> <code>INDENT</code>, <code>DEDENT</code> e <code>NEWLINE</code>, de forma análoga ao interpretador Python, permitindo que o Analisador Sintático reconheça os blocos de código sem delimitadores como <code>{</code> e <code>}</code>.</p>
+<p>O resultado dessa fase é o <em>stream</em> de tokens consumido pela fase seguinte, que constrói a Árvore de Sintaxe Abstrata (AST).</p>
+<h3 id="o-que-e-um-token-entendimento-rapido">O que é um Token? (Entendimento Rápido)</h3>
+<p>Pense no <strong>Analisador Léxico</strong> como alguém que lê um texto e empacota cada palavra ou símbolo em uma "caixinha" organizada. Essa caixinha é o <strong>Token</strong>, e ela guarda 3 informações principais: o <strong>tipo</strong> (nome do token), o <strong>lexema</strong> (texto original) e a <strong>posição</strong> (linha e coluna).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Tipo (Nome do Token)</th>
+<th style="text-align: left;">Lexema (Texto)</th>
+<th style="text-align: left;">Posição (Linha, Coluna)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>KW_IF</strong></td>
+<td style="text-align: left;"><code>"if"</code></td>
+<td style="text-align: left;">Linha 2, Coluna 4</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IDENTIFIER</strong></td>
+<td style="text-align: left;"><code>"total"</code></td>
+<td style="text-align: left;">Linha 3, Coluna 5</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>INT_LITERAL</strong></td>
+<td style="text-align: left;"><code>"42"</code></td>
+<td style="text-align: left;">Linha 3, Coluna 11</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que significam estas siglas e termos?</strong></p>
+<ul>
+<li><strong>KW_ (Keyword / Palavra Reservada):</strong> É um prefixo usado para identificar palavras que pertencem à própria linguagem Python e não podem ser usadas como nome de variável (ex.: <code>KW_IF</code>, <code>KW_WHILE</code>, <code>KW_DEF</code>).</li>
+<li><strong>NEWLINE (Fim de Linha Lógica):</strong> Indica ao compilador que uma instrução de código terminou e que a próxima linha executável vai começar.</li>
+<li><strong>INDENT (Início de Bloco / Entrada de Recuo):</strong> É um token "invisível" gerado quando você dá um Tab ou espaços para entrar em um bloco de código (por exemplo, dentro de um <code>if</code> ou <code>def</code>).</li>
+<li><strong>DEDENT (Fim de Bloco / Saída de Recuo):</strong> É o token "invisível" gerado quando você volta a margem do código para a esquerda, indicando que o bloco de código atual terminou.</li>
+</ul>
+<h2 id="tabela-de-tokens">Tabela de Tokens</h2>
+<p>A tokenização segue a regra do <strong>maior casamento</strong> (<em>maximal munch</em>): em caso de ambiguidade, vence sempre o padrão mais longo possível. Por isso operadores compostos como <code>+=</code>, <code>-=</code>, <code>&lt;=</code> e <code>&gt;=</code> são reconhecidos como um único token (<code>OP_ADD_ASSIGN</code>, <code>OP_SUB_ASSIGN</code>, <code>OP_LTE</code>, <code>OP_GTE</code>), e não como a justaposição de dois operadores simples.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Nome do Token</th>
+<th style="text-align: left;">Padrão Regex / Regra Formal</th>
+<th style="text-align: left;">Exemplo Válido</th>
+<th style="text-align: left;">Exemplo Inválido</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>KW_CLASS</strong></td>
+<td style="text-align: left;"><code>\bclass\b</code></td>
+<td style="text-align: left;"><code>class</code></td>
+<td style="text-align: left;"><code>classic</code>, <code>Class</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KW_DEF</strong></td>
+<td style="text-align: left;"><code>\bdef\b</code></td>
+<td style="text-align: left;"><code>def</code></td>
+<td style="text-align: left;"><code>define</code>, <code>DEF</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KW_SELF</strong></td>
+<td style="text-align: left;"><code>\bself\b</code></td>
+<td style="text-align: left;"><code>self</code></td>
+<td style="text-align: left;"><code>selfie</code>, <code>Self</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KW_IF</strong></td>
+<td style="text-align: left;"><code>\bif\b</code></td>
+<td style="text-align: left;"><code>if</code></td>
+<td style="text-align: left;"><code>iff</code>, <code>IF</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KW_ELIF</strong></td>
+<td style="text-align: left;"><code>\belif\b</code></td>
+<td style="text-align: left;"><code>elif</code></td>
+<td style="text-align: left;"><code>elseif</code>, <code>ELIF</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KW_ELSE</strong></td>
+<td style="text-align: left;"><code>\belse\b</code></td>
+<td style="text-align: left;"><code>else</code></td>
+<td style="text-align: left;"><code>els</code>, <code>ELSE</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KW_WHILE</strong></td>
+<td style="text-align: left;"><code>\bwhile\b</code></td>
+<td style="text-align: left;"><code>while</code></td>
+<td style="text-align: left;"><code>whiles</code>, <code>WHILE</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KW_RETURN</strong></td>
+<td style="text-align: left;"><code>\breturn\b</code></td>
+<td style="text-align: left;"><code>return</code></td>
+<td style="text-align: left;"><code>returns</code>, <code>RETURN</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KW_TRUE</strong></td>
+<td style="text-align: left;"><code>\bTrue\b</code></td>
+<td style="text-align: left;"><code>True</code></td>
+<td style="text-align: left;"><code>true</code>, <code>TRUE</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KW_FALSE</strong></td>
+<td style="text-align: left;"><code>\bFalse\b</code></td>
+<td style="text-align: left;"><code>False</code></td>
+<td style="text-align: left;"><code>false</code>, <code>FALSE</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KW_NONE</strong></td>
+<td style="text-align: left;"><code>\bNone\b</code></td>
+<td style="text-align: left;"><code>None</code></td>
+<td style="text-align: left;"><code>none</code>, <code>null</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IDENTIFIER</strong></td>
+<td style="text-align: left;"><code>[a-zA-Z_][a-zA-Z0-9_]*</code></td>
+<td style="text-align: left;"><code>total_1</code>, <code>_init</code>, <code>valor</code></td>
+<td style="text-align: left;"><code>1total</code>, <code>valor-total</code>, <code>taxa$</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>INT_LITERAL</strong></td>
+<td style="text-align: left;"><code>[0-9]+</code></td>
+<td style="text-align: left;"><code>0</code>, <code>42</code>, <code>1000</code></td>
+<td style="text-align: left;"><code>01a</code>, <code>12_000</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>FLOAT_LITERAL</strong></td>
+<td style="text-align: left;"><code>[0-9]+\.[0-9]+</code></td>
+<td style="text-align: left;"><code>0.5</code>, <code>3.1415</code>, <code>10.0</code></td>
+<td style="text-align: left;"><code>.5</code>, <code>3.</code>, <code>3..14</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>STRING_LITERAL</strong></td>
+<td style="text-align: left;"><code>"([^"\n\\]|\\.)*" \| '([^'\n\\]|\\.)*'</code></td>
+<td style="text-align: left;"><code>"olá"</code>, <code>'texto'</code>, <code>"com \"escape\""</code></td>
+<td style="text-align: left;"><code>"texto não terminado</code>, <code>'misto"</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_PLUS</strong></td>
+<td style="text-align: left;"><code>\+</code></td>
+<td style="text-align: left;"><code>+</code></td>
+<td style="text-align: left;"><code>++</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_MINUS</strong></td>
+<td style="text-align: left;"><code>-</code></td>
+<td style="text-align: left;"><code>-</code></td>
+<td style="text-align: left;"><code>--</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_MULT</strong></td>
+<td style="text-align: left;"><code>\*</code></td>
+<td style="text-align: left;"><code>*</code></td>
+<td style="text-align: left;"><code>**</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_DIV</strong></td>
+<td style="text-align: left;"><code>/</code></td>
+<td style="text-align: left;"><code>/</code></td>
+<td style="text-align: left;"><code>//</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_ASSIGN</strong></td>
+<td style="text-align: left;"><code>=</code></td>
+<td style="text-align: left;"><code>=</code></td>
+<td style="text-align: left;"><code>:=</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_ADD_ASSIGN</strong></td>
+<td style="text-align: left;"><code>\+=</code></td>
+<td style="text-align: left;"><code>+=</code></td>
+<td style="text-align: left;"><code>+ =</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_SUB_ASSIGN</strong></td>
+<td style="text-align: left;"><code>-=</code></td>
+<td style="text-align: left;"><code>-=</code></td>
+<td style="text-align: left;"><code>- =</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_EQ</strong></td>
+<td style="text-align: left;"><code>==</code></td>
+<td style="text-align: left;"><code>==</code></td>
+<td style="text-align: left;"><code>===</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_NEQ</strong></td>
+<td style="text-align: left;"><code>!=</code></td>
+<td style="text-align: left;"><code>!=</code></td>
+<td style="text-align: left;"><code>&lt;&gt;</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_LT</strong></td>
+<td style="text-align: left;"><code>&lt;</code></td>
+<td style="text-align: left;"><code>&lt;</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_LTE</strong></td>
+<td style="text-align: left;"><code>&lt;=</code></td>
+<td style="text-align: left;"><code>&lt;=</code></td>
+<td style="text-align: left;"><code>&lt; =</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_GT</strong></td>
+<td style="text-align: left;"><code>&gt;</code></td>
+<td style="text-align: left;"><code>&gt;</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OP_GTE</strong></td>
+<td style="text-align: left;"><code>&gt;=</code></td>
+<td style="text-align: left;"><code>&gt;=</code></td>
+<td style="text-align: left;"><code>&gt; =</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>COLON</strong></td>
+<td style="text-align: left;"><code>:</code></td>
+<td style="text-align: left;"><code>:</code></td>
+<td style="text-align: left;"><code>;</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>LPAREN</strong></td>
+<td style="text-align: left;"><code>\(</code></td>
+<td style="text-align: left;"><code>(</code></td>
+<td style="text-align: left;"><code>[</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>RPAREN</strong></td>
+<td style="text-align: left;"><code>\)</code></td>
+<td style="text-align: left;"><code>)</code></td>
+<td style="text-align: left;"><code>]</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>NEWLINE</strong></td>
+<td style="text-align: left;"><code>\r?\n</code></td>
+<td style="text-align: left;"><code>\n</code></td>
+<td style="text-align: left;">Espaço simples</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>INDENT</strong></td>
+<td style="text-align: left;"><em>Sintético (Pilha de recuo)</em></td>
+<td style="text-align: left;">Aumento de recuo de bloco</td>
+<td style="text-align: left;">Desalinhamento da pilha</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>DEDENT</strong></td>
+<td style="text-align: left;"><em>Sintético (Pilha de recuo)</em></td>
+<td style="text-align: left;">Redução de recuo de bloco</td>
+<td style="text-align: left;">Nível inexistente na pilha</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>EOF</strong></td>
+<td style="text-align: left;"><em>Fim de arquivo (<code>\0</code>)</em></td>
+<td style="text-align: left;">Fim do fluxo lido</td>
+<td style="text-align: left;">Caractere intermediário</td>
+</tr>
+</tbody>
+</table>
+<h2 id="regras-especiais">Regras Especiais</h2>
+<h3 id="descarte-de-comentarios">Descarte de Comentários</h3>
+<p>Toda ocorrência do caractere <code>#</code> inicia um comentário que se estende até o fim da linha física. O léxico ignora integralmente o trecho comentado, seja ele uma linha inteira:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># este comentário é descartado</span>
+</span></code></pre></div>
+<p>seja um comentário ao final de uma linha de código:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">total</span> <span class="o">=</span> <span class="n">total</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># soma uma unidade</span>
+</span></code></pre></div>
+<p>Após remover o comentário, o restante da linha é tokenizado normalmente. Uma linha que continha apenas um comentário é tratada como linha vazia e não gera token algum.</p>
+<h3 id="descarte-de-linhas-vazias">Descarte de Linhas Vazias</h3>
+<p>Linhas vazias ou compostas apenas por espaços em branco (e tabs) são descartadas e <strong>não</strong> geram tokens. Consequentemente, elas não produzem <code>INDENT</code>, <code>DEDENT</code> ou <code>NEWLINE</code>, evitando que a estrutura de blocos seja alterada por espaçamento irrelevante.</p>
+<h3 id="pilha-de-indentacao">Pilha de Indentação</h3>
+<p>O léxico mantém uma <strong>pilha de níveis de recuo</strong>, inicializada com o nível <code>0</code>. Para cada linha lógica remanescente (após o descarte de comentários e linhas vazias), calcula-se a quantidade de recuo à esquerda e aplica-se o algoritmo:</p>
+<ol>
+<li>Se o recuo for <strong>igual</strong> ao topo da pilha, nada é emitido e a linha é tokenizada normalmente.</li>
+<li>Se o recuo for <strong>maior</strong> que o topo da pilha, empilha-se o novo nível e emite-se <strong>um</strong> token <code>INDENT</code>.</li>
+<li>Se o recuo for <strong>menor</strong> que o topo da pilha, desempilha-se enquanto o topo for maior que o recuo, emitindo <strong>um</strong> <code>DEDENT</code> para cada nível removido.</li>
+<li>Se, ao final do passo anterior, o recuo <strong>não coincidir</strong> com o topo da pilha, a indentação é considerada desalinhada e gera-se um erro léxico.</li>
+<li>Ao atingir o fim do arquivo, emite-se <strong>um</strong> <code>DEDENT</code> para cada nível restante na pilha (acima de <code>0</code>) e, por fim, o token <code>EOF</code>.</li>
+</ol>
+<p>Dessa forma, o alinhamento dos blocos é validado contra níveis previamente estabelecidos, impedindo recuos arbitrários que não correspondam a nenhum nível da pilha.</p>
+<h2 id="padrao-de-erro-lexico">Padrão de Erro Léxico</h2>
+<p>Todo erro léxico é reportado com a <strong>posição exata</strong> (linha e coluna, ambas contadas a partir de <code>1</code>). As mensagens seguem três categorias formais:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Categoria</th>
+<th style="text-align: left;">Formato da Mensagem</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Caractere Inválido</td>
+<td style="text-align: left;"><code>Erro Léxico [Linha X, Coluna Y]: caractere inválido '&lt;c&gt;'</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">String Não Terminada</td>
+<td style="text-align: left;"><code>Erro Léxico [Linha X, Coluna Y]: literal de string não terminado</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Indentação Desalinhada</td>
+<td style="text-align: left;"><code>Erro Léxico [Linha X, Coluna Y]: recuo desalinhado com a pilha de indentação</code></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Campo</th>
+<th style="text-align: left;">Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Erro Léxico</code></td>
+<td style="text-align: left;">Prefixo fixo que identifica a fase em que o erro ocorreu.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Linha X</code></td>
+<td style="text-align: left;">Número da linha (<code>X</code>) onde o erro foi detectado.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Coluna Y</code></td>
+<td style="text-align: left;">Número da coluna (<code>Y</code>), contado a partir do primeiro caractere da linha.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Mensagem</td>
+<td style="text-align: left;">Descrição da categoria, com o caractere ofensivo entre aspas simples quando aplicável.</td>
+</tr>
+</tbody>
+</table>
+<p>Ao encontrar o primeiro erro léxico, o analisador <strong>interrompe a compilação</strong>, não produz tokens parciais e não avança para as fases seguintes.</p>
+<h2 id="exemplos-praticos">Exemplos Práticos</h2>
+<h3 id="codigos-validos">Códigos Válidos</h3>
+<p><strong>Exemplo 1 — Comentários descartados:</strong></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># calcula o dobro de um número</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">dobro</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>  <span class="c1"># ignora este comentário</span>
+</span></code></pre></div>
+<p>O primeiro comentário e o comentário ao final da linha são descartados, restando a sequência:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>KW_DEF, IDENTIFIER, LPAREN, IDENTIFIER, RPAREN, COLON, NEWLINE,
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>INDENT, KW_RETURN, IDENTIFIER, OP_MULT, INT_LITERAL, NEWLINE, DEDENT, EOF
+</span></code></pre></div>
+<p><strong>Exemplo 2 — Operadores compostos (<code>+=</code> e <code>&lt;=</code>):</strong></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">while</span> <span class="n">total</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">total</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></code></pre></div>
+<p>O <code>&lt;=</code> é reconhecido como <code>OP_LTE</code> e o <code>+=</code> como <code>OP_ADD_ASSIGN</code> (maior casamento), e não como pares de operadores simples:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>KW_WHILE, IDENTIFIER, OP_LTE, INT_LITERAL, COLON, NEWLINE,
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>INDENT, IDENTIFIER, OP_ADD_ASSIGN, INT_LITERAL, NEWLINE, DEDENT, EOF
+</span></code></pre></div>
+<p><strong>Exemplo 3 — Sequência de tokens completa:</strong></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">saudacao</span><span class="p">(</span><span class="n">nome</span><span class="p">):</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="n">mensagem</span> <span class="o">=</span> <span class="s2">"olá"</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="k">if</span> <span class="n">nome</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>        <span class="k">return</span> <span class="s2">"anônimo"</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="k">return</span> <span class="n">mensagem</span>
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>KW_DEF, IDENTIFIER, LPAREN, IDENTIFIER, RPAREN, COLON, NEWLINE,
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>INDENT, IDENTIFIER, OP_ASSIGN, STRING_LITERAL, NEWLINE,
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>KW_IF, IDENTIFIER, OP_EQ, KW_NONE, COLON, NEWLINE,
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>INDENT, KW_RETURN, STRING_LITERAL, NEWLINE, DEDENT,
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>KW_RETURN, IDENTIFIER, NEWLINE, DEDENT, EOF
+</span></code></pre></div>
+<h3 id="codigos-invalidos">Códigos Inválidos</h3>
+<p><strong>Exemplo 1 — Caractere inválido <code>@</code>:</strong></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">b</span> <span class="o">=</span> <span class="n">a</span> <span class="o">@</span> <span class="mi">2</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="k">return</span> <span class="n">b</span>
+</span></code></pre></div>
+<p>Mensagem de erro gerada:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Erro Léxico [Linha 3, Coluna 11]: caractere inválido '@'
+</span></code></pre></div>
+<p>O caractere <code>@</code> (coluna <code>11</code>) não pertence ao alfabeto de operadores definido na tabela de tokens.</p>
+<p><strong>Exemplo 2 — String não terminada:</strong></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">mensagem</span><span class="p">():</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">texto</span> <span class="o">=</span> <span class="s2">"olá</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="k">return</span> <span class="n">texto</span>
+</span></code></pre></div>
+<p>Mensagem de erro gerada:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Erro Léxico [Linha 2, Coluna 13]: literal de string não terminado
+</span></code></pre></div>
+<p>A aspa que abre a string na coluna <code>13</code> nunca é fechada antes do fim da linha, configurando a categoria <em>String Não Terminada</em>.</p>
+<p><strong>Exemplo 3 — Recuo desalinhado com a pilha:</strong></p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">teste</span><span class="p">():</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="k">if</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>        <span class="k">return</span> <span class="mi">1</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>      <span class="k">return</span> <span class="mi">0</span>
+</span></code></pre></div>
+<p>Mensagem de erro gerada:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Erro Léxico [Linha 4, Coluna 7]: recuo desalinhado com a pilha de indentação
+</span></code></pre></div>
+<p>Na linha <code>4</code>, o recuo de 6 espaços não coincide com nenhum nível da pilha <code>[0, 4, 8]</code>, gerando a categoria <em>Indentação Desalinhada</em>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar para o topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="../../javascripts/extra.js"></script>
+      
+    
+  </body>
+</html>
