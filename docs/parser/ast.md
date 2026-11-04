@@ -6,9 +6,9 @@ Cada nó da árvore é modelado com `@dataclass` no módulo `src/parser/nodes.py
 
 ---
 
-## Hierarquia Inicial da AST
+## Hierarquia da AST
 
-A infraestrutura base da AST é composta pela superclasse `Node` e pelo nó raiz `ProgramNode`, que agrupa todas as instruções (*statements*) de nível superior do programa:
+A infraestrutura da AST é composta pela superclasse `Node`, pelo nó raiz `ProgramNode` (que agrupa todas as instruções de nível superior do programa) e pelos nós de expressões, como `BinOpNode`:
 
 ```mermaid
 classDiagram
@@ -19,7 +19,13 @@ classDiagram
     class ProgramNode {
         +list~Node~ stmts = []
     }
+    class BinOpNode {
+        +Node | None left = None
+        +str op = ""
+        +Node | None right = None
+    }
     Node <|-- ProgramNode
+    Node <|-- BinOpNode
 ```
 
 Também podemos visualizar como um `ProgramNode` organiza as instruções em tempo de execução na forma de árvore:
@@ -33,7 +39,7 @@ flowchart TD
 
 ---
 
-## Especificação dos Nós Base
+## Especificação dos Nós
 
 ### `Node`
 
@@ -53,7 +59,7 @@ class Node:
 
 !!! info "Por que `kw_only=True` na classe base?"
     Em Python, `dataclasses` padrão não permitem que subclasses declarem atributos obrigatórios (sem valor padrão) após atributos herdados que já possuem valor padrão (`line: int = 0` e `column: int = 0`).
-    Ao declarar `@dataclass(kw_only=True)` em `Node`, `line` e `column` tornam-se parâmetros exclusivamente nomeados (*keyword-only*), permitindo que qualquer subclasse (como `ProgramNode` ou nós de expressões e instruções) defina livremente atributos posicionais ou com valor padrão sem conflito na ordem de argumentos do `__init__`.
+    Ao declarar `@dataclass(kw_only=True)` em `Node`, `line` e `column` tornam-se parâmetros exclusivamente nomeados (*keyword-only*), permitindo que qualquer subclasse (como `ProgramNode` ou `BinOpNode`) defina livremente atributos posicionais ou com valor padrão sem conflito na ordem de argumentos do `__init__`.
 
 ---
 
@@ -75,25 +81,96 @@ class ProgramNode(Node):
 
 ---
 
-## Exemplo de Uso
+### `BinOpNode` (Expressões Binárias)
+
+Nó responsável por representar operações binárias **aritméticas** (`+`, `-`, `*`, `/`) e **relacionais** (`==`, `!=`, `<`, `<=`, `>`, `>=`) entre dois operandos (`left` e `right`).
 
 ```python
-from src.parser import Node, ProgramNode
+@dataclass
+class BinOpNode(Node):
+    left: Node | None = None
+    op: str = ""
+    right: Node | None = None
+```
 
-# Instanciação padrão (programa vazio)
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `left` | `Node \| None` | `None` | Sub-árvore ou nó folha correspondente ao operando esquerdo. |
+| `op` | `str` | `""` | Símbolo textual do operador binário (ex.: `"+"`, `"-"`, `"*"`, `"/"`, `"=="`, `"!="`, `"<"`, `"<="`, `">"`, `">="`). |
+| `right` | `Node \| None` | `None` | Sub-árvore ou nó folha correspondente ao operando direito. |
+| `line` | `int` | `0` | Herdado de `Node`. Linha no código-fonte onde a operação é avaliada. |
+| `column` | `int` | `0` | Herdado de `Node`. Coluna no código-fonte onde a operação é avaliada. |
+
+---
+
+## Representação de Expressões Binárias e Árvore de Precedência
+
+Na AST, a **precedência de operadores** e a **associatividade** são codificadas diretamente pela profundidade dos nós `BinOpNode`:
+
+- Operações de **maior precedência** (como multiplicação `*` e divisão `/`) ficam **mais profundas** na árvore (mais próximas das folhas), sendo avaliadas primeiro.
+- Operações de **menor precedência** (como adição `+`, subtração `-` e comparações relacionais `<=`, `==`) ficam **mais próximas da raiz** da expressão, consumindo o resultado das sub-árvores filhas.
+
+### Exemplo Visual 1 — Precedência Aritmética (`2 + 3 * 4`)
+
+Na expressão `2 + 3 * 4`, a multiplicação tem precedência sobre a soma. Portanto, o nó `BinOpNode(op="+")` ocupa a raiz da expressão e seu campo `right` aponta para outro `BinOpNode(op="*")`:
+
+```mermaid
+flowchart TD
+    Add["BinOpNode (op='+')"] -->|"left"| N2["Operando (2)"]
+    Add -->|"right"| Mul["BinOpNode (op='*')"]
+    Mul -->|"left"| N3["Operando (3)"]
+    Mul -->|"right"| N4["Operando (4)"]
+```
+
+### Exemplo Visual 2 — Expressão Aritmética e Relacional Combinada (`2 + 3 * 4 <= 15`)
+
+Quando combinamos operadores aritméticos com um operador relacional (`<=`), o operador relacional possui a menor precedência e torna-se o nó superior da expressão:
+
+```mermaid
+flowchart TD
+    Rel["BinOpNode (op='<=')"] -->|"left"| Add["BinOpNode (op='+')"]
+    Rel -->|"right"| N15["Operando (15)"]
+    Add -->|"left"| N2["Operando (2)"]
+    Add -->|"right"| Mul["BinOpNode (op='*')"]
+    Mul -->|"left"| N3["Operando (3)"]
+    Mul -->|"right"| N4["Operando (4)"]
+```
+
+---
+
+## Exemplos de Uso
+
+```python
+from src.parser import BinOpNode, Node, ProgramNode
+
+# 1. Instanciação padrão (programa vazio)
 empty_program = ProgramNode()
 assert empty_program.stmts == []
 assert (empty_program.line, empty_program.column) == (0, 0)
 
-# Instanciação com instruções e coordenadas do código-fonte
-stmt_1 = Node(line=1, column=1)
-stmt_2 = Node(line=2, column=1)
-program = ProgramNode(stmts=[stmt_1, stmt_2], line=1, column=1)
+# 2. Construção de sub-árvore aninhada para "2 + 3 * 4"
+mult_expr = BinOpNode(
+    left=Node(line=1, column=5),
+    op="*",
+    right=Node(line=1, column=9),
+    line=1,
+    column=7,
+)
+add_expr = BinOpNode(
+    left=Node(line=1, column=1),
+    op="+",
+    right=mult_expr,
+    line=1,
+    column=3,
+)
+
+assert add_expr.op == "+"
+assert add_expr.right.op == "*"
 ```
 
 ## Validação e Testes
 
-Para executar a suíte de testes unitários da estrutura base da AST:
+Para executar a suíte de testes unitários da AST:
 
 ```bash
 pytest tests/test_ast_nodes.py -v
