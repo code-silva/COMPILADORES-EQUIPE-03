@@ -1,4 +1,4 @@
-<img width="1584" height="396" alt="capa_compiladores (3)" src="https://github.com/user-attachments/assets/e1bbe697-07e6-43d0-a963-72d915920563" />
+<img width="1584" height="396" alt="download" src="https://github.com/user-attachments/assets/829163ec-e84f-457b-a690-30b5bcbae7d9" />
 
 ---
 
