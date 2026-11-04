@@ -31,3 +31,33 @@ class ProgramNode(Node):
     """
 
     stmts: list[Node] = field(default_factory=list)
+
+
+@dataclass
+class AssignNode(Node):
+    """Nó da AST que representa operações de atribuição (=, +=, -=).
+
+    Atributos:
+        target: Identificador ou alvo da atribuição.
+        op: Operador de atribuição ('=', '+=', '-=').
+        value: Expressão atribuída ao alvo.
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    target: str = ""
+    op: str = ""
+    value: Node | None = None
+
+
+@dataclass
+class ReturnNode(Node):
+    """Nó da AST que representa instruções de retorno (return expr ou return).
+
+    Atributos:
+        value: Expressão opcional retornada pela instrução.
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    value: Node | None = None

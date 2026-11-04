@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from src.parser import Node, ProgramNode
+from src.parser import AssignNode, Node, ProgramNode, ReturnNode
 
 
 def test_node_default_instantiation() -> None:
@@ -92,3 +92,33 @@ def test_kw_only_allows_subclasses_with_positional_and_default_fields() -> None:
     assert lit.raw == ""
     assert lit.line == 5
     assert lit.column == 12
+
+
+def test_assign_node_instantiation() -> None:
+    """Verifica instanciação e herança de AssignNode."""
+    val_node = Node(line=1, column=10)
+    assign = AssignNode(target="x", op="=", value=val_node, line=1, column=5)
+
+    assert isinstance(assign, Node)
+    assert assign.target == "x"
+    assert assign.op == "="
+    assert assign.value == val_node
+    assert assign.line == 1
+    assert assign.column == 5
+
+
+def test_return_node_instantiation() -> None:
+    """Verifica instanciação e herança de ReturnNode."""
+    val_node = Node(line=2, column=12)
+    ret = ReturnNode(value=val_node, line=2, column=5)
+
+    assert isinstance(ret, Node)
+    assert ret.value == val_node
+    assert ret.line == 2
+    assert ret.column == 5
+
+    ret_empty = ReturnNode(line=3, column=1)
+    assert ret_empty.value is None
+    assert ret_empty.line == 3
+    assert ret_empty.column == 1
+
