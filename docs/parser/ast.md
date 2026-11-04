@@ -168,7 +168,113 @@ assert add_expr.op == "+"
 assert add_expr.right.op == "*"
 ```
 
-## Validação e Testes
+---
+
+## 🪢Nós de Controle de Fluxo
+
+Esta seção documenta os nós que representam as estruturas condicionais e de repetição do subconjunto Python suportado pelo PyToJava.
+
+---🔨
+
+### `IfNode`
+
+Representa uma estrutura condicional completa, podendo conter cláusulas `elif` e `else`.
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `condition` | `Node \| None` | `None` | Expressão avaliada como condição do `if`. |
+| `then_body` | `list[Node]` | `[]` | Lista de instruções executadas quando a condição é verdadeira. |
+| `elif_clauses` | `list[ElifClauseNode]` | `[]` | Lista de cláusulas `elif` associadas ao bloco. |
+| `else_body` | `list[Node]` | `[]` | Lista de instruções executadas quando nenhuma condição anterior é verdadeira. |
+| `line` | `int` | `0` | Herdado de `Node`. |
+| `column` | `int` | `0` | Herdado de `Node`. |
+
+---
+
+### `ElifClauseNode`
+
+Representa uma cláusula `elif` dentro de uma estrutura condicional.
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `condition` | `Node \| None` | `None` | Expressão avaliada como condição do `elif`. |
+| `body` | `list[Node]` | `[]` | Lista de instruções executadas quando a condição é verdadeira. |
+| `line` | `int` | `0` | Herdado de `Node`. |
+| `column` | `int` | `0` | Herdado de `Node`. |
+
+---
+
+### `ElseClauseNode`
+
+Representa a cláusula `else` dentro de uma estrutura condicional.
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `body` | `list[Node]` | `[]` | Lista de instruções executadas quando nenhuma condição anterior é verdadeira. |
+| `line` | `int` | `0` | Herdado de `Node`. |
+| `column` | `int` | `0` | Herdado de `Node`. |
+
+---
+
+### `WhileNode`
+
+Representa um laço de repetição `while`.
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `condition` | `Node \| None` | `None` | Expressão avaliada a cada iteração do laço. |
+| `body` | `list[Node]` | `[]` | Lista de instruções executadas enquanto a condição for verdadeira. |
+| `line` | `int` | `0` | Herdado de `Node`. |
+| `column` | `int` | `0` | Herdado de `Node`. |
+
+### 👀Exemplo Visual
+
+Dado o seguinte trecho de código Python:
+
+```python
+if x > 0:
+    resultado = 1
+elif x == 0:
+    resultado = 0
+else:
+    resultado = -1
+```
+
+A AST correspondente gerada pelos nós seria:
+
+```mermaid
+flowchart TD
+    If["IfNode (line=1)"] --> Cond["condition: BinOpNode '>'"]
+    If --> Then["then_body"]
+    If --> Elif["elif_clauses"]
+    If --> Else["else_body"]
+
+    Then --> T1["AssignNode 'resultado = 1' (line=2)"]
+
+    Elif --> E1["ElifClauseNode (line=3)"]
+    E1 --> EC["condition: BinOpNode '=='"]
+    E1 --> EB["body"]
+    EB --> EB1["AssignNode 'resultado = 0' (line=4)"]
+
+    Else --> EL1["AssignNode 'resultado = -1' (line=6)"]
+```
+
+E para um laço `while`:
+
+```python
+while contador <= 10:
+    contador += 1
+```
+
+```mermaid
+flowchart TD
+    While["WhileNode (line=1)"] --> WCond["condition: BinOpNode '<='"]
+    While --> WBody["body"]
+    WBody --> WB1["AssignNode 'contador += 1' (line=2)"]
+```
+
+---
+## 🚀Validação e Testes
 
 Para executar a suíte de testes unitários da AST:
 

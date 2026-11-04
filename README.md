@@ -1,19 +1,16 @@
-<img width="1584" height="396" alt="capa_compiladores (3)" src="https://github.com/user-attachments/assets/e1bbe697-07e6-43d0-a963-72d915920563" />
-
----
-
-# COMPILADORES-EQUIPE-03
+<img width="1584" height="396" alt="download" src="https://github.com/user-attachments/assets/829163ec-e84f-457b-a690-30b5bcbae7d9" />
 
 # PyToJava Compiler 🐍 ➔ ☕
 
 > Um compilador/transpilador de subconjunto de Python para código-fonte Java legível e executável.
 
-<!-- Badges Sugeridas -->
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)
-![Language](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python)
-![Target](https://img.shields.io/badge/Java-17%2B-orange?style=flat-square&logo=openjdk)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-![Coverage](https://img.shields.io/badge/coverage-85%25-yellowgreen?style=flat-square)
+<p align="center">
+  <img src="https://img.shields.io/badge/build-passing-success?style=flat&logo=github-actions&logoColor=white" alt="Build" />
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/Java-17%2B-ED8B00?style=flat&logo=openjdk&logoColor=white" alt="Java" />
+  <img src="https://img.shields.io/badge/license-MIT-informational?style=flat" alt="License" />
+  <img src="https://img.shields.io/badge/coverage-85%25-a4c639?style=flat" alt="Coverage" />
+</p>
 
 ---
 
@@ -35,7 +32,7 @@ O **PyToJava** é um compilador desenvolvido como parte da disciplina de Compila
 * **Pedro Henrique Gomes Rodrigues** - Matrícula: `241025828` - [GitHub](https://github.com/usuario2)
 * **Matheus Rodrigues Pontes** - Matrícula: `242024478` - [GitHub](https://github.com/matheus0346)
 * **Marcely do Nascimento Silva** - Matrícula: `241025701` - [GitHub](https://github.com/NSMarcely)
-* **Nome do Integrante 5** - Matrícula: `000000000` - [GitHub](https://github.com/usuario3)
+* **Sauhan Ferreira Melo** - Matrícula: `242024923` - [GitHub](https://github.com/usuario3)
 
 
 
@@ -104,13 +101,18 @@ source .venv/bin/activate   # Linux/macOS
 # Instale os pacotes
 pip install -r requirements.txt
 ```
-# 2. Compilar um arquivo Python para Java
+## 2. Compilar um arquivo Python para Java
 
 ```bash
 # Passos a definir
 ```
 
-## 🚀 Como Executar a Documentação
+## 📚 Documentação
+
+Acesse a documentação completa do projeto através do link:
+👉 [Clique aqui para acessar a documentação](https://code-silva.github.io/COMPILADORES-EQUIPE-03/)
+
+## 🚀 Como Executar a Documentação localmente
 
 Você pode executar o servidor local da documentação de duas formas: **via Docker** (recomendado para evitar divergências de ambiente) ou **localmente via Python/Pipenv**.
 
@@ -183,8 +185,7 @@ Caso prefira rodar a documentação diretamente no seu sistema operacional.
 
 > 💡 **Nota:** Qualquer alteração nos arquivos da pasta `docs/` ou no `mkdocs.yml` será atualizada automaticamente no navegador em tempo real (hot-reload) em ambos os métodos.
 
-# 📄 Licença
+## 📜 Licença
 
-A definir
+Este projeto está licenciado sob a Licença MIT - consulte o arquivo [LICENSE](./LICENSE) para mais detalhes.
 
----
