@@ -424,3 +424,108 @@ def test_while_node_inherits_from_node() -> None:
     """Verifica que WhileNode é instância de Node."""
     assert isinstance(WhileNode(), Node)
     assert issubclass(WhileNode, Node)
+
+from src.parser import (
+    IdentifierNode,
+    IntLiteralNode,
+    FloatLiteralNode,
+    StringLiteralNode,
+    BoolLiteralNode,
+    NoneLiteralNode,
+)
+
+
+# ==============================================================================
+# Testes dos nós folha / tipos primitivos
+# ==============================================================================
+
+
+def test_identifier_node_stores_name() -> None:
+    """Verifica que IdentifierNode armazena o nome corretamente."""
+    node = IdentifierNode("total", line=1, column=1)
+    assert node.name == "total"
+    assert node.line == 1
+    assert node.column == 1
+
+
+def test_identifier_node_inherits_from_node() -> None:
+    """Verifica que IdentifierNode herda de Node."""
+    assert isinstance(IdentifierNode(), Node)
+    assert issubclass(IdentifierNode, Node)
+
+
+def test_int_literal_node_stores_value() -> None:
+    """Verifica que IntLiteralNode armazena o valor inteiro usando kw_only herdado."""
+    node = IntLiteralNode(value=10, line=2, column=5)
+    assert node.value == 10
+    assert node.line == 2
+    assert node.column == 5
+
+
+def test_int_literal_node_inherits_from_node() -> None:
+    """Verifica que IntLiteralNode herda de Node."""
+    assert isinstance(IntLiteralNode(), Node)
+    assert issubclass(IntLiteralNode, Node)
+
+
+def test_float_literal_node_stores_value() -> None:
+    """Verifica que FloatLiteralNode armazena o valor float corretamente."""
+    node = FloatLiteralNode(value=3.14, line=3, column=7)
+    assert node.value == pytest.approx(3.14)
+    assert node.line == 3
+    assert node.column == 7
+
+
+def test_float_literal_node_inherits_from_node() -> None:
+    """Verifica que FloatLiteralNode herda de Node."""
+    assert isinstance(FloatLiteralNode(), Node)
+    assert issubclass(FloatLiteralNode, Node)
+
+
+def test_string_literal_node_stores_value() -> None:
+    """Verifica que StringLiteralNode armazena o texto corretamente."""
+    node = StringLiteralNode(value="olá mundo", line=4, column=9)
+    assert node.value == "olá mundo"
+    assert node.line == 4
+    assert node.column == 9
+
+
+def test_string_literal_node_inherits_from_node() -> None:
+    """Verifica que StringLiteralNode herda de Node."""
+    assert isinstance(StringLiteralNode(), Node)
+    assert issubclass(StringLiteralNode, Node)
+
+
+def test_bool_literal_node_true() -> None:
+    """Verifica que BoolLiteralNode armazena True corretamente."""
+    node = BoolLiteralNode(value=True, line=5, column=4)
+    assert node.value is True
+    assert node.line == 5
+    assert node.column == 4
+
+
+def test_bool_literal_node_false() -> None:
+    """Verifica que BoolLiteralNode armazena False corretamente."""
+    node = BoolLiteralNode(value=False, line=6, column=4)
+    assert node.value is False
+    assert node.line == 6
+    assert node.column == 4
+
+
+def test_bool_literal_node_inherits_from_node() -> None:
+    """Verifica que BoolLiteralNode herda de Node."""
+    assert isinstance(BoolLiteralNode(), Node)
+    assert issubclass(BoolLiteralNode, Node)
+
+
+def test_none_literal_node_instantiation() -> None:
+    """Verifica que NoneLiteralNode pode ser criado com coordenadas."""
+    node = NoneLiteralNode(line=7, column=1)
+    assert node.line == 7
+    assert node.column == 1
+
+
+def test_none_literal_node_inherits_from_node() -> None:
+    """Verifica que NoneLiteralNode herda de Node."""
+    assert isinstance(NoneLiteralNode(), Node)
+    assert issubclass(NoneLiteralNode, Node)
