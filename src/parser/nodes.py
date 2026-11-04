@@ -1,4 +1,6 @@
-"""Estrutura base de nós da Árvore Sintática Abstrata (AST) do compilador PyToJava."""
+"""Estrutura de nós da Árvore Sintática Abstrata (AST) do compilador PyToJava."""
+
+from __future__ import annotations
 
 from dataclasses import dataclass, field
 
@@ -31,3 +33,93 @@ class ProgramNode(Node):
     """
 
     stmts: list[Node] = field(default_factory=list)
+
+
+@dataclass
+class BinOpNode(Node):
+    """Nó da AST que representa uma expressão binária (aritmética ou relacional).
+
+    Permite o aninhamento recursivo nos operandos ``left`` e ``right`` para
+    estruturar a precedência e a associatividade dos operadores na árvore sintática.
+
+    Atributos:
+        left: Sub-árvore ou nó correspondente ao operando esquerdo.
+        op: Símbolo textual do operador (ex.: ``"+"``, ``"*"``, ``"=="``, ``"<="``).
+        right: Sub-árvore ou nó correspondente ao operando direito.
+        line: Linha no código-fonte onde a operação ocorre (herdado de ``Node``).
+        column: Coluna no código-fonte onde a operação ocorre (herdado de ``Node``).
+    """
+
+    left: Node | None = None
+    op: str = ""
+    right: Node | None = None
+
+
+@dataclass
+class IdentifierNode(Node):
+    """Nó folha da AST que representa um identificador (nome de variável ou símbolo).
+
+    Atributos:
+        name: Nome textual do identificador no código-fonte.
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    name: str = ""
+
+
+@dataclass
+class IntLiteralNode(Node):
+    """Nó folha da AST que armazena um literal numérico inteiro.
+
+    Atributos:
+        value: Valor inteiro representado pelo literal.
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    value: int = 0
+
+
+@dataclass
+class FloatLiteralNode(Node):
+    """Nó folha da AST que armazena um literal numérico de ponto flutuante.
+
+    Atributos:
+        value: Valor float representado pelo literal.
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    value: float = 0.0
+
+
+@dataclass
+class StringLiteralNode(Node):
+    """Nó folha da AST que armazena um literal de texto (string).
+
+    Atributos:
+        value: Conteúdo textual da string (sem as aspas delimitadoras).
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    value: str = ""
+
+
+@dataclass
+class BoolLiteralNode(Node):
+    """Nó folha da AST que armazena um literal booleano (``True`` ou ``False``).
+
+    Atributos:
+        value: Valor booleano nativo (``True`` ou ``False``).
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    value: bool = False
+
+
+@dataclass
+class NoneLiteralNode(Node):
+    """Nó folha da AST que representa o literal nulo (``None``)."""
