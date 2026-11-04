@@ -434,12 +434,6 @@ from src.parser import (
     NoneLiteralNode,
 )
 
-
-# ==============================================================================
-# Testes dos nós folha / tipos primitivos
-# ==============================================================================
-
-
 def test_identifier_node_stores_name() -> None:
     """Verifica que IdentifierNode armazena o nome corretamente."""
     node = IdentifierNode("total", line=1, column=1)

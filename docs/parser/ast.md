@@ -426,6 +426,134 @@ flowchart TD
 ```
 
 ---
+
+## 🍃 Nós Folha (Tipos Primitivos)
+
+Os nós folha são os elementos terminais da AST, ou seja, não têm filhos, apenas armazenam um valor literal ou um nome. São o ponto final de qualquer expressão. Cada tipo de literal tem seu próprio nó para que o analisador semântico consiga inferir o tipo da expressão diretamente, sem precisar inspecionar o lexeme.
+
+Todos usam `@dataclass(kw_only=True)`, o que significa que **todos os campos, incluindo `value`, só aceitam argumento por nome**.
+
+---
+
+### `IdentifierNode`
+
+Representa o uso de uma variável ou nome no código-fonte.
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `name` | `str` | `""` | Nome textual do identificador. |
+| `line` | `int` | `0` | Herdado de `Node`. |
+| `column` | `int` | `0` | Herdado de `Node`. |
+
+Exemplo: `total`, `x`, `resultado` → `IdentifierNode(name="total", line=1, column=1)`
+
+---
+
+### `IntLiteralNode`
+
+Representa um literal numérico inteiro.
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `value` | `int` | `0` | Valor inteiro do literal. |
+| `line` | `int` | `0` | Herdado de `Node`. |
+| `column` | `int` | `0` | Herdado de `Node`. |
+
+Exemplo: `42` → `IntLiteralNode(value=42, line=1, column=5)`
+
+---
+
+### `FloatLiteralNode`
+
+Representa um literal numérico de ponto flutuante.
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `value` | `float` | `0.0` | Valor float do literal. |
+| `line` | `int` | `0` | Herdado de `Node`. |
+| `column` | `int` | `0` | Herdado de `Node`. |
+
+Exemplo: `3.14` → `FloatLiteralNode(value=3.14, line=2, column=7)`
+
+---
+
+### `StringLiteralNode`
+
+Representa um literal de texto, sem as aspas delimitadoras.
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `value` | `str` | `""` | Conteúdo textual da string. |
+| `line` | `int` | `0` | Herdado de `Node`. |
+| `column` | `int` | `0` | Herdado de `Node`. |
+
+Exemplo: `"olá"` → `StringLiteralNode(value="olá", line=3, column=9)`
+
+---
+
+### `BoolLiteralNode`
+
+Representa um literal booleano (`True` ou `False`).
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `value` | `bool` | `False` | Valor booleano do literal. |
+| `line` | `int` | `0` | Herdado de `Node`. |
+| `column` | `int` | `0` | Herdado de `Node`. |
+
+Exemplos:
+- `True` → `BoolLiteralNode(value=True, line=1, column=4)`
+- `False` → `BoolLiteralNode(value=False, line=2, column=4)`
+
+---
+
+### `NoneLiteralNode`
+
+Representa o literal nulo `None`. Não carrega valor — apenas registra a posição no código-fonte.
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `line` | `int` | `0` | Herdado de `Node`. |
+| `column` | `int` | `0` | Herdado de `Node`. |
+
+Exemplo: `None` → `NoneLiteralNode(line=4, column=1)`
+
+---
+
+### Diagrama dos nós folha
+
+```mermaid
+classDiagram
+    class Node {
+        +int line = 0
+        +int column = 0
+    }
+    class IdentifierNode {
+        +str name = ""
+    }
+    class IntLiteralNode {
+        +int value = 0
+    }
+    class FloatLiteralNode {
+        +float value = 0.0
+    }
+    class StringLiteralNode {
+        +str value = ""
+    }
+    class BoolLiteralNode {
+        +bool value = False
+    }
+    class NoneLiteralNode
+    Node <|-- IdentifierNode
+    Node <|-- IntLiteralNode
+    Node <|-- FloatLiteralNode
+    Node <|-- StringLiteralNode
+    Node <|-- BoolLiteralNode
+    Node <|-- NoneLiteralNode
+```
+
+---
+
 ## 🚀Validação e Testes
 
 Para executar a suíte de testes unitários da AST:
