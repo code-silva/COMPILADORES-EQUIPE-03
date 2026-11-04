@@ -107,6 +107,21 @@ def test_assign_node_instantiation() -> None:
     assert assign.column == 5
 
 
+@pytest.mark.parametrize("op", ["=", "+=", "-="])
+def test_assign_node_operators(op: str) -> None:
+    """Valida AssignNode com diferentes operadores de atribuição (=, +=, -=)."""
+    val_node = Node(line=1, column=5)
+    assign = AssignNode(target="var", op=op, value=val_node, line=1, column=1)
+
+    assert isinstance(assign, Node)
+    assert isinstance(assign, AssignNode)
+    assert assign.target == "var"
+    assert assign.op == op
+    assert assign.value == val_node
+    assert assign.line == 1
+    assert assign.column == 1
+
+
 def test_return_node_instantiation() -> None:
     """Verifica instanciação e herança de ReturnNode."""
     val_node = Node(line=2, column=12)
@@ -121,4 +136,30 @@ def test_return_node_instantiation() -> None:
     assert ret_empty.value is None
     assert ret_empty.line == 3
     assert ret_empty.column == 1
+
+
+@pytest.mark.parametrize("value_node", [Node(line=2, column=10), None])
+def test_return_node_variants(value_node: Node | None) -> None:
+    """Valida ReturnNode com e sem expressão (value)."""
+    ret = ReturnNode(value=value_node, line=2, column=1)
+
+    assert isinstance(ret, Node)
+    assert isinstance(ret, ReturnNode)
+    assert ret.value == value_node
+    assert ret.line == 2
+    assert ret.column == 1
+
+
+def test_assign_and_return_nodes_inheritance_and_metadata() -> None:
+    """Valida herança de Node e rastreabilidade de line e column para AssignNode e ReturnNode."""
+    assign = AssignNode(target="x", op="=", line=10, column=20)
+    ret = ReturnNode(line=15, column=25)
+
+    assert isinstance(assign, Node)
+    assert assign.line == 10
+    assert assign.column == 20
+
+    assert isinstance(ret, Node)
+    assert ret.line == 15
+    assert ret.column == 25
 
