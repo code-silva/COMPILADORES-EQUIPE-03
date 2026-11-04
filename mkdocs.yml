@@ -65,3 +65,4 @@ nav:
       - Arquitetura do Scanner: arch/scanner.md
     - Analisador Sintático:
       - Árvore Sintática Abstrata (AST): parser/ast.md
+      - Gramática e Precedência: parser/grammar.md
