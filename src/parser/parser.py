@@ -16,6 +16,7 @@ from .nodes import (
     IntLiteralNode,
     Node,
     NoneLiteralNode,
+    ProgramNode,
     ReturnNode,
     StringLiteralNode,
 )
@@ -227,6 +228,40 @@ class Parser:
             )
 
         return left
+
+    # ==========================================================================
+    # Ponto de Entrada
+    # ==========================================================================
+
+    def parse(self) -> ProgramNode:
+        """Analisa o programa inteiro e devolve o nó raiz ``ProgramNode``.
+
+        Consome tokens até encontrar ``EOF``, ignorando quebras de linha
+        (``NEWLINE``) extras no escopo global e delegando cada instrução a
+        ``parse_statement()``.
+
+        Raises:
+            ParserError: se houver indentação inesperada no escopo global ou
+                qualquer violação gramatical nas instruções.
+        """
+        program = ProgramNode(line=1, column=1)
+
+        while True:
+            while self.match(TokenType.NEWLINE):
+                pass
+
+            token = self.peek()
+            if token.type == TokenType.EOF:
+                return program
+
+            if token.type in (TokenType.INDENT, TokenType.DEDENT):
+                raise ParserError(
+                    "Indentação inesperada no escopo global",
+                    token.line,
+                    token.column,
+                )
+
+            program.stmts.append(self.parse_statement())
 
     # ==========================================================================
     # Parsing de Instruções Simples
