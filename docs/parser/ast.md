@@ -8,7 +8,7 @@ Cada nó da árvore é modelado com `@dataclass` no módulo `src/parser/nodes.py
 
 ## Hierarquia Inicial da AST
 
-A infraestrutura base da AST é composta pela superclasse `Node` e pelo nó raiz `ProgramNode`, que agrupa todas as instruções (*statements*) de nível superior do programa:
+A infraestrutura base da AST é composta pela superclasse `Node`, pelo nó raiz `ProgramNode` e pelos nós de instruções imperativas (`AssignNode` e `ReturnNode`):
 
 ```mermaid
 classDiagram
@@ -19,15 +19,25 @@ classDiagram
     class ProgramNode {
         +list~Node~ stmts = []
     }
+    class AssignNode {
+        +str target = ""
+        +str op = ""
+        +Node | None value = None
+    }
+    class ReturnNode {
+        +Node | None value = None
+    }
     Node <|-- ProgramNode
+    Node <|-- AssignNode
+    Node <|-- ReturnNode
 ```
 
 Também podemos visualizar como um `ProgramNode` organiza as instruções em tempo de execução na forma de árvore:
 
 ```mermaid
 flowchart TD
-    Root["ProgramNode (line=1, column=1)"] --> S1["Stmt 1: Node (line=1, column=1)"]
-    Root --> S2["Stmt 2: Node (line=2, column=1)"]
+    Root["ProgramNode (line=1, column=1)"] --> S1["AssignNode: x = 10 (line=1, column=1)"]
+    Root --> S2["ReturnNode: return x (line=2, column=1)"]
     Root --> SN["Stmt N: Node (...)"]
 ```
 
@@ -53,7 +63,7 @@ class Node:
 
 !!! info "Por que `kw_only=True` na classe base?"
     Em Python, `dataclasses` padrão não permitem que subclasses declarem atributos obrigatórios (sem valor padrão) após atributos herdados que já possuem valor padrão (`line: int = 0` e `column: int = 0`).
-    Ao declarar `@dataclass(kw_only=True)` em `Node`, `line` e `column` tornam-se parâmetros exclusivamente nomeados (*keyword-only*), permitindo que qualquer subclasse (como `ProgramNode` ou nós de expressões e instruções) defina livremente atributos posicionais ou com valor padrão sem conflito na ordem de argumentos do `__init__`.
+    Ao declarar `@dataclass(kw_only=True)` em `Node`, `line` e `column` tornam-se parâmetros exclusivamente nomeados (*keyword-only*), permitindo que qualquer subclasse (como `ProgramNode`, `AssignNode`, `ReturnNode` ou nós de expressões e instruções) defina livremente atributos posicionais ou com valor padrão sem conflito na ordem de argumentos do `__init__`.
 
 ---
 
@@ -75,20 +85,144 @@ class ProgramNode(Node):
 
 ---
 
+## Instruções Imperativas
+
+Os nós de instruções imperativas modelam operações de atribuição de variáveis e instruções de fluxo de controle básicas (retorno de valores).
+
+### `AssignNode`
+
+Representa operações de atribuição (`=`, `+=`, `-=`) a variáveis ou alvos no código-fonte.
+
+```python
+@dataclass
+class AssignNode(Node):
+    target: str = ""
+    op: str = ""
+    value: Node | None = None
+```
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `target` | `str` | `""` | Identificador da variável ou alvo da atribuição. |
+| `op` | `str` | `""` | Operador de atribuição utilizado (`=`, `+=`, `-=`). |
+| `value` | `Node \| None` | `None` | Expressão da AST atribuída ao alvo. |
+| `line` | `int` | `0` | Herdado de `Node`. Linha onde a atribuição ocorre. |
+| `column` | `int` | `0` | Herdado de `Node`. Coluna onde a atribuição ocorre. |
+
+---
+
+### `ReturnNode`
+
+Representa instruções de retorno de valores (`return expr` ou `return` vazio).
+
+```python
+@dataclass
+class ReturnNode(Node):
+    value: Node | None = None
+```
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `value` | `Node \| None` | `None` | Expressão opcional retornada pela instrução (`None` quando não há valor). |
+| `line` | `int` | `0` | Herdado de `Node`. Linha onde a instrução `return` ocorre. |
+| `column` | `int` | `0` | Herdado de `Node`. Coluna onde a instrução `return` ocorre. |
+
+---
+
+## Exemplos Práticos: Código Python vs. Estrutura AST
+
+Abaixo estão exemplos práticos demonstrando como o código Python para instruções imperativas é mapeado para a estrutura da AST:
+
+### 1. Atribuição Simples (`x = 10`)
+* **Código Python:**
+  ```python
+  x = 10
+  ```
+* **Representação na AST:**
+  ```python
+  AssignNode(
+      target="x",
+      op="=",
+      value=LiteralNode(value=10),
+      line=1,
+      column=1
+  )
+  ```
+
+### 2. Atribuições Acumulativas (`x += 1` e `x -= 5`)
+* **Código Python:**
+  ```python
+  x += 1
+  x -= 5
+  ```
+* **Representação na AST:**
+  ```python
+  # x += 1
+  AssignNode(
+      target="x",
+      op="+=",
+      value=LiteralNode(value=1),
+      line=1,
+      column=1
+  )
+
+  # x -= 5
+  AssignNode(
+      target="x",
+      op="-=",
+      value=LiteralNode(value=5),
+      line=2,
+      column=1
+  )
+  ```
+
+### 3. Retorno com Valor (`return x`)
+* **Código Python:**
+  ```python
+  return x
+  ```
+* **Representação na AST:**
+  ```python
+  ReturnNode(
+      value=IdentifierNode(name="x"),
+      line=1,
+      column=1
+  )
+  ```
+
+### 4. Retorno Vazio (`return`)
+* **Código Python:**
+  ```python
+  return
+  ```
+* **Representação na AST:**
+  ```python
+  ReturnNode(
+      value=None,
+      line=1,
+      column=1
+  )
+  ```
+
+---
+
 ## Exemplo de Uso
 
 ```python
-from src.parser import Node, ProgramNode
+from src.parser import AssignNode, Node, ProgramNode, ReturnNode
 
 # Instanciação padrão (programa vazio)
 empty_program = ProgramNode()
 assert empty_program.stmts == []
 assert (empty_program.line, empty_program.column) == (0, 0)
 
-# Instanciação com instruções e coordenadas do código-fonte
-stmt_1 = Node(line=1, column=1)
-stmt_2 = Node(line=2, column=1)
-program = ProgramNode(stmts=[stmt_1, stmt_2], line=1, column=1)
+# Instanciação de nós de atribuição e retorno
+assign_stmt = AssignNode(target="x", op="=", line=1, column=1)
+return_stmt = ReturnNode(line=2, column=1)
+
+# Composição do programa no ProgramNode
+program = ProgramNode(stmts=[assign_stmt, return_stmt], line=1, column=1)
+assert len(program.stmts) == 2
 ```
 
 ## Validação e Testes
