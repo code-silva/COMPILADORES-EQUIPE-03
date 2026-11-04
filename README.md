@@ -182,6 +182,8 @@ Caso prefira rodar a documentação diretamente no seu sistema operacional.
 
 # 📄 Licença
 
-A definir
+## 📜 Licença
+
+Este projeto está licenciado sob a Licença MIT - consulte o arquivo [LICENSE](./LICENSE) para mais detalhes.
 
 ---
