@@ -1,6 +1,7 @@
 """Testes unitários para os nós da AST do PyToJava."""
 
 import pytest
+from dataclasses import FrozenInstanceError
 
 from src.parser import AssignNode, Node, ProgramNode, ReturnNode
 
@@ -43,6 +44,14 @@ def test_assign_node_operators(op: str) -> None:
     assert isinstance(assign, Node)
 
 
+def test_assign_node_with_value_expression() -> None:
+    """Verifica AssignNode contendo um nó de valor aninhado."""
+    nested_node = Node(line=3, column=10)
+    assign = AssignNode(target="x", op="=", value=nested_node, line=3, column=4)
+    assert assign.value == nested_node
+    assert isinstance(assign.value, Node)
+
+
 def test_return_node_with_and_without_value() -> None:
     """Verifica ReturnNode com e sem expressão de valor."""
     ret_empty = ReturnNode(line=5, column=1)
@@ -50,7 +59,22 @@ def test_return_node_with_and_without_value() -> None:
     assert ret_empty.line == 5
     assert ret_empty.column == 1
 
-    assign = AssignNode(target="x", op="=", value=None)
-    ret_val = ReturnNode(value=assign, line=6, column=1)
-    assert ret_val.value == assign
+    nested_node = Node(line=6, column=10)
+    ret_val = ReturnNode(value=nested_node, line=6, column=1)
+    assert ret_val.value == nested_node
     assert isinstance(ret_val, Node)
+
+
+def test_node_immutability() -> None:
+    """Garante que as dataclasses dos nós são imutáveis (frozen=True)."""
+    node = Node(line=1, column=1)
+    with pytest.raises(FrozenInstanceError):
+        node.line = 2  # type: ignore[misc]
+
+    assign = AssignNode(target="x", op="=", value=None)
+    with pytest.raises(FrozenInstanceError):
+        assign.target = "y"  # type: ignore[misc]
+
+    ret = ReturnNode(value=None)
+    with pytest.raises(FrozenInstanceError):
+        ret.value = node  # type: ignore[misc]
