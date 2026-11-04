@@ -95,3 +95,74 @@ Para executar a suíte de testes unitários do parser de expressões:
 ```bash
 pytest tests/test_parser_expressions.py -v
 ```
+
+---
+
+## Instruções Simples: Atribuição e `return`
+
+Além de expressões, o `Parser` reconhece instruções imperativas simples. Cada instrução ocupa uma linha e termina em `NEWLINE` (ou imediatamente antes de `DEDENT`/`EOF`, que pertencem a quem fecha o bloco ou o programa).
+
+```ebnf
+statement        ::= return_statement
+                   | assignment
+                   | expression ;
+assignment       ::= IDENTIFIER ( "=" | "+=" | "-=" ) expression ;
+return_statement ::= "return" expression? ;
+statement_end    ::= NEWLINE | (* antes de *) DEDENT | EOF ;
+```
+
+### Roteamento (`parse_statement`)
+
+O método `parse_statement()` decide qual regra aplicar olhando o token atual e, quando necessário, o próximo (*lookahead* de 1 token):
+
+| Token atual | Próximo token | Método chamado | Nó gerado |
+| :--- | :--- | :--- | :--- |
+| `KW_RETURN` | qualquer | `parse_return_statement()` | `ReturnNode` |
+| `IDENTIFIER` | `OP_ASSIGN`, `OP_ADD_ASSIGN`, `OP_SUB_ASSIGN` | `parse_assignment()` | `AssignNode` |
+| outro | — | `parse_expression()` | nó da expressão |
+
+O *lookahead* é necessário porque `x = 1` e `x + 1` começam com o mesmo token `IDENTIFIER`.
+
+### Atribuição (`parse_assignment`)
+
+Consome o identificador de destino, o operador e delega o lado direito a `parse_expression()`. O campo `target` guarda apenas o nome, pois o lado esquerdo sempre é um identificador; `value` guarda a sub-árvore da expressão.
+
+| Código | Nó gerado |
+| :--- | :--- |
+| `x = 10` | `AssignNode(target="x", op="=", value=IntLiteralNode(value=10))` |
+| `contador += 1` | `AssignNode(target="contador", op="+=", value=IntLiteralNode(value=1))` |
+| `saldo -= taxa` | `AssignNode(target="saldo", op="-=", value=IdentifierNode(name="taxa"))` |
+
+Para `total = a + b * 2`:
+
+```mermaid
+flowchart TD
+    A["AssignNode (target='total', op='=')"] --> Add["BinOpNode (op='+')"]
+    Add --> I1["IdentifierNode (name='a')"]
+    Add --> Mul["BinOpNode (op='*')"]
+    Mul --> I2["IdentifierNode (name='b')"]
+    Mul --> L1["IntLiteralNode (value=2)"]
+```
+
+### Retorno (`parse_return_statement`)
+
+Consome `return`. Se o próximo token já encerrar a instrução (`NEWLINE`, `DEDENT` ou `EOF`), o retorno é vazio; caso contrário, a expressão é analisada.
+
+| Código | Nó gerado |
+| :--- | :--- |
+| `return x + 1` | `ReturnNode(value=BinOpNode(left=IdentifierNode(name="x"), op="+", right=IntLiteralNode(value=1)))` |
+| `return` | `ReturnNode(value=None)` |
+
+### Erros em instruções
+
+| Código | Erro |
+| :--- | :--- |
+| `x =` | expressão ausente após o operador |
+| `x = 1 2` | esperado fim de linha após a instrução |
+| `return 1 2` | esperado fim de linha após a instrução |
+
+Para executar os testes de instruções simples:
+
+```bash
+pytest tests/test_parser_statements.py -v
+```
