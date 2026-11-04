@@ -107,7 +107,12 @@ pip install -r requirements.txt
 # Passos a definir
 ```
 
-## 🚀 Como Executar a Documentação
+## 📚 Documentação
+
+Acesse a documentação completa do projeto através do link:
+👉 [Clique aqui para acessar a documentação](https://code-silva.github.io/COMPILADORES-EQUIPE-03/)
+
+## 🚀 Como Executar a Documentação localmente
 
 Você pode executar o servidor local da documentação de duas formas: **via Docker** (recomendado para evitar divergências de ambiente) ou **localmente via Python/Pipenv**.
 
