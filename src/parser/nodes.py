@@ -1,5 +1,5 @@
-"""Estrutura base de nós da Árvore Sintática Abstrata (AST) do compilador PyToJava."""
-from __future__ import annotations
+"""Estrutura de nós da Árvore Sintática Abstrata (AST) do compilador PyToJava."""
+
 from dataclasses import dataclass, field
 
 @dataclass(kw_only=True)
@@ -30,6 +30,25 @@ class ProgramNode(Node):
 
     stmts: list[Node] = field(default_factory=list)
 
+
+@dataclass
+class BinOpNode(Node):
+    """Nó da AST que representa uma expressão binária (aritmética ou relacional).
+
+    Permite o aninhamento recursivo nos operandos ``left`` e ``right`` para
+    estruturar a precedência e a associatividade dos operadores na árvore sintática.
+
+    Atributos:
+        left: Sub-árvore ou nó correspondente ao operando esquerdo.
+        op: Símbolo textual do operador (ex.: ``"+"``, ``"*"``, ``"=="``, ``"<="``).
+        right: Sub-árvore ou nó correspondente ao operando direito.
+        line: Linha no código-fonte onde a operação ocorre (herdado de ``Node``).
+        column: Coluna no código-fonte onde a operação ocorre (herdado de ``Node``).
+    """
+
+    left: Node | None = None
+    op: str = ""
+    right: Node | None = None
 """como bloco de códico de elif, else,
     if ou while pode ter mais de uma instrução 
     vamos utilizar aqui listas"""
