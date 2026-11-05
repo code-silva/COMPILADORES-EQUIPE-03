@@ -103,13 +103,18 @@ pytest tests/test_parser_expressions.py -v
 Além de expressões, o `Parser` reconhece instruções imperativas simples. Cada instrução ocupa uma linha e termina em `NEWLINE` (ou imediatamente antes de `DEDENT`/`EOF`, que pertencem a quem fecha o bloco ou o programa).
 
 ```ebnf
-statement        ::= return_statement
+statement        ::= if_stmt
+                   | while_stmt
+                   | simple_statement ;
+simple_statement ::= return_statement
                    | assignment
                    | expression ;
 assignment       ::= IDENTIFIER ( "=" | "+=" | "-=" ) expression ;
 return_statement ::= "return" expression? ;
 statement_end    ::= NEWLINE | (* antes de *) DEDENT | EOF ;
 ```
+
+As produções `if_stmt`, `while_stmt` e `block` são detalhadas na seção [Estruturas de Controle de Fluxo](#estruturas-de-controle-de-fluxo).
 
 ### Roteamento (`parse_statement`)
 
@@ -165,4 +170,256 @@ Para executar os testes de instruções simples:
 
 ```bash
 pytest tests/test_parser_statements.py -v
+```
+
+---
+
+## Estruturas de Controle de Fluxo
+
+O `Parser` reconhece blocos condicionais (`if`/`elif`/`else`) e laços de repetição (`while`). Diferentemente das instruções simples, essas construções ocupam múltiplas linhas e dependem dos tokens sintéticos `INDENT` e `DEDENT` para delimitar o escopo do corpo.
+
+### Gramática (EBNF)
+
+```ebnf
+block       ::= ":" NEWLINE INDENT statement+ DEDENT ;
+if_stmt     ::= "if" expression block elif_clause* else_clause? ;
+elif_clause ::= "elif" expression block ;
+else_clause ::= "else" block ;
+while_stmt  ::= "while" expression block ;
+```
+
+As cláusulas `elif_clause` e `else_clause` são fatores separados apenas para fins didáticos. A produção `if_stmt` também pode ser escrita de forma expandida:
+
+```ebnf
+if_stmt ::= "if" expression block
+            ( "elif" expression block )*
+            ( "else" block )? ;
+```
+
+| Produção | Método do `Parser` | Nó da AST |
+| :--- | :--- | :--- |
+| `block` | `parse_block()` | `list[Node]` com as instruções do corpo |
+| `if_stmt` | `parse_if_statement()` | `IfNode` |
+| `elif_clause` | `parse_if_statement()` | `ElifClauseNode` |
+| `else_clause` | `parse_if_statement()` | `ElseClauseNode` (representado em `IfNode.else_body` como lista de nós) |
+| `while_stmt` | `parse_while_statement()` | `WhileNode` |
+
+### Tokens sintéticos `INDENT` e `DEDENT`
+
+O Scanner não produz nós nem valores para o recuo: ele traduz a variação de indentação em tokens sintéticos que o Parser consome para abrir e fechar escopos.
+
+- Ao encontrar uma linha mais recuada que a anterior, o Scanner emite `INDENT`.
+- Ao encontrar uma linha menos recuada, emite um `DEDENT` para cada nível de escopo encerrado.
+- Ao atingir o `EOF`, o Scanner emite os `DEDENT` necessários para fechar todos os blocos ainda abertos.
+- Recuos desalinhados geram um token `ERROR`, que o Parser converte em `ParserError`.
+
+O método `parse_block()` implementa o seguinte contrato:
+
+1. consome obrigatoriamente `COLON`;
+2. consome obrigatoriamente `NEWLINE`;
+3. valida e consome `INDENT` (abertura do escopo);
+4. chama `parse_statement()` repetidamente até encontrar `DEDENT`;
+5. consome o `DEDENT` correspondente ao escopo aberto.
+
+Como `parse_statement()` delega estruturas compostas novamente a `parse_if_statement()` ou `parse_while_statement()`, blocos aninhados empilham `INDENT`/`DEDENT` de forma equilibrada. Para o trecho abaixo, a sequência relevante de tokens é:
+
+```python
+if x > 0:
+    y = 1
+elif x == 0:
+    y = 2
+else:
+    y = 3
+```
+
+```text
+KW_IF ... COLON NEWLINE INDENT ... NEWLINE DEDENT
+KW_ELIF ... COLON NEWLINE INDENT ... NEWLINE DEDENT
+KW_ELSE COLON NEWLINE INDENT ... NEWLINE DEDENT
+```
+
+Cada `INDENT` é emparelhado com exatamente um `DEDENT` no mesmo nível. O `DEDENT` que encerra o corpo do `if` não encerra o `if` inteiro: ele apenas devolve o cursor para o nível em que `elif`/`else` podem aparecer.
+
+### Exemplo 1 — `if` simples
+
+```python
+if idade >= 18:
+    status = 1
+```
+
+```python
+IfNode(
+    condition=BinOpNode(
+        left=IdentifierNode(name="idade"),
+        op=">=",
+        right=IntLiteralNode(value=18),
+    ),
+    then_body=[
+        AssignNode(target="status", op="=", value=IntLiteralNode(value=1)),
+    ],
+    elif_clauses=[],
+    else_body=[],
+)
+```
+
+```mermaid
+flowchart TD
+    If["IfNode (line=1)"] --> Cond["condition: BinOpNode '>='"]
+    Cond --> Idade["IdentifierNode (name='idade')"]
+    Cond --> Dezoito["IntLiteralNode (value=18)"]
+    If --> Then["then_body"]
+    Then --> Assign["AssignNode (target='status', op='=')"]
+    Assign --> Um["IntLiteralNode (value=1)"]
+    If --> Elif["elif_clauses: []"]
+    If --> Else["else_body: []"]
+```
+
+### Exemplo 2 — `if` / `elif` / `else`
+
+```python
+if nota >= 7:
+    resultado = 1
+elif nota >= 5:
+    resultado = 2
+else:
+    resultado = 3
+```
+
+```python
+IfNode(
+    condition=BinOpNode(
+        left=IdentifierNode(name="nota"),
+        op=">=",
+        right=IntLiteralNode(value=7),
+    ),
+    then_body=[
+        AssignNode(target="resultado", op="=", value=IntLiteralNode(value=1)),
+    ],
+    elif_clauses=[
+        ElifClauseNode(
+            condition=BinOpNode(
+                left=IdentifierNode(name="nota"),
+                op=">=",
+                right=IntLiteralNode(value=5),
+            ),
+            body=[
+                AssignNode(
+                    target="resultado", op="=", value=IntLiteralNode(value=2)
+                ),
+            ],
+        ),
+    ],
+    else_body=[
+        AssignNode(target="resultado", op="=", value=IntLiteralNode(value=3)),
+    ],
+)
+```
+
+```mermaid
+flowchart TD
+    If["IfNode (line=1)"] --> Cond["condition: BinOpNode '>='"]
+    If --> Then["then_body"]
+    Then --> T1["AssignNode 'resultado = 1' (line=2)"]
+    If --> Elif["elif_clauses"]
+    Elif --> E1["ElifClauseNode (line=3)"]
+    E1 --> EC["condition: BinOpNode '>='"]
+    E1 --> EB["body"]
+    EB --> E1A["AssignNode 'resultado = 2' (line=4)"]
+    If --> Else["else_body (ElseClauseNode)"]
+    Else --> EL1["AssignNode 'resultado = 3' (line=6)"]
+```
+
+!!! note "Representação do `else`"
+    O nó `ElseClauseNode` está especificado na [AST](ast.md) para representar a cláusula `else`. Na implementação atual do `Parser`, o conteúdo da cláusula é armazenado diretamente em `IfNode.else_body` como uma `list[Node]`, sem encapsular um `ElseClauseNode`.
+
+### Exemplo 3 — `while`
+
+```python
+while contador <= 10:
+    contador += 1
+```
+
+```python
+WhileNode(
+    condition=BinOpNode(
+        left=IdentifierNode(name="contador"),
+        op="<=",
+        right=IntLiteralNode(value=10),
+    ),
+    body=[
+        AssignNode(
+            target="contador",
+            op="+=",
+            value=IntLiteralNode(value=1),
+        ),
+    ],
+)
+```
+
+```mermaid
+flowchart TD
+    While["WhileNode (line=1)"] --> Cond["condition: BinOpNode '<='"]
+    Cond --> Contador["IdentifierNode (name='contador')"]
+    Cond --> Dez["IntLiteralNode (value=10)"]
+    While --> Body["body"]
+    Body --> Assign["AssignNode (target='contador', op='+=')"]
+    Assign --> Um["IntLiteralNode (value=1)"]
+```
+
+### Exemplo 4 — Blocos aninhados
+
+```python
+while ativo:
+    if x > 0:
+        x -= 1
+```
+
+```python
+WhileNode(
+    condition=IdentifierNode(name="ativo"),
+    body=[
+        IfNode(
+            condition=BinOpNode(
+                left=IdentifierNode(name="x"),
+                op=">",
+                right=IntLiteralNode(value=0),
+            ),
+            then_body=[
+                AssignNode(
+                    target="x", op="-=", value=IntLiteralNode(value=1)
+                ),
+            ],
+            elif_clauses=[],
+            else_body=[],
+        ),
+    ],
+)
+```
+
+```mermaid
+flowchart TD
+    While["WhileNode (line=1)"] --> WCond["condition: IdentifierNode (name='ativo')"]
+    While --> WBody["body"]
+    WBody --> If["IfNode (line=2)"]
+    If --> ICond["condition: BinOpNode '>'"]
+    If --> IThen["then_body"]
+    IThen --> Assign["AssignNode 'x -= 1' (line=3)"]
+```
+
+O `INDENT` após `while ativo:` abre o corpo do laço; o `INDENT` após `if x > 0:` abre o corpo condicional interno. Os `DEDENT` são emitidos na ordem inversa, fechando primeiro o `if` e depois o `while`.
+
+### Erros sintáticos comuns
+
+| Código | Erro |
+| :--- | :--- |
+| `if x` seguido de bloco | esperado `:` ao iniciar o bloco |
+| `if x:` sem linha indentada | esperado bloco indentado após `:` |
+| `if x: y = 1` | esperado fim de linha após `:` |
+| Recuo desalinhado dentro do bloco | `ParserError` (o Scanner emite `ERROR`) |
+
+Para executar os testes de controle de fluxo e validar a documentação:
+
+```bash
+pytest tests/test_parser_control_flow.py -v
+python -m mkdocs build --strict
 ```
