@@ -11,14 +11,17 @@ from .nodes import (
     AssignNode,
     BinOpNode,
     BoolLiteralNode,
+    ElifClauseNode,
     FloatLiteralNode,
     IdentifierNode,
+    IfNode,
     IntLiteralNode,
     Node,
     NoneLiteralNode,
     ProgramNode,
     ReturnNode,
     StringLiteralNode,
+    WhileNode,
 )
 
 
@@ -264,20 +267,125 @@ class Parser:
             program.stmts.append(self.parse_statement())
 
     # ==========================================================================
+    # Parsing de Estruturas de Controle de Fluxo
+    # ==========================================================================
+
+    def parse_block(self) -> list[Node]:
+        """Analisa um bloco indentado delimitado por ``COLON`` e ``INDENT``/``DEDENT``.
+
+        Consome obrigatoriamente ``COLON`` e ``NEWLINE``, valida e consome a
+        abertura de escopo (``INDENT``), analisa as instruções internas via
+        ``parse_statement()`` até encontrar o ``DEDENT`` correspondente e o
+        consome ao encerrar o bloco.
+
+        Returns:
+            Lista de nós que compõem o corpo do bloco.
+
+        Raises:
+            ParserError: se ``COLON``/``NEWLINE``/``INDENT`` estiverem ausentes
+                ou se o bloco terminar em ``EOF`` antes do ``DEDENT``.
+        """
+        self.expect(TokenType.COLON, "Esperado ':' ao iniciar o bloco")
+        self.expect(TokenType.NEWLINE, "Esperado fim de linha após ':'")
+        self.expect(TokenType.INDENT, "Esperado bloco indentado após ':'")
+
+        statements: list[Node] = []
+        while self.peek().type != TokenType.DEDENT:
+            if self.peek().type == TokenType.EOF:
+                token = self.peek()
+                raise ParserError(
+                    "Bloco indentado não finalizado: esperado DEDENT",
+                    token.line,
+                    token.column,
+                )
+            if self.match(TokenType.NEWLINE):
+                continue
+            statements.append(self.parse_statement())
+
+        self.expect(TokenType.DEDENT, "Esperado DEDENT ao encerrar o bloco")
+        return statements
+
+    def parse_if_statement(self) -> IfNode:
+        """Analisa ``if``/``elif``/``else`` e devolve um ``IfNode``.
+
+        A condição do ``if`` é analisada por ``parse_expression()`` e o corpo
+        principal por ``parse_block()``. Em seguida, são processadas zero ou
+        mais cláusulas ``elif`` (cada uma como ``ElifClauseNode``) e o bloco
+        opcional ``else`` (armazenado em ``else_body``).
+        """
+        keyword = self.expect(TokenType.KW_IF, "Esperado 'if'")
+
+        condition = self.parse_expression()
+        then_body = self.parse_block()
+
+        elif_clauses: list[ElifClauseNode] = []
+        while self.peek().type == TokenType.KW_ELIF:
+            elif_keyword = self.advance()
+            elif_condition = self.parse_expression()
+            elif_body = self.parse_block()
+            elif_clauses.append(
+                ElifClauseNode(
+                    condition=elif_condition,
+                    body=elif_body,
+                    line=elif_keyword.line,
+                    column=elif_keyword.column,
+                )
+            )
+
+        else_body: list[Node] = []
+        if self.match(TokenType.KW_ELSE):
+            else_body = self.parse_block()
+
+        return IfNode(
+            condition=condition,
+            then_body=then_body,
+            elif_clauses=elif_clauses,
+            else_body=else_body,
+            line=keyword.line,
+            column=keyword.column,
+        )
+
+    def parse_while_statement(self) -> WhileNode:
+        """Analisa ``while`` e devolve um ``WhileNode``.
+
+        A condição é analisada por ``parse_expression()`` e o corpo do laço
+        por ``parse_block()``.
+        """
+        keyword = self.expect(TokenType.KW_WHILE, "Esperado 'while'")
+
+        condition = self.parse_expression()
+        body = self.parse_block()
+
+        return WhileNode(
+            condition=condition,
+            body=body,
+            line=keyword.line,
+            column=keyword.column,
+        )
+
+    # ==========================================================================
     # Parsing de Instruções Simples
     # ==========================================================================
 
     def parse_statement(self) -> Node:
         """Identifica o tipo de instrução no token atual e delega o parsing.
 
+        - ``if`` → ``parse_if_statement()``;
+        - ``while`` → ``parse_while_statement()``;
         - ``return`` → ``parse_return_statement()``;
         - ``IDENTIFIER`` seguido de ``=``, ``+=`` ou ``-=`` → ``parse_assignment()``;
         - qualquer outra construção é analisada como expressão.
 
-        Ao final, exige que a instrução termine em ``NEWLINE`` (consumido),
+        Instruções compostas já consomem seu próprio ``NEWLINE`` e ``DEDENT``.
+        Para instruções simples, exige que terminem em ``NEWLINE`` (consumido),
         ``DEDENT`` ou ``EOF`` (não consumidos).
         """
         token = self.peek()
+
+        if token.type == TokenType.KW_IF:
+            return self.parse_if_statement()
+        if token.type == TokenType.KW_WHILE:
+            return self.parse_while_statement()
 
         if token.type == TokenType.KW_RETURN:
             node = self.parse_return_statement()
