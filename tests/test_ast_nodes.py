@@ -1,9 +1,9 @@
-"""Suíte de Testes Unitários: Nós da AST (Issues #20 e #23).
+"""Suíte de Testes Unitários: Nós da AST (Issues #20, #23 e #24).
 
 Valida a classe base ``Node`` (com ``kw_only=True``), o nó raiz ``ProgramNode``,
-o nó de expressões binárias ``BinOpNode`` (operadores aritméticos, relacionais e
-aninhamento recursivo para precedência), a rastreabilidade de coordenadas
-(``line`` e ``column``) e a herança.
+o nó de expressões binárias ``BinOpNode``, a rastreabilidade de coordenadas
+(``line`` e ``column``), a herança e os nós folha (identificadores e literais
+primitivos), incluindo cenários de borda e rejeição de argumentos posicionais.
 """
 from dataclasses import dataclass
 
@@ -12,12 +12,18 @@ import pytest
 from src.parser import (
     AssignNode,
     BinOpNode,
+    BoolLiteralNode,
     ElifClauseNode,
     ElseClauseNode,
+    FloatLiteralNode,
+    IdentifierNode,
     IfNode,
+    IntLiteralNode,
     Node,
+    NoneLiteralNode,
     ProgramNode,
     ReturnNode,
+    StringLiteralNode,
     WhileNode,
 )
 
@@ -425,101 +431,147 @@ def test_while_node_inherits_from_node() -> None:
     assert isinstance(WhileNode(), Node)
     assert issubclass(WhileNode, Node)
 
-from src.parser import (
+LEAF_NODE_CLASSES: list[type[Node]] = [
     IdentifierNode,
     IntLiteralNode,
     FloatLiteralNode,
     StringLiteralNode,
     BoolLiteralNode,
     NoneLiteralNode,
-)
+]
 
-def test_identifier_node_stores_name() -> None:
-    """Verifica que IdentifierNode armazena o nome corretamente."""
-    node = IdentifierNode("total", line=1, column=1)
-    assert node.name == "total"
+LEAF_NODE_FIELDS: list[tuple[type[Node], dict[str, object]]] = [
+    (IdentifierNode, {"name": "x"}),
+    (IntLiteralNode, {"value": 1}),
+    (FloatLiteralNode, {"value": 1.5}),
+    (StringLiteralNode, {"value": "texto"}),
+    (BoolLiteralNode, {"value": True}),
+    (NoneLiteralNode, {}),
+]
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["x", "contador_1", "_temp", "totalGeral", "__interno__"],
+)
+def test_identifier_node_stores_valid_names(name: str) -> None:
+    """Verifica que IdentifierNode armazena nomes simples e com caracteres válidos."""
+    node = IdentifierNode(name=name, line=1, column=1)
+
+    assert node.name == name
     assert node.line == 1
     assert node.column == 1
 
 
-def test_identifier_node_inherits_from_node() -> None:
-    """Verifica que IdentifierNode herda de Node."""
-    assert isinstance(IdentifierNode(), Node)
-    assert issubclass(IdentifierNode, Node)
+def test_identifier_node_default_name() -> None:
+    """Verifica que IdentifierNode inicia com nome vazio."""
+    node = IdentifierNode()
+
+    assert node.name == ""
+    assert node.line == 0
+    assert node.column == 0
 
 
-def test_int_literal_node_stores_value() -> None:
-    """Verifica que IntLiteralNode armazena o valor inteiro usando kw_only herdado."""
-    node = IntLiteralNode(value=10, line=2, column=5)
-    assert node.value == 10
+@pytest.mark.parametrize("value", [0, 1, 42, -7, -1024])
+def test_int_literal_node_stores_values(value: int) -> None:
+    """Verifica que IntLiteralNode armazena inteiros positivos, negativos e zero."""
+    node = IntLiteralNode(value=value, line=2, column=5)
+
+    assert node.value == value
+    assert isinstance(node.value, int)
     assert node.line == 2
     assert node.column == 5
 
 
-def test_int_literal_node_inherits_from_node() -> None:
-    """Verifica que IntLiteralNode herda de Node."""
-    assert isinstance(IntLiteralNode(), Node)
-    assert issubclass(IntLiteralNode, Node)
+@pytest.mark.parametrize("value", [0.0, 3.14, -0.5, 1e-3, 123.456])
+def test_float_literal_node_stores_values(value: float) -> None:
+    """Verifica que FloatLiteralNode armazena valores decimais variados."""
+    node = FloatLiteralNode(value=value, line=3, column=7)
 
-
-def test_float_literal_node_stores_value() -> None:
-    """Verifica que FloatLiteralNode armazena o valor float corretamente."""
-    node = FloatLiteralNode(value=3.14, line=3, column=7)
-    assert node.value == pytest.approx(3.14)
+    assert node.value == pytest.approx(value)
+    assert isinstance(node.value, float)
     assert node.line == 3
     assert node.column == 7
 
 
-def test_float_literal_node_inherits_from_node() -> None:
-    """Verifica que FloatLiteralNode herda de Node."""
-    assert isinstance(FloatLiteralNode(), Node)
-    assert issubclass(FloatLiteralNode, Node)
+@pytest.mark.parametrize(
+    "value",
+    [
+        "",
+        "olá mundo",
+        "PyToJava",
+        'aspas "duplas"',
+        "linha 1\nlinha 2",
+        r"barra \ invertida",
+        "símbolos @#$%",
+    ],
+)
+def test_string_literal_node_stores_values(value: str) -> None:
+    """Verifica StringLiteralNode com strings vazias, convencionais e especiais."""
+    node = StringLiteralNode(value=value, line=4, column=9)
 
-
-def test_string_literal_node_stores_value() -> None:
-    """Verifica que StringLiteralNode armazena o texto corretamente."""
-    node = StringLiteralNode(value="olá mundo", line=4, column=9)
-    assert node.value == "olá mundo"
+    assert node.value == value
     assert node.line == 4
     assert node.column == 9
 
 
-def test_string_literal_node_inherits_from_node() -> None:
-    """Verifica que StringLiteralNode herda de Node."""
-    assert isinstance(StringLiteralNode(), Node)
-    assert issubclass(StringLiteralNode, Node)
+@pytest.mark.parametrize("value", [True, False], ids=["true", "false"])
+def test_bool_literal_node_stores_value(value: bool) -> None:
+    """Verifica explicitamente que BoolLiteralNode armazena True e False."""
+    node = BoolLiteralNode(value=value, line=5, column=4)
 
-
-def test_bool_literal_node_true() -> None:
-    """Verifica que BoolLiteralNode armazena True corretamente."""
-    node = BoolLiteralNode(value=True, line=5, column=4)
-    assert node.value is True
+    assert node.value is value
+    assert isinstance(node.value, bool)
     assert node.line == 5
     assert node.column == 4
 
 
-def test_bool_literal_node_false() -> None:
-    """Verifica que BoolLiteralNode armazena False corretamente."""
-    node = BoolLiteralNode(value=False, line=6, column=4)
-    assert node.value is False
-    assert node.line == 6
-    assert node.column == 4
-
-
-def test_bool_literal_node_inherits_from_node() -> None:
-    """Verifica que BoolLiteralNode herda de Node."""
-    assert isinstance(BoolLiteralNode(), Node)
-    assert issubclass(BoolLiteralNode, Node)
-
-
-def test_none_literal_node_instantiation() -> None:
-    """Verifica que NoneLiteralNode pode ser criado com coordenadas."""
+def test_none_literal_node_instantiation_without_value() -> None:
+    """Verifica que NoneLiteralNode é instanciado sem argumento de valor."""
     node = NoneLiteralNode(line=7, column=1)
+
     assert node.line == 7
     assert node.column == 1
+    assert not hasattr(node, "value")
 
 
-def test_none_literal_node_inherits_from_node() -> None:
-    """Verifica que NoneLiteralNode herda de Node."""
-    assert isinstance(NoneLiteralNode(), Node)
-    assert issubclass(NoneLiteralNode, Node)
+def test_none_literal_node_default_instantiation() -> None:
+    """Verifica que NoneLiteralNode usa os metadados padrão quando vazio."""
+    node = NoneLiteralNode()
+
+    assert node.line == 0
+    assert node.column == 0
+
+
+def test_none_literal_node_rejects_value_field() -> None:
+    """Verifica que NoneLiteralNode não possui campo de valor."""
+    with pytest.raises(TypeError):
+        NoneLiteralNode(value=None)  # type: ignore[call-arg]
+
+
+@pytest.mark.parametrize("node_class", LEAF_NODE_CLASSES)
+def test_leaf_nodes_inherit_from_node(node_class: type[Node]) -> None:
+    """Verifica que os 6 nós folha herdam de Node."""
+    node = node_class()
+
+    assert isinstance(node, Node)
+    assert issubclass(node_class, Node)
+
+
+@pytest.mark.parametrize(("node_class", "fields"), LEAF_NODE_FIELDS)
+def test_leaf_nodes_propagate_position_metadata(
+    node_class: type[Node],
+    fields: dict[str, object],
+) -> None:
+    """Verifica o repasse de line e column via argumentos nomeados em todos os nós folha."""
+    node = node_class(line=10, column=5, **fields)
+
+    assert node.line == 10
+    assert node.column == 5
+
+
+@pytest.mark.parametrize("node_class", LEAF_NODE_CLASSES)
+def test_leaf_nodes_reject_positional_metadata(node_class: type[Node]) -> None:
+    """Verifica que line e column posicionais são rejeitados por causa de kw_only=True."""
+    with pytest.raises(TypeError):
+        node_class(10, 5)  # type: ignore[misc]

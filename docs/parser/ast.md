@@ -171,7 +171,7 @@ Abaixo estão exemplos práticos demonstrando como o código Python para instru�
   AssignNode(
       target="x",
       op="=",
-      value=LiteralNode(value=10),
+      value=IntLiteralNode(value=10),
       line=1,
       column=1
   )
@@ -189,7 +189,7 @@ Abaixo estão exemplos práticos demonstrando como o código Python para instru�
   AssignNode(
       target="x",
       op="+=",
-      value=LiteralNode(value=1),
+      value=IntLiteralNode(value=1),
       line=1,
       column=1
   )
@@ -198,7 +198,7 @@ Abaixo estão exemplos práticos demonstrando como o código Python para instru�
   AssignNode(
       target="x",
       op="-=",
-      value=LiteralNode(value=5),
+      value=IntLiteralNode(value=5),
       line=2,
       column=1
   )
@@ -427,11 +427,27 @@ flowchart TD
 
 ---
 
-## 🍃 Nós Folha (Tipos Primitivos)
+## 🍃 Nós Folha (Tipos Primitivos e Identificadores)
 
-Os nós folha são os elementos terminais da AST, ou seja, não têm filhos, apenas armazenam um valor literal ou um nome. São o ponto final de qualquer expressão. Cada tipo de literal tem seu próprio nó para que o analisador semântico consiga inferir o tipo da expressão diretamente, sem precisar inspecionar o lexeme.
+Os nós folha são os elementos terminais da AST: não possuem filhos e armazenam apenas um valor literal ou um identificador. São o ponto final de qualquer expressão. Cada tipo de literal tem seu próprio nó para que o analisador semântico consiga inferir o tipo da expressão diretamente, sem precisar inspecionar o lexeme.
 
-Todos usam `@dataclass(kw_only=True)`, o que significa que **todos os campos, incluindo `value`, só aceitam argumento por nome**.
+Todos herdam de `Node` e usam `@dataclass(kw_only=True)`. Isso significa que **todos os campos, incluindo `value` e `name`, são exclusivamente nomeados**.
+
+### Visão geral dos nós folha
+
+| Nó | Campo próprio | Tipo | Padrão | Origem típica |
+| :--- | :--- | :--- | :--- | :--- |
+| `IdentifierNode` | `name` | `str` | `""` | Token `IDENTIFIER` (ex.: `total`) |
+| `IntLiteralNode` | `value` | `int` | `0` | Token `INT_LITERAL` (ex.: `42`) |
+| `FloatLiteralNode` | `value` | `float` | `0.0` | Token `FLOAT_LITERAL` (ex.: `3.14`) |
+| `StringLiteralNode` | `value` | `str` | `""` | Token `STRING_LITERAL` (ex.: `"olá"`) |
+| `BoolLiteralNode` | `value` | `bool` | `False` | Tokens `KW_TRUE` / `KW_FALSE` |
+| `NoneLiteralNode` | — | — | — | Token `KW_NONE` (ex.: `None`) |
+
+!!! warning "Argumentos exclusivamente nomeados"
+    Cada nó folha declara `@dataclass(kw_only=True)` — o mesmo modificador aplicado à base `Node` —, de modo que **nenhum campo aceita argumentos posicionais**. Chamadas como `IdentifierNode("x")` ou `IntLiteralNode(42)` levantam `TypeError`. A forma correta é `IdentifierNode(name="x")` e `IntLiteralNode(value=42)`.
+
+    Os metadados `line` e `column`, herdados de `Node`, também são keyword-only e devem ser informados por nome, por exemplo: `IdentifierNode(name="x", line=10, column=5)`.
 
 ---
 
@@ -520,6 +536,53 @@ Exemplo: `None` → `NoneLiteralNode(line=4, column=1)`
 
 ---
 
+### Mapeamento de literais e tokens para a AST
+
+| Código Python | Token | Instância da AST |
+| :--- | :--- | :--- |
+| `total` | `IDENTIFIER` | `IdentifierNode(name="total", line=1, column=1)` |
+| `42` | `INT_LITERAL` | `IntLiteralNode(value=42, line=1, column=5)` |
+| `3.14` | `FLOAT_LITERAL` | `FloatLiteralNode(value=3.14, line=2, column=7)` |
+| `"olá mundo"` | `STRING_LITERAL` | `StringLiteralNode(value="olá mundo", line=3, column=9)` |
+| `True` | `KW_TRUE` | `BoolLiteralNode(value=True, line=4, column=4)` |
+| `False` | `KW_FALSE` | `BoolLiteralNode(value=False, line=5, column=4)` |
+| `None` | `KW_NONE` | `NoneLiteralNode(line=6, column=1)` |
+
+!!! note "Posições ilustrativas"
+    Os valores de `line` e `column` acima são exemplos. Em uso real, o parser preenche essas coordenadas com a posição do token correspondente no código-fonte.
+
+### Exemplo de uso dos nós folha
+
+```python
+from src.parser import (
+    BoolLiteralNode,
+    FloatLiteralNode,
+    IdentifierNode,
+    IntLiteralNode,
+    NoneLiteralNode,
+    StringLiteralNode,
+)
+
+total = IdentifierNode(name="total", line=1, column=1)
+resposta = IntLiteralNode(value=42, line=1, column=5)
+pi = FloatLiteralNode(value=3.14, line=2, column=7)
+saudacao = StringLiteralNode(value="olá mundo", line=3, column=9)
+ativo = BoolLiteralNode(value=True, line=4, column=4)
+vazio = NoneLiteralNode(line=6, column=1)
+
+assert total.name == "total"
+assert resposta.value == 42
+assert vazio.line == 6
+```
+
+Como o contrato é keyword-only, a chamada posicional abaixo levanta `TypeError`:
+
+```python
+IntLiteralNode(42)  # TypeError: takes 1 positional argument but 2 were given
+```
+
+---
+
 ### Diagrama dos nós folha
 
 ```mermaid
@@ -554,10 +617,31 @@ classDiagram
 
 ---
 
-## 🚀Validação e Testes
+## 🚀 Validação e Testes
 
-Para executar a suíte de testes unitários da AST:
+A especificação dos nós folha é validada por testes unitários que cobrem:
+
+- instanciação dos 6 nós com valores padrão e valores explícitos;
+- cenários de borda: inteiros zero/positivos/negativos, strings vazias e com caracteres especiais, decimais e booleanos;
+- herança de `Node` com `isinstance` e `issubclass`;
+- repasse dos metadados `line` e `column` via argumentos nomeados;
+- rejeição de argumentos posicionais com `TypeError`, confirmando o contrato `kw_only=True`;
+- ausência de campo de valor em `NoneLiteralNode`.
+
+Para executar a suíte dedicada à AST:
 
 ```bash
-pytest tests/test_ast_nodes.py -v
+python -m pytest tests/test_ast_nodes.py -v
+```
+
+Para executar a suíte completa do projeto:
+
+```bash
+python -m pytest -v
+```
+
+Para validar a documentação com o build estrito do MkDocs:
+
+```bash
+python -m mkdocs build --strict
 ```
