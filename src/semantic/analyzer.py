@@ -39,6 +39,10 @@ class SemanticAnalyzer:
         current_scope: Tabela de símbolos ativa no ponto atual da travessia.
     """
 
+    _ARITHMETIC_OPERATORS = frozenset({"+", "-", "*", "/", "%"})
+    _COMPARISON_OPERATORS = frozenset({"==", "!=", "<", ">", "<=", ">="})
+    _NUMERIC_TYPES = frozenset({"int", "float"})
+
     def __init__(self) -> None:
         self.global_scope: SymbolTable = SymbolTable()
         self.current_scope: SymbolTable = self.global_scope
@@ -112,41 +116,69 @@ class SemanticAnalyzer:
     # ==========================================================================
 
     def infer_type(self, node: Node) -> str:
-        """Infere o tipo semântico de ``node``.
+        """Infere o tipo semântico de ``node`` via visitor correspondente.
 
-        Literais são mapeados para os nomes de tipo usados na etapa de geração
-        de código; identificadores são resolvidos na tabela de símbolos ativa.
+        A travessia é delegada a ``visit()`` para preservar o despacho dinâmico
+        e os hooks de subclasses. O resultado deve ser um nome de tipo textual.
 
         Raises:
-            SemanticError: Se o identificador não estiver declarado ou se o nó
-                não produzir um tipo textual.
+            SemanticError: Se o nó não produzir um tipo textual ou se contiver
+                um identificador não declarado.
         """
-        if isinstance(node, IntLiteralNode):
-            return "int"
-        if isinstance(node, FloatLiteralNode):
-            return "float"
-        if isinstance(node, StringLiteralNode):
-            return "String"
-        if isinstance(node, BoolLiteralNode):
-            return "boolean"
-        if isinstance(node, NoneLiteralNode):
-            return "None"
-
-        if isinstance(node, IdentifierNode):
-            symbol = self.current_scope.lookup(node.name)
-            if symbol is None:
-                raise SemanticError(
-                    f"Variável '{node.name}' não declarada",
-                    line=node.line,
-                    column=node.column,
-                )
-            return symbol.type
+        result = self.visit(node)
+        if isinstance(result, str):
+            return result
 
         raise SemanticError(
             f"Não foi possível inferir o tipo do nó {type(node).__name__}",
             line=node.line,
             column=node.column,
         )
+
+    @classmethod
+    def _numeric_result_type(cls, left_type: str, right_type: str) -> str | None:
+        """Retorna o tipo numérico promovido ou ``None`` se forem incompatíveis."""
+        if left_type not in cls._NUMERIC_TYPES or right_type not in cls._NUMERIC_TYPES:
+            return None
+        if "float" in (left_type, right_type):
+            return "float"
+        return "int"
+
+    @staticmethod
+    def _incompatible_binop_error(
+        node: BinOpNode, left_type: str, right_type: str
+    ) -> SemanticError:
+        """Cria o erro padronizado para uma operação binária incompatível."""
+        return SemanticError(
+            f"Operação binária incompatível: {left_type} {node.op} {right_type}",
+            line=node.line,
+            column=node.column,
+        )
+
+    def _infer_arithmetic_type(
+        self, node: BinOpNode, left_type: str, right_type: str
+    ) -> str:
+        """Valida e infere o tipo de uma operação aritmética."""
+        if node.op == "+" and left_type == right_type == "String":
+            return "String"
+
+        numeric_type = self._numeric_result_type(left_type, right_type)
+        if numeric_type is None:
+            raise self._incompatible_binop_error(node, left_type, right_type)
+
+        if node.op == "/":
+            return "float"
+        return numeric_type
+
+    def _infer_comparison_type(
+        self, node: BinOpNode, left_type: str, right_type: str
+    ) -> str:
+        """Valida e infere o tipo ``'boolean'`` de uma comparação."""
+        if self._numeric_result_type(left_type, right_type) is not None:
+            return "boolean"
+        if left_type == right_type == "boolean":
+            return "boolean"
+        raise self._incompatible_binop_error(node, left_type, right_type)
 
     # ==========================================================================
     # Métodos de Visita da AST (Visitors)
@@ -200,34 +232,56 @@ class SemanticAnalyzer:
             self.visit(node.condition)
         self._visit_block(node.body, new_scope=True)
 
-    def visit_BinOpNode(self, node: BinOpNode) -> str | None:
-        """Visita recursivamente os operandos esquerdo e direito da operação binária."""
-        if node.left is not None:
-            self.visit(node.left)
-        if node.right is not None:
-            self.visit(node.right)
-        return None
+    def visit_BinOpNode(self, node: BinOpNode) -> str:
+        """Valida os operandos e infere o tipo resultante da operação binária."""
+        if node.left is None or node.right is None:
+            raise SemanticError(
+                "Expressão binária com operando ausente",
+                line=node.line,
+                column=node.column,
+            )
+
+        left_type = self.infer_type(node.left)
+        right_type = self.infer_type(node.right)
+
+        if node.op in self._ARITHMETIC_OPERATORS:
+            return self._infer_arithmetic_type(node, left_type, right_type)
+        if node.op in self._COMPARISON_OPERATORS:
+            return self._infer_comparison_type(node, left_type, right_type)
+
+        raise SemanticError(
+            f"Operador binário não suportado: '{node.op}'",
+            line=node.line,
+            column=node.column,
+        )
 
     def visit_IdentifierNode(self, node: IdentifierNode) -> str:
         """Infere o tipo do identificador consultando a tabela de símbolos ativa."""
-        return self.infer_type(node)
+        symbol = self.current_scope.lookup(node.name)
+        if symbol is None:
+            raise SemanticError(
+                f"Variável '{node.name}' não declarada",
+                line=node.line,
+                column=node.column,
+            )
+        return symbol.type
 
     def visit_IntLiteralNode(self, node: IntLiteralNode) -> str:
         """Infere o tipo ``'int'`` para literais inteiros."""
-        return self.infer_type(node)
+        return "int"
 
     def visit_FloatLiteralNode(self, node: FloatLiteralNode) -> str:
         """Infere o tipo ``'float'`` para literais de ponto flutuante."""
-        return self.infer_type(node)
+        return "float"
 
     def visit_StringLiteralNode(self, node: StringLiteralNode) -> str:
         """Infere o tipo ``'String'`` para literais de texto."""
-        return self.infer_type(node)
+        return "String"
 
     def visit_BoolLiteralNode(self, node: BoolLiteralNode) -> str:
         """Infere o tipo ``'boolean'`` para literais booleanos."""
-        return self.infer_type(node)
+        return "boolean"
 
     def visit_NoneLiteralNode(self, node: NoneLiteralNode) -> str:
         """Infere o tipo ``'None'`` para o literal nulo."""
-        return self.infer_type(node)
+        return "None"
