@@ -1,7 +1,8 @@
 """Testes de integração do ponto de entrada ``Parser.parse()`` (#28).
 
-Os programas com ``if``/``while`` serão acrescentados quando o parser de
-estruturas de controle (#27) estiver disponível.
+Cobrem programas completos que combinam atribuições, retornos, expressões,
+condicionais (``if``/``elif``/``else``) e laços (``while``), do código-fonte
+até a árvore ``ProgramNode``.
 """
 
 import pytest
@@ -11,13 +12,17 @@ from src.lexer.token_type import TokenType
 from src.parser import (
     AssignNode,
     BinOpNode,
+    BoolLiteralNode,
+    ElifClauseNode,
     IdentifierNode,
+    IfNode,
     IntLiteralNode,
     Parser,
     ParserError,
     ProgramNode,
     ReturnNode,
     StringLiteralNode,
+    WhileNode,
 )
 from tests.parser_helpers import strip_positions
 
@@ -43,6 +48,14 @@ def ident(name: str) -> IdentifierNode:
 
 def num(value: int) -> IntLiteralNode:
     return IntLiteralNode(value=value)
+
+
+def binop(left, op: str, right) -> BinOpNode:
+    return BinOpNode(left=left, op=op, right=right)
+
+
+def assign(target: str, op: str, value) -> AssignNode:
+    return AssignNode(target=target, op=op, value=value)
 
 
 # ------------------------------------------------------------- programa vazio
@@ -137,6 +150,148 @@ def test_return_vazio_no_fim_do_arquivo() -> None:
     ]
 
 
+# ---------------------------------------------- programas com controle de fluxo
+
+
+PROGRAMA_FATORIAL = """\
+# fatorial de 5 com while
+n = 5
+resultado = 1
+while n > 1:
+    resultado = resultado * n
+    n -= 1
+
+return resultado
+"""
+
+
+def test_programa_com_while() -> None:
+    assert strip_positions(parse(PROGRAMA_FATORIAL)) == ProgramNode(
+        stmts=[
+            assign("n", "=", num(5)),
+            assign("resultado", "=", num(1)),
+            WhileNode(
+                condition=binop(ident("n"), ">", num(1)),
+                body=[
+                    assign("resultado", "=", binop(ident("resultado"), "*", ident("n"))),
+                    assign("n", "-=", num(1)),
+                ],
+            ),
+            ReturnNode(value=ident("resultado")),
+        ]
+    )
+
+
+PROGRAMA_CONCEITO = """\
+nota = 8
+if nota >= 9:
+    conceito = "A"
+elif nota >= 7:
+    conceito = "B"
+elif nota >= 5:
+    conceito = "C"
+else:
+    conceito = "D"
+return conceito
+"""
+
+
+def test_programa_com_if_elif_else() -> None:
+    assert strip_positions(parse(PROGRAMA_CONCEITO)) == ProgramNode(
+        stmts=[
+            assign("nota", "=", num(8)),
+            IfNode(
+                condition=binop(ident("nota"), ">=", num(9)),
+                then_body=[assign("conceito", "=", StringLiteralNode(value="A"))],
+                elif_clauses=[
+                    ElifClauseNode(
+                        condition=binop(ident("nota"), ">=", num(7)),
+                        body=[assign("conceito", "=", StringLiteralNode(value="B"))],
+                    ),
+                    ElifClauseNode(
+                        condition=binop(ident("nota"), ">=", num(5)),
+                        body=[assign("conceito", "=", StringLiteralNode(value="C"))],
+                    ),
+                ],
+                else_body=[assign("conceito", "=", StringLiteralNode(value="D"))],
+            ),
+            ReturnNode(value=ident("conceito")),
+        ]
+    )
+
+
+PROGRAMA_ANINHADO = """\
+i = 0
+menores = 0
+while i < 10:
+    if i < 5:
+        menores += 1
+    else:
+        if i == 7:
+            return menores
+    i += 1
+achou = True
+"""
+
+
+def test_programa_com_if_dentro_de_while_e_blocos_aninhados() -> None:
+    assert strip_positions(parse(PROGRAMA_ANINHADO)) == ProgramNode(
+        stmts=[
+            assign("i", "=", num(0)),
+            assign("menores", "=", num(0)),
+            WhileNode(
+                condition=binop(ident("i"), "<", num(10)),
+                body=[
+                    IfNode(
+                        condition=binop(ident("i"), "<", num(5)),
+                        then_body=[assign("menores", "+=", num(1))],
+                        else_body=[
+                            IfNode(
+                                condition=binop(ident("i"), "==", num(7)),
+                                then_body=[ReturnNode(value=ident("menores"))],
+                            )
+                        ],
+                    ),
+                    assign("i", "+=", num(1)),
+                ],
+            ),
+            assign("achou", "=", BoolLiteralNode(value=True)),
+        ]
+    )
+
+
+def test_bloco_no_fim_do_arquivo_sem_newline_final() -> None:
+    ast = parse("x = 0\nwhile x < 3:\n    x += 1")
+    assert strip_positions(ast.stmts) == [
+        assign("x", "=", num(0)),
+        WhileNode(
+            condition=binop(ident("x"), "<", num(3)),
+            body=[assign("x", "+=", num(1))],
+        ),
+    ]
+
+
+def test_linhas_em_branco_e_comentarios_dentro_de_blocos() -> None:
+    ast = parse("if True:\n\n    # comentário\n    x = 1\n\n    y = 2\nz = 3\n")
+    assert strip_positions(ast.stmts) == [
+        IfNode(
+            condition=BoolLiteralNode(value=True),
+            then_body=[assign("x", "=", num(1)), assign("y", "=", num(2))],
+        ),
+        assign("z", "=", num(3)),
+    ]
+
+
+def test_estruturas_mantem_a_linha_do_codigo() -> None:
+    ast = parse(PROGRAMA_CONCEITO)
+    se = ast.stmts[1]
+    assert (se.line, se.column) == (2, 1)
+    assert [c.line for c in se.elif_clauses] == [4, 6]
+    assert se.then_body[0].line == 3
+    assert se.else_body[0].line == 9
+    assert ast.stmts[2].line == 10
+
+
 # ---------------------------------------------------------------------- erros
 
 
@@ -151,6 +306,8 @@ def test_indentacao_inesperada_no_escopo_global() -> None:
     [
         ("x = 1\ny = * 2\n", 2),
         ("x = 1\n\n\nreturn 1 2\n", 4),
+        ("x = 1\nwhile x < 3\n    x += 1\n", 2),
+        ("if x:\n    y = 1\nelse:\nz = 2\n", 4),
     ],
 )
 def test_erro_sintatico_interrompe_o_parse_com_a_linha_correta(source, line) -> None:
