@@ -46,6 +46,9 @@ O construtor também aceita o código-fonte diretamente (`Parser(codigo).parse()
 | `Parser(tokens)` | Cria o parser a partir da lista de tokens (ou do código-fonte). |
 | `parse() -> ProgramNode` | Ponto de entrada: analisa o programa inteiro até o `EOF`. |
 | `parse_statement()` | Identifica o tipo da instrução atual e delega ao método adequado. |
+| `parse_if_statement()` | `if`/`elif`/`else` → `IfNode` com `ElifClauseNode`s. |
+| `parse_while_statement()` | Laço `while` → `WhileNode`. |
+| `parse_block()` | Bloco indentado (`:` `NEWLINE` `INDENT` ... `DEDENT`) → lista de instruções. |
 | `parse_assignment()` | Atribuição `=`, `+=` ou `-=` → `AssignNode`. |
 | `parse_return_statement()` | `return` com expressão opcional → `ReturnNode`. |
 | `parse_expression(precedence=0)` | Expressões com precedência de operadores. |
@@ -100,6 +103,42 @@ flowchart TD
     M --> L2["IntLiteralNode (value=2)"]
     R --> RV["IdentifierNode (name='resultado')"]
 ```
+
+---
+
+## Programa com Controle de Fluxo
+
+`parse_statement()` reconhece `if` e `while` e delega a `parse_if_statement()` e `parse_while_statement()`. Cada corpo é lido por `parse_block()`, que consome `INDENT`, as instruções internas e o `DEDENT`. Por isso, os blocos podem ser aninhados livremente e o `parse()` volta ao escopo global logo após o `DEDENT`.
+
+```python
+codigo = """
+n = 5
+resultado = 1
+while n > 1:
+    if n > 3:
+        resultado += 1
+    resultado = resultado * n
+    n -= 1
+return resultado
+"""
+```
+
+```mermaid
+flowchart TD
+    P["ProgramNode"] --> A1["AssignNode n = 5"]
+    P --> A2["AssignNode resultado = 1"]
+    P --> W["WhileNode"]
+    P --> R["ReturnNode resultado"]
+    W --> C["condition: BinOpNode n > 1"]
+    W --> B["body"]
+    B --> I["IfNode n > 3"]
+    B --> A3["AssignNode resultado = resultado * n"]
+    B --> A4["AssignNode n -= 1"]
+```
+
+- Linhas em branco e comentários dentro de um bloco também são ignorados.
+- Um bloco pode terminar no fim do arquivo, sem `NEWLINE` final: o Scanner emite os `DEDENT` pendentes antes do `EOF`.
+- Esquecer o `:` ou a indentação do corpo gera `ParserError` na linha da estrutura.
 
 ---
 
