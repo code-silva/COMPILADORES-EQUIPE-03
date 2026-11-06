@@ -108,6 +108,47 @@ class SemanticAnalyzer:
                 self.exit_scope()
 
     # ==========================================================================
+    # Inferência de Tipos
+    # ==========================================================================
+
+    def infer_type(self, node: Node) -> str:
+        """Infere o tipo semântico de ``node``.
+
+        Literais são mapeados para os nomes de tipo usados na etapa de geração
+        de código; identificadores são resolvidos na tabela de símbolos ativa.
+
+        Raises:
+            SemanticError: Se o identificador não estiver declarado ou se o nó
+                não produzir um tipo textual.
+        """
+        if isinstance(node, IntLiteralNode):
+            return "int"
+        if isinstance(node, FloatLiteralNode):
+            return "float"
+        if isinstance(node, StringLiteralNode):
+            return "String"
+        if isinstance(node, BoolLiteralNode):
+            return "boolean"
+        if isinstance(node, NoneLiteralNode):
+            return "None"
+
+        if isinstance(node, IdentifierNode):
+            symbol = self.current_scope.lookup(node.name)
+            if symbol is None:
+                raise SemanticError(
+                    f"Variável '{node.name}' não declarada",
+                    line=node.line,
+                    column=node.column,
+                )
+            return symbol.type
+
+        raise SemanticError(
+            f"Não foi possível inferir o tipo do nó {type(node).__name__}",
+            line=node.line,
+            column=node.column,
+        )
+
+    # ==========================================================================
     # Métodos de Visita da AST (Visitors)
     # ==========================================================================
 
@@ -167,27 +208,26 @@ class SemanticAnalyzer:
             self.visit(node.right)
         return None
 
-    def visit_IdentifierNode(self, node: IdentifierNode) -> str | None:
-        """Visita um identificador consultando a tabela de símbolos ativa."""
-        symbol = self.current_scope.lookup(node.name)
-        return symbol.type if symbol is not None else None
+    def visit_IdentifierNode(self, node: IdentifierNode) -> str:
+        """Infere o tipo do identificador consultando a tabela de símbolos ativa."""
+        return self.infer_type(node)
 
     def visit_IntLiteralNode(self, node: IntLiteralNode) -> str:
-        """Retorna o tipo primitivo ``'int'`` para literais inteiros."""
-        return "int"
+        """Infere o tipo ``'int'`` para literais inteiros."""
+        return self.infer_type(node)
 
     def visit_FloatLiteralNode(self, node: FloatLiteralNode) -> str:
-        """Retorna o tipo primitivo ``'float'`` para literais de ponto flutuante."""
-        return "float"
+        """Infere o tipo ``'float'`` para literais de ponto flutuante."""
+        return self.infer_type(node)
 
     def visit_StringLiteralNode(self, node: StringLiteralNode) -> str:
-        """Retorna o tipo primitivo ``'str'`` para literais de texto."""
-        return "str"
+        """Infere o tipo ``'String'`` para literais de texto."""
+        return self.infer_type(node)
 
     def visit_BoolLiteralNode(self, node: BoolLiteralNode) -> str:
-        """Retorna o tipo primitivo ``'bool'`` para literais booleanos."""
-        return "bool"
+        """Infere o tipo ``'boolean'`` para literais booleanos."""
+        return self.infer_type(node)
 
     def visit_NoneLiteralNode(self, node: NoneLiteralNode) -> str:
-        """Retorna o tipo primitivo ``'None'`` para o literal nulo."""
-        return "None"
+        """Infere o tipo ``'None'`` para o literal nulo."""
+        return self.infer_type(node)
