@@ -69,3 +69,5 @@ nav:
       - Gramática e Precedência: parser/grammar.md
     - Analisador Semântico:
       - Tabela de Símbolos e Escopos: semantic/symbol_table.md
+      - Analisador Semântico e Visitor: semantic/analyzer.md
+
