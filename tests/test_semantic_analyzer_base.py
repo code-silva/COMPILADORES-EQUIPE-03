@@ -148,6 +148,8 @@ def test_visit_simple_program_visits_all_children() -> None:
     )
     program = Parser(source).parse()
     analyzer = RecordingSemanticAnalyzer()
+    analyzer.global_scope.define(Symbol(name="x", type="int", line=1))
+    analyzer.global_scope.define(Symbol(name="y", type="float", line=2))
 
     analyzer.analyze(program)
 
@@ -178,8 +180,8 @@ def test_visit_literals_returns_primitive_type_names() -> None:
 
     assert analyzer.visit(IntLiteralNode(value=1)) == "int"
     assert analyzer.visit(FloatLiteralNode(value=1.5)) == "float"
-    assert analyzer.visit(StringLiteralNode(value="abc")) == "str"
-    assert analyzer.visit(BoolLiteralNode(value=True)) == "bool"
+    assert analyzer.visit(StringLiteralNode(value="abc")) == "String"
+    assert analyzer.visit(BoolLiteralNode(value=True)) == "boolean"
     assert analyzer.visit(NoneLiteralNode()) == "None"
     assert analyzer.visit(None) is None
 
@@ -198,7 +200,28 @@ def test_visit_identifier_resolves_symbol_in_current_scope() -> None:
     analyzer.current_scope.define(Symbol(name="contador", type="int", line=1))
 
     assert analyzer.visit(IdentifierNode(name="contador")) == "int"
-    assert analyzer.visit(IdentifierNode(name="inexistente")) is None
+    with pytest.raises(
+        SemanticError, match="Variável 'inexistente' não declarada"
+    ) as exc_info:
+        analyzer.visit(IdentifierNode(name="inexistente", line=3, column=7))
+
+    assert exc_info.value.line == 3
+    assert exc_info.value.column == 7
+
+
+def test_infer_type_resolves_literals_and_symbols() -> None:
+    """Verifica a inferência de tipos de literais e de identificadores declarados."""
+    analyzer = SemanticAnalyzer()
+    analyzer.current_scope.define(
+        Symbol(name="total", type="float", line=1, column=1)
+    )
+
+    assert analyzer.infer_type(IntLiteralNode(value=1)) == "int"
+    assert analyzer.infer_type(FloatLiteralNode(value=1.5)) == "float"
+    assert analyzer.infer_type(StringLiteralNode(value="ok")) == "String"
+    assert analyzer.infer_type(BoolLiteralNode(value=False)) == "boolean"
+    assert analyzer.infer_type(NoneLiteralNode()) == "None"
+    assert analyzer.infer_type(IdentifierNode(name="total")) == "float"
 
 
 def test_generic_visit_raises_semantic_error_for_unknown_node() -> None:
@@ -236,6 +259,7 @@ def test_scope_depth_during_control_flow_traversal() -> None:
     )
     program = Parser(source).parse()
     analyzer = RecordingSemanticAnalyzer()
+    analyzer.global_scope.define(Symbol(name="x", type="int", line=1))
 
     analyzer.analyze(program)
 
