@@ -23,7 +23,7 @@ from src.parser.nodes import (
 )
 
 from .errors import SemanticError
-from .symbol_table import SymbolTable
+from .symbol_table import Symbol, SymbolTable
 
 
 class SemanticAnalyzer:
@@ -155,6 +155,13 @@ class SemanticAnalyzer:
             column=node.column,
         )
 
+    @staticmethod
+    def _is_assignable(target_type: str, value_type: str) -> bool:
+        """Retorna se ``value_type`` pode ser atribuído a ``target_type``."""
+        if target_type == value_type:
+            return True
+        return target_type == "float" and value_type == "int"
+
     def _infer_arithmetic_type(
         self, node: BinOpNode, left_type: str, right_type: str
     ) -> str:
@@ -190,11 +197,37 @@ class SemanticAnalyzer:
             self.visit(stmt)
         return self.current_scope
 
-    def visit_AssignNode(self, node: AssignNode) -> str | None:
-        """Visita a expressão atribuída em uma instrução de atribuição."""
-        if node.value is not None:
-            return self.visit(node.value)
-        return None
+    def visit_AssignNode(self, node: AssignNode) -> str:
+        """Infere o valor, registra o símbolo e valida o tipo da atribuição."""
+        if node.value is None:
+            raise SemanticError(
+                "Atribuição sem expressão de valor",
+                line=node.line,
+                column=node.column,
+            )
+
+        value_type = self.infer_type(node.value)
+        symbol = self.current_scope.lookup(node.target)
+
+        if symbol is None:
+            self.current_scope.define(
+                Symbol(
+                    name=node.target,
+                    type=value_type,
+                    line=node.line,
+                    column=node.column,
+                )
+            )
+            return value_type
+
+        if not self._is_assignable(symbol.type, value_type):
+            raise SemanticError(
+                f"Tipo incompatível na atribuição: variável '{node.target}' "
+                f"é '{symbol.type}', mas recebeu '{value_type}'",
+                line=node.line,
+                column=node.column,
+            )
+        return value_type
 
     def visit_ReturnNode(self, node: ReturnNode) -> str:
         """Visita a expressão de retorno (se presente) e devolve seu tipo."""
