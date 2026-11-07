@@ -58,6 +58,37 @@ sequenceDiagram
 
 ---
 
+## Regras Semânticas para Controle de Fluxo e Escopos de Bloco
+
+A validação de estruturas condicionais (`IfNode`, `ElifClauseNode`, `ElseClauseNode`) e laços de repetição (`WhileNode`) garante duas propriedades fundamentais para a geração de código Java estaticamente tipado:
+
+### 1. Predicados Condicionais Estritamente Booleanos
+
+Diferentemente do Python (que avalia *truthiness* implícita de números e strings), em Java as cláusulas `if (...)` e `while (...)` exigem expressões estritamente do tipo `boolean`. Por isso, `visit_IfNode`, `visit_ElifClauseNode` e `visit_WhileNode` invocam `_validate_condition()`:
+
+- O tipo da condição é inferido via `self.infer_type(node.condition)`.
+- Se o tipo resultante for diferente de `"boolean"` (por exemplo, `"int"`, `"float"`, `"String"` ou `"None"`), o analisador lança imediatamente um `SemanticError` indicando a linha e a coluna da condição inválida.
+
+```python
+# Inválido semanticamente no PyToJava (condição do tipo 'int'):
+x = 10
+if x:
+    y = 1
+# Erro Semântico [Linha 2, Coluna 4]: Condição inválida em 'if': esperado tipo 'boolean', mas recebeu 'int'
+```
+
+### 2. Escopo Lexical de Blocos e Isolamento de Variáveis
+
+Cada bloco subordinado (`then_body`, cada cláusula `elif`, `else_body` e o `body` do `while`) é executado dentro de um **escopo filho próprio** criado por `_visit_block(..., new_scope=True)`:
+
+| Regra de Escopo | Comportamento no `SemanticAnalyzer` |
+| :--- | :--- |
+| **Visibilidade de fora para dentro** | Variáveis declaradas no escopo global (ou em um bloco pai) são encontradas por `current_scope.lookup(name)` dentro do bloco filho e podem ser lidas ou atualizadas desde que mantenham compatibilidade de tipo. |
+| **Isolamento de dentro para fora (Não-Vazamento)** | Variáveis declaradas pela primeira vez dentro de um bloco `if`, `elif`, `else` ou `while` são registradas apenas na `SymbolTable` local daquele bloco. Ao término do bloco (`exit_scope()`), o escopo local é destruído e o acesso à variável fora do bloco resulta em `SemanticError` (*variável não declarada*). |
+| **Isolamento entre blocos irmãos** | Como cada ramo (`then`, `elif`, `else`) cria e destrói seu próprio escopo filho de forma independente, variáveis locais criadas no ramo `if` não vazam para os ramos `elif` ou `else`. |
+
+---
+
 ## API Pública
 
 ### `SemanticAnalyzer` (`src/semantic/analyzer.py`)
