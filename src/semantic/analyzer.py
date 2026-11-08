@@ -236,10 +236,32 @@ class SemanticAnalyzer:
             return result if isinstance(result, str) else "None"
         return "None"
 
+    def _validate_condition(
+        self, condition: Node | None, construct: str, owner_node: Node
+    ) -> str:
+        """Valida que a expressão condicional de ``if``, ``elif`` ou ``while`` é ``'boolean'``."""
+        if condition is None:
+            raise SemanticError(
+                f"Condição ausente na estrutura '{construct}'",
+                line=owner_node.line,
+                column=owner_node.column,
+            )
+
+        cond_type = self.infer_type(condition)
+        if cond_type != "boolean":
+            err_line = condition.line if condition.line > 0 else owner_node.line
+            err_col = condition.column if condition.column > 0 else owner_node.column
+            raise SemanticError(
+                f"Condição inválida em '{construct}': esperado tipo 'boolean', "
+                f"mas recebeu '{cond_type}'",
+                line=err_line,
+                column=err_col,
+            )
+        return cond_type
+
     def visit_IfNode(self, node: IfNode) -> None:
-        """Visita a condição, o bloco ``then``, as cláusulas ``elif`` e o ``else``."""
-        if node.condition is not None:
-            self.visit(node.condition)
+        """Valida a condição booleana e visita ``then``, ``elif`` e ``else`` em escopos próprios."""
+        self._validate_condition(node.condition, "if", node)
 
         self._visit_block(node.then_body, new_scope=True)
 
@@ -250,9 +272,8 @@ class SemanticAnalyzer:
             self._visit_block(node.else_body, new_scope=True)
 
     def visit_ElifClauseNode(self, node: ElifClauseNode) -> None:
-        """Visita a condição da cláusula ``elif`` e seu corpo em escopo próprio."""
-        if node.condition is not None:
-            self.visit(node.condition)
+        """Valida a condição booleana da cláusula ``elif`` e visita seu corpo em escopo próprio."""
+        self._validate_condition(node.condition, "elif", node)
         self._visit_block(node.body, new_scope=True)
 
     def visit_ElseClauseNode(self, node: ElseClauseNode) -> None:
@@ -260,9 +281,8 @@ class SemanticAnalyzer:
         self._visit_block(node.body, new_scope=True)
 
     def visit_WhileNode(self, node: WhileNode) -> None:
-        """Visita a condição de repetição e o corpo do laço ``while`` em escopo próprio."""
-        if node.condition is not None:
-            self.visit(node.condition)
+        """Valida a condição booleana de repetição e visita o corpo do ``while`` em escopo próprio."""
+        self._validate_condition(node.condition, "while", node)
         self._visit_block(node.body, new_scope=True)
 
     def visit_BinOpNode(self, node: BinOpNode) -> str:
