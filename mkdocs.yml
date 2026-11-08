@@ -72,4 +72,8 @@ nav:
       - Tabela de Símbolos e Escopos: semantic/symbol_table.md
       - Analisador Semântico e Visitor: semantic/analyzer.md
       - Tipos e Compatibilidade: semantic/types.md
+    - Gerador de Código:
+      - Arquitetura do Gerador: codegen/architecture.md
+      - Expressões e Literais: codegen/expressions.md
+
 
