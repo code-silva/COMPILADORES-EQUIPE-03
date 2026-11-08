@@ -67,6 +67,7 @@ nav:
       - Visão Geral e API: parser/index.md
       - Árvore Sintática Abstrata (AST): parser/ast.md
       - Gramática e Precedência: parser/grammar.md
+      - Erros Sintáticos e Casos de Borda: parser/errors.md
     - Analisador Semântico:
       - Tabela de Símbolos e Escopos: semantic/symbol_table.md
       - Analisador Semântico e Visitor: semantic/analyzer.md

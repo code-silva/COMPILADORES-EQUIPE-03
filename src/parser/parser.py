@@ -117,17 +117,53 @@ class Parser:
         return token
 
     def match(self, *token_types: TokenType) -> bool:
-        """Verifica se o token atual pertence a ``token_types`` e o consome em caso positivo."""
-        if self.peek().type in token_types:
+        """Verifica se o token atual pertence a ``token_types`` e o consome em caso positivo.
+
+        Raises:
+            TypeError: se algum argumento não for uma instância de ``TokenType``.
+            ParserError: se o token atual for ``TokenType.ERROR``.
+        """
+        for expected_type in token_types:
+            if not isinstance(expected_type, TokenType):
+                raise TypeError(
+                    f"Esperado TokenType em match(), mas recebido {type(expected_type).__name__}"
+                )
+
+        token = self.peek()
+        if token.type == TokenType.ERROR and TokenType.ERROR not in token_types:
+            raise ParserError(
+                token.lexeme or "Token de erro léxico encontrado",
+                token.line,
+                token.column,
+            )
+
+        if token.type in token_types:
             self.advance()
             return True
         return False
 
     def expect(self, token_type: TokenType, message: str | None = None) -> Token:
-        """Exige que o token atual seja do tipo ``token_type``, lançando ``ParserError`` caso contrário."""
+        """Exige que o token atual seja do tipo ``token_type``, lançando ``ParserError`` caso contrário.
+
+        Raises:
+            TypeError: se ``token_type`` não for uma instância de ``TokenType``.
+            ParserError: se o token atual não corresponder ao esperado.
+        """
+        if not isinstance(token_type, TokenType):
+            raise TypeError(
+                f"Esperado TokenType em expect(), mas recebido {type(token_type).__name__}"
+            )
+
         token = self.peek()
         if token.type == token_type:
             return self.advance()
+
+        if token.type == TokenType.ERROR:
+            raise ParserError(
+                token.lexeme or "Token de erro léxico encontrado",
+                token.line,
+                token.column,
+            )
 
         error_msg = message or (
             f"Esperado token {token_type.name}, mas encontrado "
@@ -381,6 +417,13 @@ class Parser:
         ``DEDENT`` ou ``EOF`` (não consumidos).
         """
         token = self.peek()
+
+        if token.type in (TokenType.KW_ELIF, TokenType.KW_ELSE):
+            raise ParserError(
+                f"Cláusula '{token.lexeme}' sem 'if' correspondente",
+                token.line,
+                token.column,
+            )
 
         if token.type == TokenType.KW_IF:
             return self.parse_if_statement()
