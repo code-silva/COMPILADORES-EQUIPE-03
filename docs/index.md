@@ -83,6 +83,25 @@ Para saber mais sobre compiladores, [clique aqui](compiladores.md).
     </div>
   </div>
 
+  <!-- Card 4: Gerador de Código -->
+  <div class="card-fases">
+    <div>
+      <div class="card-header">
+        <div class="card-icon">⚙️</div>
+        <span class="badge badge-purple">Fase 4</span>
+      </div>
+      <h3>Gerador de Código</h3>
+      <p>
+        Tradução da AST para código-fonte <strong>Java</strong> estruturado e indentado, a partir do nó raiz <strong>ProgramNode</strong>.
+      </p>
+    </div>
+    <div class="card-footer-action">
+      <div class="progress-bar"><div class="progress-fill purple" style="width: 10%;"></div></div>
+      <span class="progress-text">Geração da estrutura base em progresso</span>
+      <a href="../codegen/architecture/" class="btn-card-doc">Ver Documentação ➔</a>
+    </div>
+  </div>
+
 </div>
 
 !!! info "🎓 Contexto Acadêmico & Arquitetura de Fases [Consultar Teoria de Compiladores ↗](https://github.com/sergioaafreitas/COMP1)"
