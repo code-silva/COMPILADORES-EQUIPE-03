@@ -1,6 +1,17 @@
 from __future__ import annotations
 
-from src.parser.nodes import ProgramNode
+from src.parser.nodes import (
+    BinOpNode,
+    BoolLiteralNode,
+    FloatLiteralNode,
+    IdentifierNode,
+    IntLiteralNode,
+    Node,
+    NoneLiteralNode,
+    ProgramNode,
+    StringLiteralNode,
+)
+
 
 class CodeGenerator:
     """esse metodo é uma constante, cuja a utilidade é definir quantos espaços tem cada nível de indentação, no caso em Java é 4"""
@@ -48,3 +59,54 @@ class CodeGenerator:
         self.emit("}")
 
         return self.get_code()
+
+    def gen_expression(self, node: Node) -> str:
+        """Converte um nó de expressão da AST para a sintaxe equivalente em Java.
+
+        Args:
+            node: Nó da AST representando um literal, identificador ou operação binária.
+
+        Returns:
+            String contendo a expressão formatada na sintaxe Java.
+
+        Raises:
+            ValueError: Se o nó de operação binária estiver incompleto ou se o tipo
+                de nó não for suportado como expressão.
+        """
+        if isinstance(node, BoolLiteralNode):
+            return "true" if node.value else "false"
+
+        if isinstance(node, IntLiteralNode):
+            return str(node.value)
+
+        if isinstance(node, FloatLiteralNode):
+            return str(node.value)
+
+        if isinstance(node, StringLiteralNode):
+            escaped = (
+                node.value.replace("\\", "\\\\")
+                .replace('"', '\\"')
+                .replace("\n", "\\n")
+                .replace("\t", "\\t")
+                .replace("\r", "\\r")
+            )
+            return f'"{escaped}"'
+
+        if isinstance(node, NoneLiteralNode):
+            return "null"
+
+        if isinstance(node, IdentifierNode):
+            return node.name
+
+        if isinstance(node, BinOpNode):
+            if node.left is None or node.right is None:
+                raise ValueError(
+                    "BinOpNode requer ambos os operandos (left e right) para gerar código."
+                )
+            left_expr = self.gen_expression(node.left)
+            right_expr = self.gen_expression(node.right)
+            return f"({left_expr} {node.op} {right_expr})"
+
+        raise ValueError(
+            f"Nó de expressão não suportado na geração de código: {type(node).__name__}"
+        )
