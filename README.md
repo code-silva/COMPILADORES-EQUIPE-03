@@ -85,31 +85,121 @@ pytojava/
 └── requirements.txt          # Dependências (pytest, mkdocs, etc.)
 ```
 
-## 1. Clonar e Instalar Dependências
+# 🚀 Guia de Execução e Homologação do Projeto
+
+Este guia descreve os pré-requisitos e o passo a passo para configurar o ambiente, executar a suíte de testes automatizados e compilar scripts Python procedurais para Java no Windows, Linux e macOS.
+
+---
+
+## 🛠️ 1. Pré-requisitos e Instalação de Ferramentas
+
+O projeto exige **Python 3.10+** (recomendado 3.12) e **OpenJDK 17+** (`javac`).
+
+### 🪟 Windows (via PowerShell como Administrador)
+
+### 1. Instalar o Python 3.12 (adicionando ao PATH)
+
+```powershell
+winget install -e --id Python.Python.3.12 --override "/passive InstallAllUsers=1 PrependPath=1"
+```
+
+### 2. Instalar o OpenJDK 17
+```powershell
+winget install -e --id EclipseAdoptium.Temurin.17.JDK
+```
+
+### 3. Feche e reabra o terminal para atualizar as variáveis de ambiente
+
+
+### 🐧 Linux (Ubuntu / Debian)
 
 ```bash
-# Passos sujeito a alterações
+# 1. Atualizar repositórios e instalar Python, venv e OpenJDK 17
+sudo apt update
+sudo apt install -y python3 python3-venv python3-pip openjdk-17-jdk
 
-# Clone o repositório
-git clone link-do-repositorio
-
-# Crie e ative um ambiente virtual
-python -m venv .venv
-source .venv/bin/activate   # Linux/macOS
-# .venv\Scripts\activate    # Windows
-
-# Instale os pacotes
-pip install -r requirements.txt
+# 2. Confirmar as versões
+python3 --version
+javac -version
 ```
-## 2. Compilar um arquivo Python para Java
+
+### 🍎 macOS (via Homebrew)
 
 ```bash
-# Compila o arquivo .py gerando automaticamente em output/<nome>.java
-python -m src.cli examples/basic_math.py
-
-# Ou especifique o caminho do arquivo .java de saída com -o / --output
-python -m src.cli examples/basic_math.py -o output/Main.java
+brew install python@3.12 openjdk@17
+sudo ln -sfn $(brew --prefix)/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
+export PATH="$(brew --prefix)/opt/openjdk@17/bin:$PATH"
 ```
+
+---
+
+## 📦 2. Configuração do Ambiente Virtual do Projeto
+
+Em qualquer sistema operacional, navegue até a pasta raiz do repositório clonado:
+
+```bash
+python3 -m venv .venv        # Linux / macOS
+python -m venv .venv         # Windows
+
+# 2. Ativar o ambiente virtual
+source .venv/bin/activate    # Linux / macOS
+.\.venv\Scripts\activate     # Windows (PowerShell)
+
+# (No Windows PowerShell, se houver bloqueio de script, execute antes:)
+# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+# 3. Instalar as dependências do projeto
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+---
+
+## 🧪 3. Execução da Suíte de Testes Automatizados
+
+Para homologar as 4 fases da pipeline de compilação (Scanner com pilha de indentação, Parser com *Precedence Climbing*, Analisador Semântico com *Visitor Pattern* e a validação *End-to-End* com o `javac` real via `subprocess`):
+
+```bash
+python -m pytest -v
+```
+
+> **Resultado Esperado:** 629+ testes aprovados.
+
+---
+
+## ⚙️ 4. Compilação e Execução de um Exemplo (Python → Java)
+
+**Passo A:** Transpilar o código Python procedural para Java
+
+```bash
+python -m src.cli examples/calculator.py -o Main.java
+```
+
+**Passo B:** Compilar a classe Java emitida usando o `javac`
+
+```bash
+javac Main.java
+```
+
+**Passo C:** Executar a aplicação na JVM
+
+```bash
+java Main
+```
+
+---
+
+## 🌐 5. Visualização da Documentação Estática (Opcional)
+
+Para visualizar os diagramas da AST em Mermaid.js e os manuais das etapas de compilação:
+
+```bash
+python -m mkdocs serve
+```
+
+Acesse [http://127.0.0.1:8000](http://127.0.0.1:8000) no navegador.
+
+---
 
 ## 📚 Documentação
 
