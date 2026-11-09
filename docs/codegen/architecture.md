@@ -118,6 +118,12 @@ símbolo e validando reatribuições incompatíveis (que levantam `SemanticError
 
 `ReturnNode` gera `return expr;` quando há valor e `return;` quando não há.
 
+### Impressão
+
+`PrintNode` gera `System.out.println(expr);` quando há argumento e
+`System.out.println();` para `print()`. O `print` aceita no máximo um
+argumento e não pode ser usado como expressão (ex.: `x = print(1)`).
+
 ### Exemplo
 
 ```python

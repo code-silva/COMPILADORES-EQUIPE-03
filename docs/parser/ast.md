@@ -32,6 +32,10 @@ classDiagram
     class ReturnNode {
         +Node | None value = None
     }
+    class PrintNode {
+        +Node | None value = None
+    }
+    Node <|-- PrintNode
     Node <|-- ProgramNode
     Node <|-- BinOpNode
     Node <|-- AssignNode
@@ -154,6 +158,22 @@ class ReturnNode(Node):
 | `value` | `Node \| None` | `None` | Expressão opcional retornada pela instrução (`None` quando não há valor). |
 | `line` | `int` | `0` | Herdado de `Node`. Linha onde a instrução `return` ocorre. |
 | `column` | `int` | `0` | Herdado de `Node`. Coluna onde a instrução `return` ocorre. |
+
+### `PrintNode`
+
+Representa a instrução `print(expr)` ou `print()`. É um nó de instrução, não de expressão: `print` não produz valor.
+
+```python
+@dataclass
+class PrintNode(Node):
+    value: Node | None = None
+```
+
+| Atributo | Tipo | Padrão | Descrição |
+| :--- | :--- | :--- | :--- |
+| `value` | `Node \| None` | `None` | Expressão impressa (`None` em `print()`). |
+| `line` | `int` | `0` | Herdado de `Node`. Linha do `print`. |
+| `column` | `int` | `0` | Herdado de `Node`. Coluna do `print`. |
 
 ---
 

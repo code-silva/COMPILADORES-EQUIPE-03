@@ -123,6 +123,7 @@ O método `parse_statement()` decide qual regra aplicar olhando o token atual e,
 | Token atual | Próximo token | Método chamado | Nó gerado |
 | :--- | :--- | :--- | :--- |
 | `KW_RETURN` | qualquer | `parse_return_statement()` | `ReturnNode` |
+| `IDENTIFIER` (lexema `print`) | `LPAREN` | `parse_print_statement()` | `PrintNode` |
 | `IDENTIFIER` | `OP_ASSIGN`, `OP_ADD_ASSIGN`, `OP_SUB_ASSIGN` | `parse_assignment()` | `AssignNode` |
 | outro | — | `parse_expression()` | nó da expressão |
 
