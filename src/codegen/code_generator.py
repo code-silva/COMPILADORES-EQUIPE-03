@@ -12,6 +12,7 @@ from src.parser.nodes import (
     IntLiteralNode,
     Node,
     NoneLiteralNode,
+    PrintNode,
     ProgramNode,
     ReturnNode,
     StringLiteralNode,
@@ -291,3 +292,10 @@ class CodeGenerator:
         self.emit(f"while ({cond_expr}) {{")
         self._emit_block_body(node.body)
         self.emit("}")
+
+    def visit_PrintNode(self, node: PrintNode) -> None:
+        """Gera ``System.out.println(expr);`` (ou ``println()`` sem argumento)."""
+        if node.value is None:
+            self.emit("System.out.println();")
+        else:
+            self.emit(f"System.out.println({self.gen_expression(node.value)});")
