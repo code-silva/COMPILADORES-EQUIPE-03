@@ -88,17 +88,17 @@ pytojava/
 └── requirements.txt
 ```
 
-# 🚀 Guia de Execução e Homologação do Projeto
+# Guia de Execução e Homologação do Projeto
 
 Este guia descreve os pré-requisitos e o passo a passo para configurar o ambiente, executar a suíte de testes automatizados e compilar scripts Python procedurais para Java no Windows, Linux e macOS.
 
 ---
 
-## 🛠️ 1. Pré-requisitos e Instalação de Ferramentas
+## 1. Pré-requisitos e Instalação de Ferramentas
 
 O projeto exige **Python 3.10+** (recomendado 3.12) e **OpenJDK 17+** (`javac`).
 
-### 🪟 Windows (via PowerShell como Administrador)
+### Windows (via PowerShell como Administrador)
 
 ### 1. Instalar o Python 3.12 (adicionando ao PATH)
 
@@ -114,7 +114,7 @@ winget install -e --id EclipseAdoptium.Temurin.17.JDK
 ### 3. Feche e reabra o terminal para atualizar as variáveis de ambiente
 
 
-### 🐧 Linux (Ubuntu / Debian)
+### Linux (Ubuntu / Debian)
 
 ```bash
 # 1. Atualizar repositórios e instalar Python, venv e OpenJDK 17
@@ -126,7 +126,7 @@ python3 --version
 javac -version
 ```
 
-### 🍎 macOS (via Homebrew)
+### macOS (via Homebrew)
 
 ```bash
 brew install python@3.12 openjdk@17
@@ -136,7 +136,7 @@ export PATH="$(brew --prefix)/opt/openjdk@17/bin:$PATH"
 
 ---
 
-## 📦 2. Configuração do Ambiente Virtual do Projeto
+## 2. Configuração do Ambiente Virtual do Projeto
 
 Em qualquer sistema operacional, navegue até a pasta raiz do repositório clonado:
 
@@ -158,7 +158,7 @@ python -m pip install -r requirements.txt
 
 ---
 
-## 🧪 3. Execução da Suíte de Testes Automatizados
+## 3. Execução da Suíte de Testes Automatizados
 
 Para homologar as 4 fases da pipeline de compilação (Scanner com pilha de indentação, Parser com *Precedence Climbing*, Analisador Semântico com *Visitor Pattern* e a validação *End-to-End* com o `javac` real via `subprocess`):
 
@@ -170,7 +170,7 @@ python -m pytest -v
 
 ---
 
-## ⚙️ 4. Compilação e Execução de um Exemplo (Python → Java)
+## 4. Compilação e Execução de um Exemplo (Python → Java)
 
 **Passo A:** Transpilar o código Python procedural para Java
 
@@ -192,7 +192,7 @@ java Main
 
 ---
 
-## 🌐 5. Visualização da Documentação Estática (Opcional)
+## 5. Visualização da Documentação Estática (Opcional)
 
 Para visualizar os diagramas da AST em Mermaid.js e os manuais das etapas de compilação:
 
@@ -204,7 +204,7 @@ Acesse [http://127.0.0.1:8000](http://127.0.0.1:8000) no navegador.
 
 ---
 
-## 📚 Documentação
+## Documentação
 
 Acesse a documentação completa do projeto através do link:
 [Clique aqui para acessar a documentação](https://code-silva.github.io/COMPILADORES-EQUIPE-03/)
