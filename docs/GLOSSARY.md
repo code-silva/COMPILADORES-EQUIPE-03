@@ -1,4 +1,4 @@
-# 📖Glossário de Termos 
+# Glossário de Termos 
  Esta documentação reúne os termos e conceitos utilizados no desenvolvimento do **PyToJava**, com o objetivo de centralizar e organizar essas definições em um único material de consulta. Assim, busca-se facilitar o entendimento dos conceitos empregados no projeto e servir como apoio para o esclarecimento de dúvidas durante o desenvolvimento.
 
 | Termo | Categoria | Descrição | Exemplo Válido | Observação |

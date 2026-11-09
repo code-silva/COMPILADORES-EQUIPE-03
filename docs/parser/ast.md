@@ -322,11 +322,11 @@ assert add_expr.right.op == "*"
 
 ---
 
-## 🪢Nós de Controle de Fluxo
+## Nós de Controle de Fluxo
 
 Esta seção documenta os nós que representam as estruturas condicionais e de repetição do subconjunto Python suportado pelo PyToJava.
 
----🔨
+---
 
 ### `IfNode`
 
@@ -379,7 +379,7 @@ Representa um laço de repetição `while`.
 | `line` | `int` | `0` | Herdado de `Node`. |
 | `column` | `int` | `0` | Herdado de `Node`. |
 
-### 👀Exemplo Visual
+### Exemplo Visual
 
 Dado o seguinte trecho de código Python:
 
@@ -427,7 +427,7 @@ flowchart TD
 
 ---
 
-## 🍃 Nós Folha (Tipos Primitivos e Identificadores)
+## Nós Folha (Tipos Primitivos e Identificadores)
 
 Os nós folha são os elementos terminais da AST: não possuem filhos e armazenam apenas um valor literal ou um identificador. São o ponto final de qualquer expressão. Cada tipo de literal tem seu próprio nó para que o analisador semântico consiga inferir o tipo da expressão diretamente, sem precisar inspecionar o lexeme.
 
@@ -617,7 +617,7 @@ classDiagram
 
 ---
 
-## 🚀 Validação e Testes
+## Validação e Testes
 
 A especificação dos nós folha é validada por testes unitários que cobrem:
 
