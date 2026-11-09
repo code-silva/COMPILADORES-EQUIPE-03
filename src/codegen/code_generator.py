@@ -4,14 +4,18 @@ from src.parser.nodes import (
     AssignNode,
     BinOpNode,
     BoolLiteralNode,
+    ElifClauseNode,
+    ElseClauseNode,
     FloatLiteralNode,
     IdentifierNode,
+    IfNode,
     IntLiteralNode,
     Node,
     NoneLiteralNode,
     ProgramNode,
     ReturnNode,
     StringLiteralNode,
+    WhileNode,
 )
 from src.semantic.analyzer import SemanticAnalyzer
 
@@ -36,7 +40,36 @@ class CodeGenerator:
         self.indent_level: int = 0 #guarda o nível da indentação
         self.code_lines: list[str] = [] #lista de linhas de código na ordem já geradas
         self.declared_vars: set[str] = set() #variáveis que já receberam declaração Java
+        self._scope_stack: list[set[str]] = [self.declared_vars]
         self._analyzer: SemanticAnalyzer = SemanticAnalyzer() #fornece o tipo das variáveis
+
+    def _is_declared(self, name: str) -> bool:
+        """Verifica se ``name`` já foi declarada no escopo atual ou em escopos pais."""
+        return any(name in scope for scope in reversed(self._scope_stack))
+
+    def _enter_block_scope(self) -> None:
+        """Abre um novo escopo léxico de bloco no analisador e na pilha de declarações."""
+        self._analyzer.enter_scope()
+        new_scope: set[str] = set()
+        self._scope_stack.append(new_scope)
+        self.declared_vars = new_scope
+
+    def _exit_block_scope(self) -> None:
+        """Fecha o escopo de bloco atual e restaura o escopo pai."""
+        self._scope_stack.pop()
+        self.declared_vars = self._scope_stack[-1]
+        self._analyzer.exit_scope()
+
+    def _emit_block_body(self, statements: list[Node]) -> None:
+        """Emite uma lista de instruções dentro de um bloco indentado com escopo próprio."""
+        self.indent()
+        self._enter_block_scope()
+        try:
+            for stmt in statements:
+                self.visit(stmt)
+        finally:
+            self._exit_block_scope()
+            self.dedent()
 
     """calcula os espaços e colaca a linha de código com sua indentação na lista"""
     def emit(self, code: str) -> None:
@@ -63,6 +96,7 @@ class CodeGenerator:
         self.indent_level = 0
         self.code_lines = []
         self.declared_vars = set()
+        self._scope_stack = [self.declared_vars]
         self._analyzer = SemanticAnalyzer()
 
         self.emit("public class Main {")
@@ -134,7 +168,7 @@ class CodeGenerator:
         )
 
     # ==========================================================================
-    # Instruções (Issue #36)
+    # Instruções (Issues #36 e #37)
     # ==========================================================================
 
     def visit(self, node: Node) -> None:
@@ -181,7 +215,7 @@ class CodeGenerator:
         if node.op not in self.ASSIGN_OPERATORS:
             raise ValueError(f"Operador de atribuição não suportado: {node.op!r}")
 
-        is_first = node.target not in self.declared_vars
+        is_first = not self._is_declared(node.target)
         if is_first and node.op != "=":
             raise ValueError(
                 f"Atribuição acumulativa '{node.op}' em variável não declarada: "
@@ -205,3 +239,55 @@ class CodeGenerator:
             self.emit("return;")
         else:
             self.emit(f"return {self.gen_expression(node.value)};")
+
+    def visit_IfNode(self, node: IfNode) -> None:
+        """Traduz ``IfNode`` (com ``elif_clauses`` e ``else_body``) para ``if / else if / else`` em Java."""
+        if node.condition is None:
+            raise ValueError("IfNode requer uma condição (condition) para gerar código.")
+
+        self._analyzer._validate_condition(node.condition, "if", node)
+        cond_expr = self.gen_expression(node.condition)
+        self.emit(f"if ({cond_expr}) {{")
+        self._emit_block_body(node.then_body)
+
+        for elif_clause in node.elif_clauses:
+            self.visit_ElifClauseNode(elif_clause)
+
+        if node.else_body:
+            if len(node.else_body) == 1 and isinstance(node.else_body[0], ElseClauseNode):
+                self.visit_ElseClauseNode(node.else_body[0])
+            else:
+                self.emit("} else {")
+                self._emit_block_body(node.else_body)
+
+        self.emit("}")
+
+    def visit_ElifClauseNode(self, node: ElifClauseNode) -> None:
+        """Traduz ``ElifClauseNode`` encadeando ``} else if (condição) {`` em Java."""
+        if node.condition is None:
+            raise ValueError(
+                "ElifClauseNode requer uma condição (condition) para gerar código."
+            )
+
+        self._analyzer._validate_condition(node.condition, "elif", node)
+        elif_cond_expr = self.gen_expression(node.condition)
+        self.emit(f"}} else if ({elif_cond_expr}) {{")
+        self._emit_block_body(node.body)
+
+    def visit_ElseClauseNode(self, node: ElseClauseNode) -> None:
+        """Traduz ``ElseClauseNode`` encadeando ``} else {`` em Java."""
+        self.emit("} else {")
+        self._emit_block_body(node.body)
+
+    def visit_WhileNode(self, node: WhileNode) -> None:
+        """Traduz ``WhileNode`` para ``while (condição) { ... }`` em Java."""
+        if node.condition is None:
+            raise ValueError(
+                "WhileNode requer uma condição (condition) para gerar código."
+            )
+
+        self._analyzer._validate_condition(node.condition, "while", node)
+        cond_expr = self.gen_expression(node.condition)
+        self.emit(f"while ({cond_expr}) {{")
+        self._emit_block_body(node.body)
+        self.emit("}")

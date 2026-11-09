@@ -75,5 +75,7 @@ nav:
     - Gerador de Código:
       - Arquitetura do Gerador: codegen/architecture.md
       - Expressões e Literais: codegen/expressions.md
+      - Controle de Fluxo: codegen/control_flow.md
+
 
 
