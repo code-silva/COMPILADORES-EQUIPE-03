@@ -270,3 +270,12 @@ class Scanner:
             raise LexicalError(f"caractere inválido '{character}'", line, column)
         self.line_has_tokens = True
         return token
+
+    def scan(self) -> list[Token]:
+        """Percorre todo o código-fonte e retorna a lista de tokens até ``EOF``."""
+        tokens: list[Token] = []
+        while True:
+            token = self.next_token()
+            tokens.append(token)
+            if token.type == TokenType.EOF:
+                return tokens

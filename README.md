@@ -104,7 +104,11 @@ pip install -r requirements.txt
 ## 2. Compilar um arquivo Python para Java
 
 ```bash
-# Passos a definir
+# Compila o arquivo .py gerando automaticamente em output/<nome>.java
+python -m src.cli examples/basic_math.py
+
+# Ou especifique o caminho do arquivo .java de saída com -o / --output
+python -m src.cli examples/basic_math.py -o output/Main.java
 ```
 
 ## 📚 Documentação
