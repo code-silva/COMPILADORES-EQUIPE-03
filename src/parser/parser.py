@@ -18,6 +18,7 @@ from .nodes import (
     IntLiteralNode,
     Node,
     NoneLiteralNode,
+    PrintNode,
     ProgramNode,
     ReturnNode,
     StringLiteralNode,
@@ -409,6 +410,7 @@ class Parser:
         - ``if`` → ``parse_if_statement()``;
         - ``while`` → ``parse_while_statement()``;
         - ``return`` → ``parse_return_statement()``;
+        - ``print`` seguido de ``(`` → ``parse_print_statement()``;
         - ``IDENTIFIER`` seguido de ``=``, ``+=`` ou ``-=`` → ``parse_assignment()``;
         - qualquer outra construção é analisada como expressão.
 
@@ -432,6 +434,12 @@ class Parser:
 
         if token.type == TokenType.KW_RETURN:
             node = self.parse_return_statement()
+        elif (
+            token.type == TokenType.IDENTIFIER
+            and token.lexeme == "print"
+            and self.peek(1).type == TokenType.LPAREN
+        ):
+            node = self.parse_print_statement()
         elif (
             token.type == TokenType.IDENTIFIER
             and self.peek(1).type in self.ASSIGNMENT_OPERATORS
@@ -486,6 +494,22 @@ class Parser:
             value = self.parse_expression()
 
         return ReturnNode(value=value, line=keyword.line, column=keyword.column)
+
+    def parse_print_statement(self) -> PrintNode:
+        """Analisa ``"print" "(" expressao? ")"``.
+
+        ``print()`` gera um ``PrintNode`` com ``value=None``. Aceita no máximo
+        um argumento.
+        """
+        keyword = self.expect(TokenType.IDENTIFIER, "Esperado 'print'")
+        self.expect(TokenType.LPAREN, "Esperado '(' após 'print'")
+
+        value = None
+        if self.peek().type != TokenType.RPAREN:
+            value = self.parse_expression()
+
+        self.expect(TokenType.RPAREN, "Esperado ')' para fechar 'print'")
+        return PrintNode(value=value, line=keyword.line, column=keyword.column)
 
     def _end_simple_statement(self) -> None:
         """Garante que a instrução simples terminou no token atual."""

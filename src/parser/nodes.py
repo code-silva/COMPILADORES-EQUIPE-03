@@ -215,3 +215,16 @@ class ReturnNode(Node):
     """
 
     value: Node | None = None
+
+
+@dataclass
+class PrintNode(Node):
+    """Nó da AST que representa a instrução ``print(expr)`` ou ``print()``.
+
+    Atributos:
+        value: Expressão impressa, ou ``None`` para ``print()`` (linha vazia).
+        line: Linha no código-fonte (herdado de ``Node``).
+        column: Coluna no código-fonte (herdado de ``Node``).
+    """
+
+    value: Node | None = None

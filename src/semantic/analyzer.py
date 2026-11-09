@@ -17,6 +17,7 @@ from src.parser.nodes import (
     Node,
     NoneLiteralNode,
     ProgramNode,
+    PrintNode,
     ReturnNode,
     StringLiteralNode,
     WhileNode,
@@ -228,6 +229,12 @@ class SemanticAnalyzer:
                 column=node.column,
             )
         return value_type
+
+    def visit_PrintNode(self, node: PrintNode) -> str:
+        """Valida a expressão impressa (se houver); ``print`` não produz valor."""
+        if node.value is not None:
+            self.infer_type(node.value)
+        return "None"
 
     def visit_ReturnNode(self, node: ReturnNode) -> str:
         """Visita a expressão de retorno (se presente) e devolve seu tipo."""
