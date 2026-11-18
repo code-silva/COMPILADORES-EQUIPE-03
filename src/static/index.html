@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Converta arquivos Python para Java com o compilador PyToJava.">
+  <title>PyToJava · Compilador local</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header><a class="brand" href="/">Py<span>To</span>Java<span class="brand-dot">.</span></a><span class="local"><i></i> Ambiente local</span></header>
+  <main>
+    <div class="intro"><p class="eyebrow">COMPILADOR PYTHON → JAVA</p><h1>Do seu Python<br>ao próximo <span>Main.java.</span></h1><p>Envie seu arquivo, acompanhe cada etapa da compilação<br class="desktop"> e baixe o código Java gerado.</p></div>
+    <div class="workspace">
+      <section class="panel upload-panel" aria-labelledby="upload-title">
+        <div class="section-heading"><span class="number">01</span><h2 id="upload-title">Arquivo de entrada</h2></div>
+        <label id="drop-zone" class="drop-zone" for="file-input">
+          <span class="file-icon" aria-hidden="true">↑</span>
+          <strong>Arraste seu arquivo Python aqui</strong>
+          <span>ou <span class="choose">escolha um arquivo</span></span>
+          <small>.py · UTF-8 · até 1 MB</small>
+          <input id="file-input" type="file" accept=".py" aria-label="Escolher arquivo Python">
+        </label>
+        <div id="selected-file" class="selected-file" hidden><span class="py-badge">PY</span><div><strong id="file-name"></strong><small id="file-size"></small></div><button id="remove-file" type="button" aria-label="Remover arquivo">×</button></div>
+        <button id="compile" class="primary" type="button" disabled>Converter para Java <span aria-hidden="true">→</span></button>
+        <p class="hint">Compatível com o subconjunto procedural de Python implementado pelo projeto. O arquivo é processado no seu computador.</p>
+      </section>
+      <section class="panel" aria-labelledby="pipeline-title">
+        <div class="section-heading"><span class="number">02</span><h2 id="pipeline-title">Etapas da compilação</h2></div>
+        <ol class="checklist">
+          <li data-stage="upload"><span class="stage-icon" aria-hidden="true">·</span><div><strong>Recebimento do arquivo</strong><small>Leitura do código-fonte Python</small></div><span class="stage-status">Pendente</span></li>
+          <li data-stage="lexer"><span class="stage-icon" aria-hidden="true">·</span><div><strong>Análise léxica</strong><small>Reconhecimento de tokens e indentação</small></div><span class="stage-status">Pendente</span></li>
+          <li data-stage="parser"><span class="stage-icon" aria-hidden="true">·</span><div><strong>Análise sintática</strong><small>Construção da árvore sintática</small></div><span class="stage-status">Pendente</span></li>
+          <li data-stage="semantic"><span class="stage-icon" aria-hidden="true">·</span><div><strong>Análise semântica</strong><small>Verificação de tipos e escopos</small></div><span class="stage-status">Pendente</span></li>
+          <li data-stage="codegen"><span class="stage-icon" aria-hidden="true">·</span><div><strong>Geração de Java</strong><small>Tradução para a classe Main</small></div><span class="stage-status">Pendente</span></li>
+        </ol>
+      </section>
+    </div>
+    <p id="message" class="message" role="status" aria-live="polite">Selecione um arquivo .py para começar.</p>
+    <section id="result" class="panel result" aria-labelledby="result-title" hidden>
+      <div class="result-heading"><div><p class="eyebrow">CONVERSÃO CONCLUÍDA</p><h2 id="result-title">Seu Java está pronto.</h2></div><a id="download" class="primary" download="Main.java">Baixar Main.java <span aria-hidden="true">↓</span></a></div>
+      <div class="code-label">Main.java</div><pre><code id="java-code"></code></pre>
+    </section>
+  </main>
+  <footer><span>PyToJava · Equipe 03</span><span>Projeto da disciplina de Compiladores</span></footer>
+</body>
+</html>
