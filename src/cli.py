@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 import sys
-from typing import Sequence
+from typing import Callable, Sequence
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -16,11 +16,15 @@ from src.parser import Parser, ParserError
 from src.semantic import SemanticAnalyzer, SemanticError
 
 
-def compile_source(source_code: str) -> str:
+def compile_source(
+    source_code: str,
+    on_stage: Callable[[str, str], None] | None = None,
+) -> str:
     """Executa o pipeline completo de compilação (Lexer -> Parser -> Semântico -> Codegen).
 
     Args:
         source_code: Código-fonte no subconjunto procedural de Python.
+        on_stage: Callback opcional com o nome e o estado de cada etapa.
 
     Returns:
         Código-fonte Java equivalente e formatado.
@@ -30,10 +34,18 @@ def compile_source(source_code: str) -> str:
         ParserError: Se houver violação gramatical na análise sintática.
         SemanticError: Se houver erro de escopo ou incompatibilidade de tipos.
     """
-    tokens = Scanner(source_code).scan()
-    ast = Parser(tokens).parse()
-    SemanticAnalyzer().analyze(ast)
-    java_code = CodeGenerator().generate(ast)
+    def run_stage(name: str, action):
+        if on_stage:
+            on_stage(name, "running")
+        result = action()
+        if on_stage:
+            on_stage(name, "done")
+        return result
+
+    tokens = run_stage("lexer", lambda: Scanner(source_code).scan())
+    ast = run_stage("parser", lambda: Parser(tokens).parse())
+    run_stage("semantic", lambda: SemanticAnalyzer().analyze(ast))
+    java_code = run_stage("codegen", lambda: CodeGenerator().generate(ast))
     return java_code
 
 
