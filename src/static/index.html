@@ -3,46 +3,250 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Converta arquivos Python para Java com o compilador PyToJava.">
-  <title>PyToJava · Compilador local</title>
+  <meta name="description" content="Converta arquivos Python procedurais para código-fonte Java com o compilador PyToJava.">
+  <title>PyToJava · Compilador Python para Java</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/app.css">
   <script src="/app.js" defer></script>
 </head>
 <body>
-  <header><a class="brand" href="/">Py<span>To</span>Java<span class="brand-dot">.</span></a><span class="local"><i></i> Ambiente local</span></header>
-  <main>
-    <div class="intro"><p class="eyebrow">COMPILADOR PYTHON → JAVA</p><h1>Do seu Python<br>ao próximo <span>Main.java.</span></h1><p>Envie seu arquivo, acompanhe cada etapa da compilação<br class="desktop"> e baixe o código Java gerado.</p></div>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">Py</span>
+        <span class="brand-name">Py<span>To</span>Java<span class="brand-dot">.</span></span>
+      </a>
+      <div class="topbar-actions">
+        <span class="status-pill" title="Execução 100% local, sem envio para servidores externos">
+          <span class="status-dot" aria-hidden="true"></span>
+          Servidor local
+        </span>
+        <button id="theme-toggle" class="icon-button" type="button" aria-label="Alternar tema claro e escuro" aria-pressed="false" title="Alternar tema">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">COMPILADOR PYTHON → JAVA</p>
+        <h1>Do seu Python ao próximo <span>Main.java.</span></h1>
+        <p class="subtitle">
+          Envie um arquivo <code>.py</code> ou teste no editor local, acompanhe cada etapa real da pipeline de compilação e baixe a classe Java gerada.
+        </p>
+      </div>
+      <div class="hero-meta" aria-label="Características do compilador">
+        <span class="meta-chip">4 fases reais</span>
+        <span class="meta-chip">Subconjunto procedural</span>
+        <span class="meta-chip">Processamento em memória</span>
+      </div>
+    </section>
+
     <div class="workspace">
       <section class="panel upload-panel" aria-labelledby="upload-title">
-        <div class="section-heading"><span class="number">01</span><h2 id="upload-title">Arquivo de entrada</h2></div>
-        <label id="drop-zone" class="drop-zone" for="file-input">
-          <span class="file-icon" aria-hidden="true">↑</span>
-          <strong>Arraste seu arquivo Python aqui</strong>
-          <span>ou <span class="choose">escolha um arquivo</span></span>
-          <small>.py · UTF-8 · até 1 MB</small>
-          <input id="file-input" type="file" accept=".py" aria-label="Escolher arquivo Python">
-        </label>
-        <div id="selected-file" class="selected-file" hidden><span class="py-badge">PY</span><div><strong id="file-name"></strong><small id="file-size"></small></div><button id="remove-file" type="button" aria-label="Remover arquivo">×</button></div>
-        <button id="compile" class="primary" type="button" disabled>Converter para Java <span aria-hidden="true">→</span></button>
-        <p class="hint">Compatível com o subconjunto procedural de Python implementado pelo projeto. O arquivo é processado no seu computador.</p>
+        <div class="panel-header">
+          <div class="section-heading">
+            <span class="step-badge">01</span>
+            <div>
+              <h2 id="upload-title">Código de entrada</h2>
+              <p class="section-desc">Arquivo Python UTF-8 até 1 MB</p>
+            </div>
+          </div>
+          <div class="mode-switch" role="tablist" aria-label="Modo de entrada">
+            <button id="tab-upload" class="mode-tab active" type="button" role="tab" aria-selected="true" aria-controls="panel-upload">Arquivo</button>
+            <button id="tab-editor" class="mode-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-editor">Editor</button>
+          </div>
+        </div>
+
+        <div id="panel-upload" role="tabpanel" aria-labelledby="tab-upload">
+          <label id="drop-zone" class="drop-zone" for="file-input">
+            <span class="file-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </span>
+            <strong>Arraste seu arquivo Python aqui</strong>
+            <span>ou <span class="choose">escolha no computador</span></span>
+            <small>Extensão .py · Codificação UTF-8 · Máximo 1 MB</small>
+            <input id="file-input" type="file" accept=".py" aria-label="Escolher arquivo Python">
+          </label>
+
+          <div id="selected-file" class="selected-file" hidden>
+            <span class="py-badge">PY</span>
+            <div class="selected-meta">
+              <strong id="file-name"></strong>
+              <small id="file-size"></small>
+            </div>
+            <button id="inspect-file" class="ghost-btn" type="button" title="Visualizar ou editar o código no editor">Editar</button>
+            <button id="remove-file" class="remove-btn" type="button" aria-label="Remover arquivo">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="panel-editor" class="editor-panel" role="tabpanel" aria-labelledby="tab-editor" hidden>
+          <div class="editor-toolbar">
+            <span class="editor-filename" id="editor-filename">entrada.py</span>
+            <span class="editor-shortcut">Ctrl + Enter para compilar</span>
+          </div>
+          <textarea
+            id="source-editor"
+            class="source-editor"
+            spellcheck="false"
+            autocomplete="off"
+            autocapitalize="off"
+            placeholder="# Escreva ou cole seu código Python procedural aqui&#10;x = 10&#10;y = 20&#10;soma = x + y"
+            aria-label="Código-fonte Python"
+          ></textarea>
+        </div>
+
+        <div id="examples-bar" class="examples-bar" hidden>
+          <span class="examples-label">Exemplos do projeto:</span>
+          <div id="examples-list" class="examples-list"></div>
+        </div>
+
+        <button id="compile" class="primary compile-btn" type="button" disabled>
+          <span class="btn-label">Converter para Java</span>
+          <svg class="btn-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+        <p class="hint">
+          Compatível com o subconjunto procedural implementado pela CLI. O código é analisado localmente em memória e não é executado pelo servidor.
+        </p>
       </section>
-      <section class="panel" aria-labelledby="pipeline-title">
-        <div class="section-heading"><span class="number">02</span><h2 id="pipeline-title">Etapas da compilação</h2></div>
+
+      <section class="panel pipeline-panel" aria-labelledby="pipeline-title">
+        <div class="panel-header">
+          <div class="section-heading">
+            <span class="step-badge">02</span>
+            <div>
+              <h2 id="pipeline-title">Etapas da compilação</h2>
+              <p class="section-desc">Acompanhamento em tempo real via NDJSON</p>
+            </div>
+          </div>
+          <div class="pipeline-stats">
+            <span id="stage-counter" class="stage-counter">0 / 5</span>
+            <span id="elapsed-time" class="elapsed-time" hidden></span>
+          </div>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+
         <ol class="checklist">
-          <li data-stage="upload"><span class="stage-icon" aria-hidden="true">·</span><div><strong>Recebimento do arquivo</strong><small>Leitura do código-fonte Python</small></div><span class="stage-status">Pendente</span></li>
-          <li data-stage="lexer"><span class="stage-icon" aria-hidden="true">·</span><div><strong>Análise léxica</strong><small>Reconhecimento de tokens e indentação</small></div><span class="stage-status">Pendente</span></li>
-          <li data-stage="parser"><span class="stage-icon" aria-hidden="true">·</span><div><strong>Análise sintática</strong><small>Construção da árvore sintática</small></div><span class="stage-status">Pendente</span></li>
-          <li data-stage="semantic"><span class="stage-icon" aria-hidden="true">·</span><div><strong>Análise semântica</strong><small>Verificação de tipos e escopos</small></div><span class="stage-status">Pendente</span></li>
-          <li data-stage="codegen"><span class="stage-icon" aria-hidden="true">·</span><div><strong>Geração de Java</strong><small>Tradução para a classe Main</small></div><span class="stage-status">Pendente</span></li>
+          <li data-stage="upload">
+            <span class="stage-icon" aria-hidden="true"></span>
+            <div class="stage-info">
+              <strong>Recebimento do arquivo</strong>
+              <small>Leitura e validação do código-fonte Python</small>
+            </div>
+            <span class="stage-status">Pendente</span>
+          </li>
+          <li data-stage="lexer">
+            <span class="stage-icon" aria-hidden="true"></span>
+            <div class="stage-info">
+              <strong>Análise léxica</strong>
+              <small>Reconhecimento de tokens e pilha de indentação</small>
+            </div>
+            <span class="stage-status">Pendente</span>
+          </li>
+          <li data-stage="parser">
+            <span class="stage-icon" aria-hidden="true"></span>
+            <div class="stage-info">
+              <strong>Análise sintática</strong>
+              <small>Construção da árvore sintática abstrata (AST)</small>
+            </div>
+            <span class="stage-status">Pendente</span>
+          </li>
+          <li data-stage="semantic">
+            <span class="stage-icon" aria-hidden="true"></span>
+            <div class="stage-info">
+              <strong>Análise semântica</strong>
+              <small>Inferência de tipos, escopos e tabela de símbolos</small>
+            </div>
+            <span class="stage-status">Pendente</span>
+          </li>
+          <li data-stage="codegen">
+            <span class="stage-icon" aria-hidden="true"></span>
+            <div class="stage-info">
+              <strong>Geração de Java</strong>
+              <small>Emissão formatada da classe pública Main</small>
+            </div>
+            <span class="stage-status">Pendente</span>
+          </li>
         </ol>
       </section>
     </div>
-    <p id="message" class="message" role="status" aria-live="polite">Selecione um arquivo .py para começar.</p>
+
+    <div id="message-box" class="message-box" role="status" aria-live="polite">
+      <span id="message-icon" class="message-icon" aria-hidden="true"></span>
+      <p id="message" class="message">Selecione um arquivo .py ou escolha um exemplo para começar.</p>
+    </div>
+
     <section id="result" class="panel result" aria-labelledby="result-title" hidden>
-      <div class="result-heading"><div><p class="eyebrow">CONVERSÃO CONCLUÍDA</p><h2 id="result-title">Seu Java está pronto.</h2></div><a id="download" class="primary" download="Main.java">Baixar Main.java <span aria-hidden="true">↓</span></a></div>
-      <div class="code-label">Main.java</div><pre><code id="java-code"></code></pre>
+      <div class="result-heading">
+        <div>
+          <p class="eyebrow">CONVERSÃO CONCLUÍDA</p>
+          <h2 id="result-title">Seu arquivo Java está pronto.</h2>
+          <p id="result-meta" class="result-meta"></p>
+        </div>
+        <div class="result-actions">
+          <button id="copy-code" class="secondary" type="button">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span id="copy-label">Copiar código</span>
+          </button>
+          <a id="download" class="primary" download="Main.java">
+            <span>Baixar Main.java</span>
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-header">
+          <div class="code-title">
+            <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="code-filename">Main.java</span>
+          </div>
+          <span class="code-lang">Java 17+</span>
+        </div>
+        <div class="code-body">
+          <div id="line-numbers" class="line-numbers" aria-hidden="true"></div>
+          <pre><code id="java-code"></code></pre>
+        </div>
+      </div>
     </section>
   </main>
-  <footer><span>PyToJava · Equipe 03</span><span>Projeto da disciplina de Compiladores</span></footer>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>PyToJava · Equipe 03</span>
+      <span>Compilador Python → Java · Disciplina de Compiladores</span>
+    </div>
+  </footer>
 </body>
 </html>

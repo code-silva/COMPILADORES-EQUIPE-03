@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="PyToJava">
+  <rect width="64" height="64" rx="16" fill="#1d5c43"/>
+  <path d="M18 44V20h10.5c5.2 0 8.5 2.9 8.5 7.4 0 4.6-3.3 7.5-8.5 7.5H24V44h-6zm6-13.7h4.2c2 0 3.2-1 3.2-2.9 0-1.8-1.2-2.8-3.2-2.8H24v5.7z" fill="#f5f8f5"/>
+  <circle cx="45" cy="41" r="5" fill="#6fd49a"/>
+</svg>
