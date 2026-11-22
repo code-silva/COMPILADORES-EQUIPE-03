@@ -32,6 +32,16 @@ def request(server, method, path, body=None, headers=None):
         connection.close()
 
 
+def request_with_headers(server, method, path, body=None, headers=None):
+    connection = HTTPConnection(*server.server_address, timeout=5)
+    try:
+        connection.request(method, path, body=body, headers=headers or {})
+        response = connection.getresponse()
+        return response.status, dict(response.getheaders()), response.read()
+    finally:
+        connection.close()
+
+
 def compile_request(server, source, filename="teste.py"):
     status, content_type, body = request(
         server, "POST", "/api/compile",
@@ -42,13 +52,40 @@ def compile_request(server, source, filename="teste.py"):
 
 
 @pytest.mark.parametrize("path,content_type", [
-    ("/", "text/html"), ("/app.js", "text/javascript"), ("/app.css", "text/css"),
+    ("/", "text/html"),
+    ("/app.js", "text/javascript"),
+    ("/app.css", "text/css"),
+    ("/favicon.svg", "image/svg+xml"),
+    ("/?theme=dark", "text/html"),
 ])
 def test_serves_interface_assets(server, path, content_type):
     status, actual_type, body = request(server, "GET", path)
     assert status == 200
     assert actual_type.startswith(content_type)
     assert body
+
+
+def test_head_request_returns_security_headers_without_body(server):
+    status, headers, body = request_with_headers(server, "HEAD", "/")
+    assert status == 200
+    assert body == b""
+    assert headers.get("X-Content-Type-Options") == "nosniff"
+    assert headers.get("X-Frame-Options") == "DENY"
+    assert headers.get("Referrer-Policy") == "no-referrer"
+
+
+def test_examples_endpoint_lists_compilable_project_scripts(server):
+    status, content_type, body = request(server, "GET", "/api/examples")
+    assert status == 200
+    assert content_type.startswith("application/json")
+    payload = json.loads(body)
+    examples = payload["examples"]
+    names = {item["name"] for item in examples}
+    assert "teste_interface.py" in names
+    assert "calculator.py" in names
+    for item in examples:
+        assert item["name"].endswith(".py")
+        assert "public class Main" in compile_source(item["source"])
 
 
 def test_upload_generates_download_content_and_ordered_stage_events(server):

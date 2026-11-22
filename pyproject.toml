@@ -14,7 +14,7 @@ dependencies = []
 packages = ["src", "src.lexer", "src.parser", "src.semantic", "src.codegen"]
 
 [tool.setuptools.package-data]
-src = ["static/*.html", "static/*.css", "static/*.js"]
+src = ["static/*.html", "static/*.css", "static/*.js", "static/*.svg"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

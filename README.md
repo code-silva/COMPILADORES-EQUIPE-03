@@ -68,12 +68,15 @@ pytojava/
 │   ├── calculator.py
 │   ├── control_flow.py
 │   ├── factorial.py
-│   └── hello.py
+│   ├── hello.py
+│   └── teste_interface.py
 ├── output/                   # Arquivos .java gerados (ignorados pelo Git)
 ├── src/                      # Código-fonte do compilador
 │   ├── __init__.py
 │   ├── cli.py                # Driver e interface de linha de comando (CLI)
 │   ├── main.py               # Ponto de entrada alternativo
+│   ├── web.py                # Servidor HTTP local da interface web
+│   ├── static/               # Assets da interface web (HTML, CSS, JS, SVG)
 │   ├── lexer/                # Fase 1: Analisador Léxico
 │   ├── parser/               # Fase 2: Analisador Sintático e nós da AST
 │   ├── semantic/             # Fase 3: Analisador Semântico e Tabela de Símbolos
@@ -158,27 +161,23 @@ python -m pip install -r requirements.txt
 
 ---
 
-## Interface local no Chrome
+## Interface Web Local
 
-Na raiz do projeto, inicie o servidor (Python 3.10+; sem dependências adicionais):
+Na raiz do projeto, inicie o servidor local (Python 3.10+, sem dependências externas):
 
 ```bash
 python -m src.web
 ```
 
-Abra **http://localhost:8000** no Chrome. Arraste ou selecione um arquivo `.py`
-em UTF-8, de até 1 MB, e clique em **Converter para Java**. O checklist acompanha
-as etapas reais do compilador. Se houver erro, a etapa correspondente exibe a
-mensagem com a posição informada pelo compilador; as seguintes ficam pendentes.
-Ao concluir, a página mostra o código e permite baixar **Main.java**.
+Abra **http://localhost:8000** no navegador. É possível arrastar ou selecionar um arquivo `.py` (UTF-8, até 1 MB), carregar um dos exemplos oficiais do projeto ou editar o código diretamente no editor integrado e clicar em **Converter para Java** (ou `Ctrl+Enter`).
 
-A interface aceita o mesmo subconjunto procedural de Python da CLI. Os arquivos
-são processados em memória no computador local; a interface não executa o Python
-enviado nem o Java gerado. O nome `Main.java` corresponde à classe pública emitida
-pelo compilador.
+O painel acompanha as etapas reais do compilador em tempo real via NDJSON (`upload`, `lexer`, `parser`, `semantic` e `codegen`). Em caso de erro, a fase correspondente exibe a mensagem com a linha informada pelo compilador. Ao concluir, o código `Main.java` é exibido com numeração de linhas, realce de sintaxe, botão para cópia e download direto.
 
-Para encerrar o servidor, pressione `Ctrl+C` no terminal. Caso a porta esteja em
-uso, execute `python -m src.web --port 8001` e abra http://localhost:8001.
+A interface aceita o mesmo subconjunto procedural de Python da CLI. Todo o processamento ocorre em memória no computador local, sem executar o código Python enviado nem o Java gerado.
+
+Para encerrar o servidor, pressione `Ctrl+C` no terminal. Caso a porta esteja em uso, execute `python -m src.web --port 8001` e abra http://localhost:8001.
+
+---
 
 ## 3. Execução da Suíte de Testes Automatizados
 
