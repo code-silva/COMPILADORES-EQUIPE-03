@@ -158,6 +158,28 @@ python -m pip install -r requirements.txt
 
 ---
 
+## Interface local no Chrome
+
+Na raiz do projeto, inicie o servidor (Python 3.10+; sem dependências adicionais):
+
+```bash
+python -m src.web
+```
+
+Abra **http://localhost:8000** no Chrome. Arraste ou selecione um arquivo `.py`
+em UTF-8, de até 1 MB, e clique em **Converter para Java**. O checklist acompanha
+as etapas reais do compilador. Se houver erro, a etapa correspondente exibe a
+mensagem com a posição informada pelo compilador; as seguintes ficam pendentes.
+Ao concluir, a página mostra o código e permite baixar **Main.java**.
+
+A interface aceita o mesmo subconjunto procedural de Python da CLI. Os arquivos
+são processados em memória no computador local; a interface não executa o Python
+enviado nem o Java gerado. O nome `Main.java` corresponde à classe pública emitida
+pelo compilador.
+
+Para encerrar o servidor, pressione `Ctrl+C` no terminal. Caso a porta esteja em
+uso, execute `python -m src.web --port 8001` e abra http://localhost:8001.
+
 ## 3. Execução da Suíte de Testes Automatizados
 
 Para homologar as 4 fases da pipeline de compilação (Scanner com pilha de indentação, Parser com *Precedence Climbing*, Analisador Semântico com *Visitor Pattern* e a validação *End-to-End* com o `javac` real via `subprocess`):
