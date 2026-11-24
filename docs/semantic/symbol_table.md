@@ -16,7 +16,7 @@ Registro imutável de uma variável.
 | Atributo | Tipo | Descrição |
 | :--- | :--- | :--- |
 | `name` | `str` | Nome do identificador. |
-| `type` | `str` | Tipo primitivo: `"int"`, `"float"`, `"str"`, `"bool"` ou `"None"`. |
+| `type` | `str` | Tipo primitivo: `"int"`, `"float"`, `"String"`, `"boolean"` ou `"None"`. |
 | `line` | `int` | Linha da primeira definição. |
 | `column` | `int` | Coluna da primeira definição (opcional, padrão `0`). |
 

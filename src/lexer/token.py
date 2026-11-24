@@ -6,7 +6,7 @@ from typing import Any
 from .token_type import TokenType
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Token:
     """Estrutura imutável que representa uma unidade léxica identificada pelo scanner.
 

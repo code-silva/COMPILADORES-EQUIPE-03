@@ -114,12 +114,12 @@ Para saber mais sobre compiladores, [clique aqui](compiladores.md).
 * Implementar as fases de um compilador: análise léxica, sintática, semântica e geração de código
 * Aplicar os conceitos teóricos de compiladores na prática
 * Gerar código Java executável e compilável via `javac` a partir de código Python procedural
-* Compreender a arquitetura interna de um compilador e sua interface de linha de comando (CLI)
+* Compreender a arquitetura interna de um compilador, sua interface de linha de comando (CLI) e sua interface web local
 
 ---
 ## Tecnologias Utilizadas
 
-- **Python 3.10+**: Implementação do compilador (Lexer, Parser, Semântico, Codegen e CLI)
+- **Python 3.10+**: Implementação do compilador (Lexer, Parser, Semântico, Codegen, CLI e Interface Web Local)
 - **Java 17+ (`javac`)**: Linguagem alvo e validação do código gerado
 - **Pytest**: Suíte de testes unitários e de integração End-to-End (E2E)
 - **Flex & Bison**: Modelos teóricos de referência para análise léxica e sintática

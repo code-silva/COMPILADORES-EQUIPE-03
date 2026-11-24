@@ -30,18 +30,25 @@ pytojava/
 │   ├── estrutura.md                     # Estrutura de diretórios do projeto
 │   ├── GLOSSARY.md                      # Glossário de termos técnicos
 │   ├── index.md                         # Página inicial da documentação
-│   └── usage.md                         # Guia de uso da CLI (Driver)
+│   └── usage.md                         # Guia de uso da CLI, API e Interface Web
 ├── examples/                            # Scripts Python procedurais de exemplo (.py)
 │   ├── basic_math.py                    # Operações aritméticas e atribuições
 │   ├── calculator.py                    # Calculadora procedural com controle de fluxo
 │   ├── control_flow.py                  # Laços while e condicionais aninhadas
 │   ├── factorial.py                     # Cálculo iterativo de fatorial
-│   └── hello.py                         # Manipulação de strings e booleanos
+│   ├── hello.py                         # Manipulação de strings e booleanos
+│   └── teste_interface.py               # Script de demonstração para a interface web
 ├── output/                              # Diretório padrão para arquivos .java gerados
 ├── src/                                 # Código-fonte do compilador PyToJava
 │   ├── __init__.py
 │   ├── cli.py                           # Driver e CLI do pipeline completo
 │   ├── main.py                          # Ponto de entrada principal (delega para cli.py)
+│   ├── web.py                           # Servidor HTTP local da interface web
+│   ├── static/                          # Assets estáticos da interface web local
+│   │   ├── app.css                      # Estilização responsiva (temas claro e escuro)
+│   │   ├── app.js                       # Cliente NDJSON, editor, realce Java e download
+│   │   ├── favicon.svg                  # Ícone vetorial da aplicação web
+│   │   └── index.html                   # Estrutura semântica da interface web
 │   ├── lexer/                           # Fase 1: Analisador Léxico
 │   │   ├── __init__.py
 │   │   ├── char_stream.py
@@ -88,7 +95,8 @@ pytojava/
 │   ├── test_semantic_binop_inference.py
 │   ├── test_semantic_control_flow.py
 │   ├── test_symbol_table.py
-│   └── test_symbol_table_and_errors.py
+│   ├── test_symbol_table_and_errors.py
+│   └── test_web.py
 ├── .gitignore
 ├── CONTRIBUTING.md
 ├── docker-compose.yml
@@ -105,7 +113,7 @@ pytojava/
 ## Pastas Principais
 
 * **docs**: Documentação formal, relatórios e especificações técnicas (MkDocs)
-* **examples**: Scripts Python procedurais prontos para compilação de ponta a ponta
-* **output**: Diretório de saída onde os arquivos `.java` gerados são armazenados
-* **src**: Código-fonte modularizado das quatro fases do compilador e da CLI
-* **tests**: Suíte de testes unitários, de integração e de validação E2E com `javac`
+* **examples**: Scripts Python procedurais prontos para compilação de ponta a ponta na CLI ou na interface web
+* **output**: Diretório de saída onde os arquivos `.java` gerados pela CLI são armazenados
+* **src**: Código-fonte modularizado das quatro fases do compilador, da CLI (`cli.py`) e da interface web local (`web.py` e `static/`)
+* **tests**: Suíte de testes unitários, de integração HTTP e de validação E2E com `javac`

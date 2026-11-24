@@ -1,16 +1,19 @@
+# Conceitos de Compiladores
+
 ## O que é um Compilador?
-Um compilador é um programa de computador que atua como um tradutor, convertendo código escrito em uma linguagem de programação de alto nível (como Python) para outra linguagem, geralmente de mais baixo nível, como código de máquina, assembly ou bytecode.
 
-Esse processo mantém o significado original do programa, permitindo que ele seja executado em diferentes ambientes. Além da tradução, o compilador também verifica erros de sintaxe e semântica, garantindo que o código fonte esteja correto antes da geração do código final.
+Um compilador é um programa de computador que atua como um tradutor, convertendo código escrito em uma linguagem de programação de alto nível (como Python) para outra linguagem — seja código de máquina, bytecode ou outra linguagem de alto nível estaticamente tipada (transpilação ou compilação *source-to-source*).
 
-No PyToJava, aplicamos esse conceito traduzindo código Python para Java, passando por todas as fases clássicas de um compilador.
-## Quais são as etas de compilação? 
-**1) Análise Léxica:** Divide o código-fonte em unidades lexicais chamadas "tokens". Identifica palavras-chave, operadores, identificadores e outros símbolos da linguagem. Garante que o código-fonte esteja bem estruturado e siga as regras básicas da linguagem.
+Esse processo preserva a semântica original do programa, permitindo que ele seja executado no ambiente alvo. Além da tradução, o compilador verifica rigorosamente regras léxicas, sintáticas e semânticas, garantindo que o código-fonte esteja livre de erros antes da emissão do código final.
 
-**2) Análise Sintática:** Analisa a estrutura gramatical do código-fonte com base na gramática da linguagem. Verifica se a sequência de tokens forma sentenças válidas de acordo com as regras da linguagem. Constrói uma árvore sintática (parse tree) que representa a hierarquia estrutural do programa.
+No **PyToJava**, aplicamos esses conceitos traduzindo um subconjunto procedural de Python para código-fonte **Java 17+** (`public class Main`), passando pelas fases clássicas de um compilador.
 
-**3) Geração de Código Intermediário:** Cria uma representação mais abstrata e fácil de manipular do programa. Permite que a lógica seja separada da arquitetura específica da máquina onde será executado. Essa etapa facilita a otimização e o suporte a múltiplas arquiteturas.
+---
 
-**4) Otimização:** Analisa o código intermediário para melhorar o desempenho e a eficiência do programa final. Aplica técnicas como eliminação de código morto, otimização de loops e redução de instruções. Produz um código mais rápido e que consome menos recursos.
+## Quais são as etapas de compilação?
 
-**5) Geração do Código Objeto:** Traduz o código intermediário otimizado em instruções de baixo nível compreendidas pelo processador. Gera arquivos executáveis que podem ser executados diretamente pela máquina. Conclui o processo de compilação com o código final pronto para uso.
+1. **Análise Léxica (`src/lexer/`)**: divide o código-fonte bruto em unidades léxicas chamadas **tokens** (`Token`). Identifica palavras reservadas, identificadores, literais, operadores e delimitadores, descarta comentários (`#`) e converte variações de recuo em tokens sintéticos `INDENT`, `DEDENT` e `NEWLINE` através do `IndentManager`.
+2. **Análise Sintática (`src/parser/`)**: valida a sequência linear de tokens contra a gramática livre de contexto da linguagem por descida recursiva e *Precedence Climbing*. Constrói a **Árvore Sintática Abstrata (AST)** encabeçada por `ProgramNode`.
+3. **Análise Semântica (`src/semantic/`)**: percorre a AST com o padrão **Visitor** (`SemanticAnalyzer`), gerencia escopos léxicos aninhados na **Tabela de Símbolos** (`SymbolTable`), valida que condições de `if`/`elif`/`while` sejam estritamente booleanas e infere estaticamente os tipos (`int`, `float`, `String`, `boolean`, `None`).
+4. **Geração de Código (`src/codegen/`)**: traduz a AST validada para código-fonte Java estruturado e indentado (`CodeGenerator`), mapeando tipos semânticos para tipos Java (`int`, `double`, `String`, `boolean`, `Object`) e emitindo declarações tipadas na primeira atribuição de cada variável em seu escopo.
+5. **Orquestração e Interfaces (`src/cli.py` e `src/web.py`)**: o driver conecta as quatro fases tanto pela Interface de Linha de Comando (CLI) quanto pela Interface Web Local com acompanhamento em tempo real das etapas via streaming NDJSON.

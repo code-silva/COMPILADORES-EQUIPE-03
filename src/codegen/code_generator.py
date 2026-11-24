@@ -1,4 +1,8 @@
+"""Gerador de código Java a partir da Árvore Sintática Abstrata (AST)."""
+
 from __future__ import annotations
+
+from typing import Any, Callable
 
 from src.parser.nodes import (
     AssignNode,
@@ -21,8 +25,21 @@ from src.semantic.analyzer import SemanticAnalyzer
 
 
 class CodeGenerator:
-    """esse metodo é uma constante, cuja a utilidade é definir quantos espaços tem cada nível de indentação, no caso em Java é 4"""
+    """Traduz a AST validada de Python procedural para código-fonte Java formatado."""
+
     INDENT_SIZE: int = 4
+
+    # Cache pré-alocado de prefixos de indentação (4 espaços por nível).
+    _INDENT_PREFIXES: tuple[str, ...] = tuple(" " * (level * 4) for level in range(32))
+
+    # Tabela de escape em passada única para literais de string em Java.
+    _JAVA_STRING_ESCAPE_TABLE: dict[int, str] = str.maketrans({
+        "\\": "\\\\",
+        '"': '\\"',
+        "\n": "\\n",
+        "\t": "\\t",
+        "\r": "\\r",
+    })
 
     # Tipos semânticos do analisador -> tipos Java usados nas declarações.
     JAVA_TYPES: dict[str, str] = {
@@ -37,15 +54,19 @@ class CodeGenerator:
     ASSIGN_OPERATORS: frozenset[str] = frozenset({"=", "+=", "-="})
 
     def __init__(self) -> None:
-        self.indent_level: int = 0 #guarda o nível da indentação
-        self.code_lines: list[str] = [] #lista de linhas de código na ordem já geradas
-        self.declared_vars: set[str] = set() #variáveis que já receberam declaração Java
+        self.indent_level: int = 0
+        self.code_lines: list[str] = []
+        self.declared_vars: set[str] = set()
         self._scope_stack: list[set[str]] = [self.declared_vars]
-        self._analyzer: SemanticAnalyzer = SemanticAnalyzer() #fornece o tipo das variáveis
+        self._analyzer: SemanticAnalyzer = SemanticAnalyzer()
+        self._visitor_cache: dict[type[Node], Callable[[Any], None]] = {}
 
     def _is_declared(self, name: str) -> bool:
         """Verifica se ``name`` já foi declarada no escopo atual ou em escopos pais."""
-        return any(name in scope for scope in reversed(self._scope_stack))
+        for scope in reversed(self._scope_stack):
+            if name in scope:
+                return True
+        return False
 
     def _enter_block_scope(self) -> None:
         """Abre um novo escopo léxico de bloco no analisador e na pilha de declarações."""
@@ -65,34 +86,43 @@ class CodeGenerator:
         self.indent()
         self._enter_block_scope()
         try:
+            visit = self.visit
             for stmt in statements:
-                self.visit(stmt)
+                visit(stmt)
         finally:
             self._exit_block_scope()
             self.dedent()
 
-    """calcula os espaços e colaca a linha de código com sua indentação na lista"""
     def emit(self, code: str) -> None:
-        prefix = " " * (self.indent_level * self.INDENT_SIZE)
-        self.code_lines.append(f"{prefix}{code}")
+        """Adiciona uma linha de código Java precedida pela indentação atual."""
+        level = self.indent_level
+        if self.INDENT_SIZE == 4 and level < len(self._INDENT_PREFIXES):
+            prefix = self._INDENT_PREFIXES[level]
+        else:
+            prefix = " " * (level * self.INDENT_SIZE)
+        self.code_lines.append(f"{prefix}{code}" if prefix else code)
 
-    """soma +1 nível cada vez que abrir uma chave"""
     def indent(self) -> None:
+        """Incrementa o nível de indentação atual em 1."""
         self.indent_level += 1
 
-    """remove -1 nível cada vez que fechar uma chave"""
-    def dedent(self) -> None: 
+    def dedent(self) -> None:
+        """Decrementa o nível de indentação atual em 1.
+
+        Raises:
+            ValueError: Se o nível de indentação já estiver em 0.
+        """
         if self.indent_level > 0:
             self.indent_level -= 1
         else:
             raise ValueError("A indentação não pode ter nível menor que 0.")
 
-    """junta as linhas da lista em uma única string"""
     def get_code(self) -> str:
+        """Une as linhas emitidas em uma única string terminada por quebra de linha."""
         return "\n".join(self.code_lines) + "\n"
 
-    """gera o corpo da main vazio e devolve tudo com uma única string"""
     def generate(self, node: ProgramNode) -> str:
+        """Gera a classe ``Main`` completa em Java a partir de um ``ProgramNode``."""
         self.indent_level = 0
         self.code_lines = []
         self.declared_vars = set()
@@ -105,8 +135,9 @@ class CodeGenerator:
         self.emit("public static void main(String[] args) {")
         self.indent()
 
+        visit = self.visit
         for stmt in node.stmts:
-            self.visit(stmt)
+            visit(stmt)
 
         self.dedent()
         self.emit("}")
@@ -139,13 +170,7 @@ class CodeGenerator:
             return str(node.value)
 
         if isinstance(node, StringLiteralNode):
-            escaped = (
-                node.value.replace("\\", "\\\\")
-                .replace('"', '\\"')
-                .replace("\n", "\\n")
-                .replace("\t", "\\t")
-                .replace("\r", "\\r")
-            )
+            escaped = node.value.translate(self._JAVA_STRING_ESCAPE_TABLE)
             return f'"{escaped}"'
 
         if isinstance(node, NoneLiteralNode):
@@ -177,11 +202,15 @@ class CodeGenerator:
         Raises:
             ValueError: Se o tipo de nó não possuir gerador de instrução.
         """
-        visitor = getattr(self, f"visit_{type(node).__name__}", None)
+        node_type = type(node)
+        visitor = self._visitor_cache.get(node_type)
         if visitor is None:
-            raise ValueError(
-                f"Instrução não suportada na geração de código: {type(node).__name__}"
-            )
+            visitor = getattr(self, f"visit_{node_type.__name__}", None)
+            if visitor is None:
+                raise ValueError(
+                    f"Instrução não suportada na geração de código: {node_type.__name__}"
+                )
+            self._visitor_cache[node_type] = visitor
         visitor(node)
 
     def java_type(self, semantic_type: str) -> str:

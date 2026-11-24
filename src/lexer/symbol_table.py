@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from .token_type import TokenType
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Symbol:
     """Registra os dados da primeira ocorrência de um identificador."""
 
@@ -31,9 +31,11 @@ def insert_symbol(
     col: int,
 ) -> Symbol:
     """Insere um símbolo novo ou retorna o registro já existente."""
-    if name not in table:
-        table[name] = Symbol(name, token_type, line, col)
-    return table[name]
+    symbol = table.get(name)
+    if symbol is None:
+        symbol = Symbol(name, token_type, line, col)
+        table[name] = symbol
+    return symbol
 
 
 def lookup_symbol(table: SymbolTable, name: str) -> Symbol | None:

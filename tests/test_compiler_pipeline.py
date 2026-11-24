@@ -273,3 +273,24 @@ def test_cli_main_reports_formatted_compilation_errors_to_stderr(
     assert exit_code == 1
     assert expected_error_prefix in captured.err
     assert not output_java.exists()
+
+
+def test_compile_source_on_stage_callback_reports_ordered_lifecycle() -> None:
+    """Verifica que on_stage recebe running e done para todas as 4 fases na ordem exata."""
+    events: list[tuple[str, str]] = []
+    java_code = compile_source(
+        "x = 10\ny = x + 5\n",
+        on_stage=lambda stage, status: events.append((stage, status)),
+    )
+    assert "int y = (x + 5);" in java_code
+    assert events == [
+        ("lexer", "running"),
+        ("lexer", "done"),
+        ("parser", "running"),
+        ("parser", "done"),
+        ("semantic", "running"),
+        ("semantic", "done"),
+        ("codegen", "running"),
+        ("codegen", "done"),
+    ]
+
