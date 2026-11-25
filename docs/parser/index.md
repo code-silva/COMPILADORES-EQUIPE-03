@@ -1,4 +1,9 @@
-# Analisador Sintático
+# Analisador Sintático — Visão Geral e API
+
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 2 de 4 · Análise Sintática (Visão Geral e API)</span>
+  <span class="phase-banner-meta">src/parser/parser.py · Descida Recursiva + Precedence Climbing</span>
+</div>
 
 O analisador sintático (`src/parser/`) recebe a sequência de tokens gerada pelo **Scanner** e constrói a **Árvore Sintática Abstrata (AST)** do programa, cujo nó raiz é o `ProgramNode`.
 

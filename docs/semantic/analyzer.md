@@ -1,5 +1,10 @@
 # Analisador Semântico e Navegação na AST (Visitor)
 
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 3 de 4 · Análise Semântica (Padrão Visitor e Escopos de Bloco)</span>
+  <span class="phase-banner-meta">src/semantic/analyzer.py · src/semantic/errors.py</span>
+</div>
+
 O módulo `src/semantic/analyzer.py` implementa a infraestrutura base do **Analisador Semântico** (`SemanticAnalyzer`) do compilador **PyToJava**, juntamente com a exceção tipada `SemanticError` definida em `src/semantic/errors.py`.
 
 Após o `Parser` construir a **Árvore Sintática Abstrata (AST)** a partir do fluxo de tokens, o `SemanticAnalyzer` percorre recursivamente todos os nós da árvore utilizando o padrão de projeto **Visitor**, gerenciando a abertura e o fechamento de escopos léxicos através da `SymbolTable`.

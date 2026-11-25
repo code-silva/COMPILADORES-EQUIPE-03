@@ -1,5 +1,10 @@
 # Arquitetura do Scanner (Analisador Léxico)
 
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 1 de 4 · Análise Léxica (Arquitetura e Fluxo)</span>
+  <span class="phase-banner-meta">src/lexer/char_stream.py · src/lexer/scanner.py · src/lexer/indent_manager.py</span>
+</div>
+
 O **Scanner** é a primeira fase do compilador **PyToJava**. Ele percorre o código-fonte Python caractere a caractere e o transforma em uma sequência de **tokens** prontos para o *parser*. Nesta fase, o texto bruto deixa de ser apenas uma cadeia de caracteres e passa a ser uma **fila ordenada de unidades léxicas**, cada uma com tipo, lexema e posição (linha e coluna).
 
 O ciclo de vida dos dados na análise léxica é:

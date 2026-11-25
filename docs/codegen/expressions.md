@@ -1,5 +1,10 @@
 # Geração de Código para Expressões
 
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 4 de 4 · Geração de Código Java (Literais e Expressões)</span>
+  <span class="phase-banner-meta">src/codegen/code_generator.py · CodeGenerator.gen_expression()</span>
+</div>
+
 O método `CodeGenerator.gen_expression(node: Node) -> str`, implementado em `src/codegen/code_generator.py`, é responsável por traduzir os nós de expressão da **Árvore Sintática Abstrata (AST)** para a sintaxe estrita equivalente na linguagem **Java**.
 
 Essa etapa abrange todos os nós folhas de valores primitivos (`IntLiteralNode`, `FloatLiteralNode`, `StringLiteralNode`, `BoolLiteralNode` e `NoneLiteralNode`), referências a variáveis (`IdentifierNode`) e expressões operacionais (`BinOpNode`), preservando de forma determinística a árvore de precedência construída pelo `Parser`.

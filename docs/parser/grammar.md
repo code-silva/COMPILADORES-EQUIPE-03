@@ -1,5 +1,10 @@
 # Gramática de Expressões e Precedência de Operadores
 
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 2 de 4 · Análise Sintática (Gramática EBNF e Precedência)</span>
+  <span class="phase-banner-meta">src/parser/parser.py · Precedence Climbing e Controle de Fluxo</span>
+</div>
+
 O módulo `src/parser/parser.py` implementa a infraestrutura principal da classe `Parser`, responsável por converter a sequência linear de tokens emitida pelo `Scanner` em sub-árvores da **Árvore Sintática Abstrata (AST)**.
 
 O reconhecimento de expressões utiliza análise sintática recursiva descendente combinada com o algoritmo de **Subida de Precedência (*Precedence Climbing*)**, garantindo que operadores unários, aritméticos, relacionais e agrupamentos por parênteses sejam estruturados respeitando a hierarquia matemática da linguagem.

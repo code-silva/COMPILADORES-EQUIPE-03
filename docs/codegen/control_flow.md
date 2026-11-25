@@ -1,5 +1,10 @@
 # Geração de Código para Estruturas de Controle de Fluxo
 
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 4 de 4 · Geração de Código Java (Condicionais e Laços)</span>
+  <span class="phase-banner-meta">src/codegen/code_generator.py · if / else if / else e while</span>
+</div>
+
 O módulo `src/codegen/code_generator.py` traduz as estruturas de controle procedurais da AST (`IfNode`, `ElifClauseNode`, `ElseClauseNode` e `WhileNode`) para blocos equivalentes em **Java**, substituindo a delimitação por recuo (`INDENT`/`DEDENT`) do Python por blocos explícitos delimitados por chaves `{}` e indentados em múltiplos de 4 espaços.
 
 ---

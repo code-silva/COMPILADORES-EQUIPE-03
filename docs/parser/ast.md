@@ -1,5 +1,10 @@
 # Árvore Sintática Abstrata (AST)
 
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 2 de 4 · Análise Sintática (Modelagem da AST)</span>
+  <span class="phase-banner-meta">src/parser/nodes.py · Hierarquia de Nós @dataclass</span>
+</div>
+
 A **Árvore Sintática Abstrata** (*Abstract Syntax Tree* — **AST**) é a estrutura de dados central produzida pelo **Analisador Sintático (Parser)** do compilador **PyToJava**. Enquanto a análise léxica converte o código-fonte Python em uma sequência linear de tokens, a AST organiza essas construções em uma hierarquia em árvore que reflete a estrutura gramatical e semântica do programa, abstraindo detalhes puramente sintáticos (como delimitadores, quebras de linha e recuos `INDENT`/`DEDENT`).
 
 Cada nó da árvore é modelado com `@dataclass` no módulo `src/parser/nodes.py` e carrega metadados de rastreabilidade (`line` e `column`) herdados da classe base `Node`, permitindo que as fases seguintes (análise semântica e geração de código Java) reportem diagnósticos precisos no código-fonte original.
