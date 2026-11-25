@@ -32,15 +32,6 @@ class CodeGenerator:
     # Cache pré-alocado de prefixos de indentação (4 espaços por nível).
     _INDENT_PREFIXES: tuple[str, ...] = tuple(" " * (level * 4) for level in range(32))
 
-    # Tabela de escape em passada única para literais de string em Java.
-    _JAVA_STRING_ESCAPE_TABLE: dict[int, str] = str.maketrans({
-        "\\": "\\\\",
-        '"': '\\"',
-        "\n": "\\n",
-        "\t": "\\t",
-        "\r": "\\r",
-    })
-
     # Tipos semânticos do analisador -> tipos Java usados nas declarações.
     JAVA_TYPES: dict[str, str] = {
         "int": "int",
@@ -53,13 +44,14 @@ class CodeGenerator:
     # Operadores de atribuição aceitos pelo gerador.
     ASSIGN_OPERATORS: frozenset[str] = frozenset({"=", "+=", "-="})
 
+    _VISITOR_DISPATCH: dict[type[Node], Callable[[CodeGenerator, Any], None]] = {}
+
     def __init__(self) -> None:
         self.indent_level: int = 0
         self.code_lines: list[str] = []
         self.declared_vars: set[str] = set()
         self._scope_stack: list[set[str]] = [self.declared_vars]
         self._analyzer: SemanticAnalyzer = SemanticAnalyzer()
-        self._visitor_cache: dict[type[Node], Callable[[Any], None]] = {}
 
     def _is_declared(self, name: str) -> bool:
         """Verifica se ``name`` já foi declarada no escopo atual ou em escopos pais."""
@@ -160,26 +152,15 @@ class CodeGenerator:
             ValueError: Se o nó de operação binária estiver incompleto ou se o tipo
                 de nó não for suportado como expressão.
         """
-        if isinstance(node, BoolLiteralNode):
-            return "true" if node.value else "false"
+        node_type = type(node)
 
-        if isinstance(node, IntLiteralNode):
-            return str(node.value)
-
-        if isinstance(node, FloatLiteralNode):
-            return str(node.value)
-
-        if isinstance(node, StringLiteralNode):
-            escaped = node.value.translate(self._JAVA_STRING_ESCAPE_TABLE)
-            return f'"{escaped}"'
-
-        if isinstance(node, NoneLiteralNode):
-            return "null"
-
-        if isinstance(node, IdentifierNode):
+        if node_type is IdentifierNode or isinstance(node, IdentifierNode):
             return node.name
 
-        if isinstance(node, BinOpNode):
+        if node_type is IntLiteralNode or isinstance(node, IntLiteralNode):
+            return str(node.value)
+
+        if node_type is BinOpNode or isinstance(node, BinOpNode):
             if node.left is None or node.right is None:
                 raise ValueError(
                     "BinOpNode requer ambos os operandos (left e right) para gerar código."
@@ -188,8 +169,27 @@ class CodeGenerator:
             right_expr = self.gen_expression(node.right)
             return f"({left_expr} {node.op} {right_expr})"
 
+        if node_type is FloatLiteralNode or isinstance(node, FloatLiteralNode):
+            return str(node.value)
+
+        if node_type is StringLiteralNode or isinstance(node, StringLiteralNode):
+            escaped = (
+                node.value.replace("\\", "\\\\")
+                .replace('"', '\\"')
+                .replace("\n", "\\n")
+                .replace("\t", "\\t")
+                .replace("\r", "\\r")
+            )
+            return f'"{escaped}"'
+
+        if node_type is BoolLiteralNode or isinstance(node, BoolLiteralNode):
+            return "true" if node.value else "false"
+
+        if node_type is NoneLiteralNode or isinstance(node, NoneLiteralNode):
+            return "null"
+
         raise ValueError(
-            f"Nó de expressão não suportado na geração de código: {type(node).__name__}"
+            f"Nó de expressão não suportado na geração de código: {node_type.__name__}"
         )
 
     # ==========================================================================
@@ -203,14 +203,16 @@ class CodeGenerator:
             ValueError: Se o tipo de nó não possuir gerador de instrução.
         """
         node_type = type(node)
-        visitor = self._visitor_cache.get(node_type)
+        if type(self) is CodeGenerator:
+            handler = self._VISITOR_DISPATCH.get(node_type)
+            if handler is not None:
+                handler(self, node)
+                return
+        visitor = getattr(self, f"visit_{node_type.__name__}", None)
         if visitor is None:
-            visitor = getattr(self, f"visit_{node_type.__name__}", None)
-            if visitor is None:
-                raise ValueError(
-                    f"Instrução não suportada na geração de código: {node_type.__name__}"
-                )
-            self._visitor_cache[node_type] = visitor
+            raise ValueError(
+                f"Instrução não suportada na geração de código: {node_type.__name__}"
+            )
         visitor(node)
 
     def java_type(self, semantic_type: str) -> str:
@@ -320,3 +322,13 @@ class CodeGenerator:
         self.emit(f"while ({cond_expr}) {{")
         self._emit_block_body(node.body)
         self.emit("}")
+
+
+CodeGenerator._VISITOR_DISPATCH = {
+    AssignNode: CodeGenerator.visit_AssignNode,
+    ReturnNode: CodeGenerator.visit_ReturnNode,
+    IfNode: CodeGenerator.visit_IfNode,
+    ElifClauseNode: CodeGenerator.visit_ElifClauseNode,
+    ElseClauseNode: CodeGenerator.visit_ElseClauseNode,
+    WhileNode: CodeGenerator.visit_WhileNode,
+}

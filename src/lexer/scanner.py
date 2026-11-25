@@ -68,19 +68,24 @@ class Scanner:
     def _scan_number(self, line: int, column: int) -> Token:
         """Reconhece literais numéricos inteiros (``INT_LITERAL``) ou decimais (``FLOAT_LITERAL``)."""
         stream = self.stream
+        source = stream.source_code
+        length = len(source)
         start = stream.cursor
+        cursor = start
         is_float = False
 
-        while not stream.is_at_end() and stream.peek().isdigit():
-            stream.advance()
+        while cursor < length and source[cursor].isdigit():
+            cursor += 1
 
-        if not stream.is_at_end() and stream.peek() == "." and stream.peek_next().isdigit():
+        if cursor + 1 < length and source[cursor] == "." and source[cursor + 1].isdigit():
             is_float = True
-            stream.advance()
-            while not stream.is_at_end() and stream.peek().isdigit():
-                stream.advance()
+            cursor += 2
+            while cursor < length and source[cursor].isdigit():
+                cursor += 1
 
-        lexeme = stream.source_code[start : stream.cursor]
+        stream.cursor = cursor
+        stream.column += cursor - start
+        lexeme = source[start:cursor]
         if is_float:
             return Token(TokenType.FLOAT_LITERAL, lexeme, float(lexeme), line, column)
         return Token(TokenType.INT_LITERAL, lexeme, int(lexeme), line, column)
@@ -88,45 +93,75 @@ class Scanner:
     def _scan_identifier(self, line: int, column: int) -> Token:
         """Reconhece identificadores ou palavras reservadas da linguagem."""
         stream = self.stream
+        source = stream.source_code
+        length = len(source)
         start = stream.cursor
+        cursor = start
 
-        while not stream.is_at_end():
-            ch = stream.peek()
+        while cursor < length:
+            ch = source[cursor]
             if ch.isalnum() or ch == "_":
-                stream.advance()
+                cursor += 1
             else:
                 break
 
-        lexeme = stream.source_code[start : stream.cursor]
+        stream.cursor = cursor
+        stream.column += cursor - start
+        lexeme = source[start:cursor]
         token_type = self.KEYWORDS.get(lexeme, TokenType.IDENTIFIER)
         return Token(token_type, lexeme, None, line, column)
 
     def _scan_string(self, start_line: int, start_col: int) -> Token:
         """Reconhece literais de string delimitados por aspas simples ou duplas."""
         stream = self.stream
-        quote_type = stream.advance()
-        chars: list[str] = []
+        source = stream.source_code
+        length = len(source)
+        start_cursor = stream.cursor
+        quote_type = source[start_cursor]
+        cursor = start_cursor + 1
+        chunk_start = cursor
+        chunks: list[str] | None = None
         escapes = self._STRING_ESCAPES
 
-        while not stream.is_at_end():
-            character = stream.peek()
-            if character == quote_type or character in self._LINE_BREAKS:
-                break
+        while cursor < length:
+            character = source[cursor]
+            if character == quote_type:
+                if chunks is None:
+                    value = source[chunk_start:cursor]
+                else:
+                    if cursor > chunk_start:
+                        chunks.append(source[chunk_start:cursor])
+                    value = "".join(chunks)
+                cursor += 1
+                stream.cursor = cursor
+                stream.column += cursor - start_cursor
+                return Token(TokenType.STRING_LITERAL, value, value, start_line, start_col)
+
+            if character == "\n" or character == "\r":
+                stream.cursor = cursor
+                stream.column += cursor - start_cursor
+                raise LexicalError("literal de string não terminado", start_line, start_col)
+
             if character == "\\":
-                stream.advance()
-                if stream.is_at_end() or stream.peek() in self._LINE_BREAKS:
+                if chunks is None:
+                    chunks = []
+                if cursor > chunk_start:
+                    chunks.append(source[chunk_start:cursor])
+                cursor += 1
+                if cursor >= length or source[cursor] in ("\n", "\r"):
+                    stream.cursor = cursor
+                    stream.column += cursor - start_cursor
                     raise LexicalError("literal de string não terminado", start_line, start_col)
-                next_char = stream.advance()
-                chars.append(escapes.get(next_char, next_char))
+                next_char = source[cursor]
+                chunks.append(escapes.get(next_char, next_char))
+                cursor += 1
+                chunk_start = cursor
             else:
-                chars.append(stream.advance())
+                cursor += 1
 
-        if stream.is_at_end() or stream.peek() in self._LINE_BREAKS:
-            raise LexicalError("literal de string não terminado", start_line, start_col)
-
-        stream.advance()
-        value = "".join(chars)
-        return Token(TokenType.STRING_LITERAL, value, value, start_line, start_col)
+        stream.cursor = cursor
+        stream.column += cursor - start_cursor
+        raise LexicalError("literal de string não terminado", start_line, start_col)
 
     def _scan_delimiter(self, line: int, column: int) -> Token:
         """Reconhece delimitadores pontuais ``:``, ``(`` e ``)``."""
@@ -184,14 +219,27 @@ class Scanner:
     def _skip_whitespace(self) -> None:
         """Consome espaços e tabulações horizontais no meio da linha."""
         stream = self.stream
-        while not stream.is_at_end() and stream.peek() in self._INLINE_WHITESPACE:
-            stream.advance()
+        source = stream.source_code
+        length = len(source)
+        start = stream.cursor
+        cursor = start
+        while cursor < length and source[cursor] in (" ", "\t"):
+            cursor += 1
+        if cursor != start:
+            stream.cursor = cursor
+            stream.column += cursor - start
 
     def _skip_comment(self) -> None:
         """Descarta comentários iniciados por ``#`` até o final da linha física."""
         stream = self.stream
-        while not stream.is_at_end() and stream.peek() not in self._LINE_BREAKS:
-            stream.advance()
+        source = stream.source_code
+        length = len(source)
+        start = stream.cursor
+        cursor = start
+        while cursor < length and source[cursor] not in ("\n", "\r"):
+            cursor += 1
+        stream.cursor = cursor
+        stream.column += cursor - start
 
     def _scan_newline(self) -> Token | None:
         """Consome quebra de linha (``\\n`` ou ``\\r\\n``) e emite ``NEWLINE`` se a linha continha tokens."""
@@ -212,18 +260,31 @@ class Scanner:
     def _process_line_indentation(self) -> None:
         """Mede o recuo inicial de uma linha lógica e enfileira tokens ``INDENT``/``DEDENT``."""
         stream = self.stream
+        source = stream.source_code
+        length = len(source)
         self.at_line_start = False
         start_line = stream.line
         start_col = stream.column
+        start = stream.cursor
+        cursor = start
 
         indent_level = 0
-        while not stream.is_at_end() and stream.peek() in self._INLINE_WHITESPACE:
-            if stream.advance() == "\t":
-                indent_level += 4
-            else:
+        while cursor < length:
+            ch = source[cursor]
+            if ch == " ":
                 indent_level += 1
+                cursor += 1
+            elif ch == "\t":
+                indent_level += 4
+                cursor += 1
+            else:
+                break
 
-        if not stream.is_at_end() and stream.peek() not in self._NON_INDENT_LINE_STARTS:
+        if cursor != start:
+            stream.cursor = cursor
+            stream.column += cursor - start
+
+        if cursor < length and source[cursor] not in self._NON_INDENT_LINE_STARTS:
             tokens = process_indentation(indent_level, start_line, start_col)
             if tokens:
                 self.pending_tokens.extend(tokens)

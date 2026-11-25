@@ -42,11 +42,11 @@ class SemanticAnalyzer:
     _ARITHMETIC_OPERATORS = frozenset({"+", "-", "*", "/", "%"})
     _COMPARISON_OPERATORS = frozenset({"==", "!=", "<", ">", "<=", ">="})
     _NUMERIC_TYPES = frozenset({"int", "float"})
+    _VISITOR_DISPATCH: dict[type[Node], Callable[[SemanticAnalyzer, Any], Any]] = {}
 
     def __init__(self) -> None:
         self.global_scope: SymbolTable = SymbolTable()
         self.current_scope: SymbolTable = self.global_scope
-        self._visitor_cache: dict[type[Node], Callable[[Any], Any]] = {}
 
     # ==========================================================================
     # Gerenciamento de Escopos
@@ -90,10 +90,11 @@ class SemanticAnalyzer:
             return None
 
         node_type = type(node)
-        visitor = self._visitor_cache.get(node_type)
-        if visitor is None:
-            visitor = getattr(self, f"visit_{node_type.__name__}", self.generic_visit)
-            self._visitor_cache[node_type] = visitor
+        if type(self) is SemanticAnalyzer:
+            handler = self._VISITOR_DISPATCH.get(node_type)
+            if handler is not None:
+                return handler(self, node)
+        visitor = getattr(self, f"visit_{node_type.__name__}", self.generic_visit)
         return visitor(node)
 
     def generic_visit(self, node: Node) -> None:
@@ -344,3 +345,21 @@ class SemanticAnalyzer:
     def visit_NoneLiteralNode(self, node: NoneLiteralNode) -> str:
         """Infere o tipo ``'None'`` para o literal nulo."""
         return "None"
+
+
+SemanticAnalyzer._VISITOR_DISPATCH = {
+    ProgramNode: SemanticAnalyzer.visit_ProgramNode,
+    AssignNode: SemanticAnalyzer.visit_AssignNode,
+    ReturnNode: SemanticAnalyzer.visit_ReturnNode,
+    IfNode: SemanticAnalyzer.visit_IfNode,
+    ElifClauseNode: SemanticAnalyzer.visit_ElifClauseNode,
+    ElseClauseNode: SemanticAnalyzer.visit_ElseClauseNode,
+    WhileNode: SemanticAnalyzer.visit_WhileNode,
+    BinOpNode: SemanticAnalyzer.visit_BinOpNode,
+    IdentifierNode: SemanticAnalyzer.visit_IdentifierNode,
+    IntLiteralNode: SemanticAnalyzer.visit_IntLiteralNode,
+    FloatLiteralNode: SemanticAnalyzer.visit_FloatLiteralNode,
+    StringLiteralNode: SemanticAnalyzer.visit_StringLiteralNode,
+    BoolLiteralNode: SemanticAnalyzer.visit_BoolLiteralNode,
+    NoneLiteralNode: SemanticAnalyzer.visit_NoneLiteralNode,
+}
