@@ -1,5 +1,10 @@
 # Tabela de Símbolos e Escopos
 
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 3 de 4 · Análise Semântica (Tabela de Símbolos e Escopos)</span>
+  <span class="phase-banner-meta">src/semantic/symbol_table.py · Symbol e SymbolTable Encadeada</span>
+</div>
+
 A tabela de símbolos (`src/semantic/symbol_table.py`) é a memória do **analisador semântico**: ela registra cada variável declarada no programa, com o seu tipo e a linha em que apareceu, e responde se um nome está visível em determinado ponto do código.
 
 !!! note "Não confundir com a tabela do léxico"
@@ -16,7 +21,7 @@ Registro imutável de uma variável.
 | Atributo | Tipo | Descrição |
 | :--- | :--- | :--- |
 | `name` | `str` | Nome do identificador. |
-| `type` | `str` | Tipo primitivo: `"int"`, `"float"`, `"str"`, `"bool"` ou `"None"`. |
+| `type` | `str` | Tipo primitivo: `"int"`, `"float"`, `"String"`, `"boolean"` ou `"None"`. |
 | `line` | `int` | Linha da primeira definição. |
 | `column` | `int` | Coluna da primeira definição (opcional, padrão `0`). |
 

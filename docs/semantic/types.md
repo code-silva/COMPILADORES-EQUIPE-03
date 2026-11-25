@@ -1,5 +1,10 @@
 # Tipos e Compatibilidade Semântica
 
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 3 de 4 · Análise Semântica (Inferência e Coerção de Tipos)</span>
+  <span class="phase-banner-meta">src/semantic/analyzer.py · int · float · String · boolean · None</span>
+</div>
+
 O analisador semântico do **PyToJava** infere e valida tipos para expressões e
 atribuições. Esta página documenta os tipos primitivos reconhecidos, a matriz de
 compatibilidade de operações binárias (`BinOpNode`) e as regras de registro e

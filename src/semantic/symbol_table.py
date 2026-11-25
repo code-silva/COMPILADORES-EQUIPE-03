@@ -19,14 +19,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Symbol:
     """Variável registrada na tabela de símbolos.
 
     Atributos:
         name: Nome do identificador no código-fonte.
         type: Tipo primitivo inferido para a variável
-            (ex.: ``"int"``, ``"float"``, ``"str"``, ``"bool"``, ``"None"``).
+            (ex.: ``"int"``, ``"float"``, ``"String"``, ``"boolean"``, ``"None"``).
         line: Linha em que a variável foi definida pela primeira vez.
         column: Coluna em que a variável foi definida (opcional, padrão 0).
     """
@@ -44,6 +44,8 @@ class SymbolTable:
         symbols: Símbolos definidos neste escopo, indexados pelo nome.
         parent: Escopo que contém este, ou ``None`` no escopo global.
     """
+
+    __slots__ = ("symbols", "parent")
 
     def __init__(self, parent: SymbolTable | None = None) -> None:
         self.symbols: dict[str, Symbol] = {}
@@ -92,7 +94,12 @@ class SymbolTable:
     @property
     def depth(self) -> int:
         """Profundidade do escopo: 0 no global, 1 em um bloco dentro dele..."""
-        return 0 if self.parent is None else self.parent.depth + 1
+        level = 0
+        scope = self.parent
+        while scope is not None:
+            level += 1
+            scope = scope.parent
+        return level
 
     def __repr__(self) -> str:
         return f"SymbolTable(symbols={list(self.symbols)}, depth={self.depth})"

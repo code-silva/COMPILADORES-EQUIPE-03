@@ -1,4 +1,8 @@
+"""Gerador de código Java a partir da Árvore Sintática Abstrata (AST)."""
+
 from __future__ import annotations
+
+from typing import Any, Callable
 
 from src.parser.nodes import (
     AssignNode,
@@ -21,8 +25,12 @@ from src.semantic.analyzer import SemanticAnalyzer
 
 
 class CodeGenerator:
-    """esse metodo é uma constante, cuja a utilidade é definir quantos espaços tem cada nível de indentação, no caso em Java é 4"""
+    """Traduz a AST validada de Python procedural para código-fonte Java formatado."""
+
     INDENT_SIZE: int = 4
+
+    # Cache pré-alocado de prefixos de indentação (4 espaços por nível).
+    _INDENT_PREFIXES: tuple[str, ...] = tuple(" " * (level * 4) for level in range(32))
 
     # Tipos semânticos do analisador -> tipos Java usados nas declarações.
     JAVA_TYPES: dict[str, str] = {
@@ -36,16 +44,21 @@ class CodeGenerator:
     # Operadores de atribuição aceitos pelo gerador.
     ASSIGN_OPERATORS: frozenset[str] = frozenset({"=", "+=", "-="})
 
+    _VISITOR_DISPATCH: dict[type[Node], Callable[[CodeGenerator, Any], None]] = {}
+
     def __init__(self) -> None:
-        self.indent_level: int = 0 #guarda o nível da indentação
-        self.code_lines: list[str] = [] #lista de linhas de código na ordem já geradas
-        self.declared_vars: set[str] = set() #variáveis que já receberam declaração Java
+        self.indent_level: int = 0
+        self.code_lines: list[str] = []
+        self.declared_vars: set[str] = set()
         self._scope_stack: list[set[str]] = [self.declared_vars]
-        self._analyzer: SemanticAnalyzer = SemanticAnalyzer() #fornece o tipo das variáveis
+        self._analyzer: SemanticAnalyzer = SemanticAnalyzer()
 
     def _is_declared(self, name: str) -> bool:
         """Verifica se ``name`` já foi declarada no escopo atual ou em escopos pais."""
-        return any(name in scope for scope in reversed(self._scope_stack))
+        for scope in reversed(self._scope_stack):
+            if name in scope:
+                return True
+        return False
 
     def _enter_block_scope(self) -> None:
         """Abre um novo escopo léxico de bloco no analisador e na pilha de declarações."""
@@ -65,34 +78,43 @@ class CodeGenerator:
         self.indent()
         self._enter_block_scope()
         try:
+            visit = self.visit
             for stmt in statements:
-                self.visit(stmt)
+                visit(stmt)
         finally:
             self._exit_block_scope()
             self.dedent()
 
-    """calcula os espaços e colaca a linha de código com sua indentação na lista"""
     def emit(self, code: str) -> None:
-        prefix = " " * (self.indent_level * self.INDENT_SIZE)
-        self.code_lines.append(f"{prefix}{code}")
+        """Adiciona uma linha de código Java precedida pela indentação atual."""
+        level = self.indent_level
+        if self.INDENT_SIZE == 4 and level < len(self._INDENT_PREFIXES):
+            prefix = self._INDENT_PREFIXES[level]
+        else:
+            prefix = " " * (level * self.INDENT_SIZE)
+        self.code_lines.append(f"{prefix}{code}" if prefix else code)
 
-    """soma +1 nível cada vez que abrir uma chave"""
     def indent(self) -> None:
+        """Incrementa o nível de indentação atual em 1."""
         self.indent_level += 1
 
-    """remove -1 nível cada vez que fechar uma chave"""
-    def dedent(self) -> None: 
+    def dedent(self) -> None:
+        """Decrementa o nível de indentação atual em 1.
+
+        Raises:
+            ValueError: Se o nível de indentação já estiver em 0.
+        """
         if self.indent_level > 0:
             self.indent_level -= 1
         else:
             raise ValueError("A indentação não pode ter nível menor que 0.")
 
-    """junta as linhas da lista em uma única string"""
     def get_code(self) -> str:
+        """Une as linhas emitidas em uma única string terminada por quebra de linha."""
         return "\n".join(self.code_lines) + "\n"
 
-    """gera o corpo da main vazio e devolve tudo com uma única string"""
     def generate(self, node: ProgramNode) -> str:
+        """Gera a classe ``Main`` completa em Java a partir de um ``ProgramNode``."""
         self.indent_level = 0
         self.code_lines = []
         self.declared_vars = set()
@@ -105,8 +127,9 @@ class CodeGenerator:
         self.emit("public static void main(String[] args) {")
         self.indent()
 
+        visit = self.visit
         for stmt in node.stmts:
-            self.visit(stmt)
+            visit(stmt)
 
         self.dedent()
         self.emit("}")
@@ -129,16 +152,27 @@ class CodeGenerator:
             ValueError: Se o nó de operação binária estiver incompleto ou se o tipo
                 de nó não for suportado como expressão.
         """
-        if isinstance(node, BoolLiteralNode):
-            return "true" if node.value else "false"
+        node_type = type(node)
 
-        if isinstance(node, IntLiteralNode):
+        if node_type is IdentifierNode or isinstance(node, IdentifierNode):
+            return node.name
+
+        if node_type is IntLiteralNode or isinstance(node, IntLiteralNode):
             return str(node.value)
 
-        if isinstance(node, FloatLiteralNode):
+        if node_type is BinOpNode or isinstance(node, BinOpNode):
+            if node.left is None or node.right is None:
+                raise ValueError(
+                    "BinOpNode requer ambos os operandos (left e right) para gerar código."
+                )
+            left_expr = self.gen_expression(node.left)
+            right_expr = self.gen_expression(node.right)
+            return f"({left_expr} {node.op} {right_expr})"
+
+        if node_type is FloatLiteralNode or isinstance(node, FloatLiteralNode):
             return str(node.value)
 
-        if isinstance(node, StringLiteralNode):
+        if node_type is StringLiteralNode or isinstance(node, StringLiteralNode):
             escaped = (
                 node.value.replace("\\", "\\\\")
                 .replace('"', '\\"')
@@ -148,23 +182,14 @@ class CodeGenerator:
             )
             return f'"{escaped}"'
 
-        if isinstance(node, NoneLiteralNode):
+        if node_type is BoolLiteralNode or isinstance(node, BoolLiteralNode):
+            return "true" if node.value else "false"
+
+        if node_type is NoneLiteralNode or isinstance(node, NoneLiteralNode):
             return "null"
 
-        if isinstance(node, IdentifierNode):
-            return node.name
-
-        if isinstance(node, BinOpNode):
-            if node.left is None or node.right is None:
-                raise ValueError(
-                    "BinOpNode requer ambos os operandos (left e right) para gerar código."
-                )
-            left_expr = self.gen_expression(node.left)
-            right_expr = self.gen_expression(node.right)
-            return f"({left_expr} {node.op} {right_expr})"
-
         raise ValueError(
-            f"Nó de expressão não suportado na geração de código: {type(node).__name__}"
+            f"Nó de expressão não suportado na geração de código: {node_type.__name__}"
         )
 
     # ==========================================================================
@@ -177,10 +202,16 @@ class CodeGenerator:
         Raises:
             ValueError: Se o tipo de nó não possuir gerador de instrução.
         """
-        visitor = getattr(self, f"visit_{type(node).__name__}", None)
+        node_type = type(node)
+        if type(self) is CodeGenerator:
+            handler = self._VISITOR_DISPATCH.get(node_type)
+            if handler is not None:
+                handler(self, node)
+                return
+        visitor = getattr(self, f"visit_{node_type.__name__}", None)
         if visitor is None:
             raise ValueError(
-                f"Instrução não suportada na geração de código: {type(node).__name__}"
+                f"Instrução não suportada na geração de código: {node_type.__name__}"
             )
         visitor(node)
 
@@ -291,3 +322,13 @@ class CodeGenerator:
         self.emit(f"while ({cond_expr}) {{")
         self._emit_block_body(node.body)
         self.emit("}")
+
+
+CodeGenerator._VISITOR_DISPATCH = {
+    AssignNode: CodeGenerator.visit_AssignNode,
+    ReturnNode: CodeGenerator.visit_ReturnNode,
+    IfNode: CodeGenerator.visit_IfNode,
+    ElifClauseNode: CodeGenerator.visit_ElifClauseNode,
+    ElseClauseNode: CodeGenerator.visit_ElseClauseNode,
+    WhileNode: CodeGenerator.visit_WhileNode,
+}

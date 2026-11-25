@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable
 
 from src.parser.nodes import (
     AssignNode,
@@ -42,6 +42,7 @@ class SemanticAnalyzer:
     _ARITHMETIC_OPERATORS = frozenset({"+", "-", "*", "/", "%"})
     _COMPARISON_OPERATORS = frozenset({"==", "!=", "<", ">", "<=", ">="})
     _NUMERIC_TYPES = frozenset({"int", "float"})
+    _VISITOR_DISPATCH: dict[type[Node], Callable[[SemanticAnalyzer, Any], Any]] = {}
 
     def __init__(self) -> None:
         self.global_scope: SymbolTable = SymbolTable()
@@ -88,8 +89,12 @@ class SemanticAnalyzer:
         if node is None:
             return None
 
-        method_name = f"visit_{type(node).__name__}"
-        visitor = getattr(self, method_name, self.generic_visit)
+        node_type = type(node)
+        if type(self) is SemanticAnalyzer:
+            handler = self._VISITOR_DISPATCH.get(node_type)
+            if handler is not None:
+                return handler(self, node)
+        visitor = getattr(self, f"visit_{node_type.__name__}", self.generic_visit)
         return visitor(node)
 
     def generic_visit(self, node: Node) -> None:
@@ -105,8 +110,9 @@ class SemanticAnalyzer:
         if new_scope:
             self.enter_scope()
         try:
+            visit = self.visit
             for stmt in statements:
-                self.visit(stmt)
+                visit(stmt)
         finally:
             if new_scope:
                 self.exit_scope()
@@ -138,9 +144,10 @@ class SemanticAnalyzer:
     @classmethod
     def _numeric_result_type(cls, left_type: str, right_type: str) -> str | None:
         """Retorna o tipo numérico promovido ou ``None`` se forem incompatíveis."""
-        if left_type not in cls._NUMERIC_TYPES or right_type not in cls._NUMERIC_TYPES:
+        numeric_types = cls._NUMERIC_TYPES
+        if left_type not in numeric_types or right_type not in numeric_types:
             return None
-        if "float" in (left_type, right_type):
+        if left_type == "float" or right_type == "float":
             return "float"
         return "int"
 
@@ -158,15 +165,13 @@ class SemanticAnalyzer:
     @staticmethod
     def _is_assignable(target_type: str, value_type: str) -> bool:
         """Retorna se ``value_type`` pode ser atribuído a ``target_type``."""
-        if target_type == value_type:
-            return True
-        return target_type == "float" and value_type == "int"
+        return target_type == value_type or (target_type == "float" and value_type == "int")
 
     def _infer_arithmetic_type(
         self, node: BinOpNode, left_type: str, right_type: str
     ) -> str:
         """Valida e infere o tipo de uma operação aritmética."""
-        if node.op == "+" and left_type == right_type == "String":
+        if node.op == "+" and left_type == "String" and right_type == "String":
             return "String"
 
         numeric_type = self._numeric_result_type(left_type, right_type)
@@ -183,7 +188,7 @@ class SemanticAnalyzer:
         """Valida e infere o tipo ``'boolean'`` de uma comparação."""
         if self._numeric_result_type(left_type, right_type) is not None:
             return "boolean"
-        if left_type == right_type == "boolean":
+        if left_type == "boolean" and right_type == "boolean":
             return "boolean"
         raise self._incompatible_binop_error(node, left_type, right_type)
 
@@ -193,8 +198,9 @@ class SemanticAnalyzer:
 
     def visit_ProgramNode(self, node: ProgramNode) -> SymbolTable:
         """Percorre todas as instruções de nível superior do programa."""
+        visit = self.visit
         for stmt in node.stmts:
-            self.visit(stmt)
+            visit(stmt)
         return self.current_scope
 
     def visit_AssignNode(self, node: AssignNode) -> str:
@@ -265,8 +271,9 @@ class SemanticAnalyzer:
 
         self._visit_block(node.then_body, new_scope=True)
 
+        visit = self.visit
         for elif_clause in node.elif_clauses:
-            self.visit(elif_clause)
+            visit(elif_clause)
 
         if node.else_body:
             self._visit_block(node.else_body, new_scope=True)
@@ -338,3 +345,21 @@ class SemanticAnalyzer:
     def visit_NoneLiteralNode(self, node: NoneLiteralNode) -> str:
         """Infere o tipo ``'None'`` para o literal nulo."""
         return "None"
+
+
+SemanticAnalyzer._VISITOR_DISPATCH = {
+    ProgramNode: SemanticAnalyzer.visit_ProgramNode,
+    AssignNode: SemanticAnalyzer.visit_AssignNode,
+    ReturnNode: SemanticAnalyzer.visit_ReturnNode,
+    IfNode: SemanticAnalyzer.visit_IfNode,
+    ElifClauseNode: SemanticAnalyzer.visit_ElifClauseNode,
+    ElseClauseNode: SemanticAnalyzer.visit_ElseClauseNode,
+    WhileNode: SemanticAnalyzer.visit_WhileNode,
+    BinOpNode: SemanticAnalyzer.visit_BinOpNode,
+    IdentifierNode: SemanticAnalyzer.visit_IdentifierNode,
+    IntLiteralNode: SemanticAnalyzer.visit_IntLiteralNode,
+    FloatLiteralNode: SemanticAnalyzer.visit_FloatLiteralNode,
+    StringLiteralNode: SemanticAnalyzer.visit_StringLiteralNode,
+    BoolLiteralNode: SemanticAnalyzer.visit_BoolLiteralNode,
+    NoneLiteralNode: SemanticAnalyzer.visit_NoneLiteralNode,
+}

@@ -1,5 +1,10 @@
 # Erros Sintáticos e Casos de Borda
 
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 2 de 4 · Análise Sintática (Diagnósticos e Casos Limite)</span>
+  <span class="phase-banner-meta">src/parser/errors.py · ParserError [Linha X, Coluna Y]</span>
+</div>
+
 O analisador sintático do **PyToJava** implementa uma estratégia de diagnóstico rigorosa e determinística no módulo `src/parser/errors.py` e na classe `Parser` (`src/parser/parser.py`). Sempre que a sequência de tokens recebida do `Scanner` viola alguma produção da gramática livre de contexto da linguagem, o parser interrompe imediatamente a construção da AST e lança uma exceção tipada `ParserError` contendo a linha e a coluna exatas do token infrator.
 
 ---

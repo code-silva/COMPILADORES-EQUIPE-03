@@ -46,24 +46,24 @@ class Parser:
         TokenType.OP_DIV: 30,
     }
 
-    UNARY_OPERATORS: set[TokenType] = {
+    UNARY_OPERATORS: frozenset[TokenType] = frozenset({
         TokenType.OP_PLUS,
         TokenType.OP_MINUS,
-    }
+    })
 
-    ASSIGNMENT_OPERATORS: set[TokenType] = {
+    ASSIGNMENT_OPERATORS: frozenset[TokenType] = frozenset({
         TokenType.OP_ASSIGN,
         TokenType.OP_ADD_ASSIGN,
         TokenType.OP_SUB_ASSIGN,
-    }
+    })
 
     # Tokens que encerram uma instrução simples. ``DEDENT`` e ``EOF`` não são
     # consumidos pela instrução: pertencem a quem fecha o bloco ou o programa.
-    STATEMENT_TERMINATORS: set[TokenType] = {
+    STATEMENT_TERMINATORS: frozenset[TokenType] = frozenset({
         TokenType.NEWLINE,
         TokenType.DEDENT,
         TokenType.EOF,
-    }
+    })
 
     def __init__(self, tokens: list[Token] | str) -> None:
         """Inicializa o parser com a sequência de tokens do Scanner.
@@ -87,14 +87,7 @@ class Parser:
     @staticmethod
     def _tokenize_source(source_code: str) -> list[Token]:
         """Converte código-fonte diretamente em lista de tokens via Scanner."""
-        scanner = Scanner(source_code)
-        result: list[Token] = []
-        while True:
-            tok = scanner.next_token()
-            result.append(tok)
-            if tok.type == TokenType.EOF:
-                break
-        return result
+        return Scanner(source_code).scan()
 
     # ==========================================================================
     # Métodos Auxiliares de Navegação
@@ -102,18 +95,21 @@ class Parser:
 
     def peek(self, offset: int = 0) -> Token:
         """Retorna o token atual (ou deslocado por ``offset``) sem consumi-lo."""
+        tokens = self.tokens
         index = self.current + offset
         if index < 0:
-            return self.tokens[0]
-        if index >= len(self.tokens):
-            return self.tokens[-1]
-        return self.tokens[index]
+            return tokens[0]
+        if index >= len(tokens):
+            return tokens[-1]
+        return tokens[index]
 
     def advance(self) -> Token:
         """Consome o token atual e avança o cursor de leitura."""
-        token = self.peek()
-        if token.type != TokenType.EOF and self.current < len(self.tokens) - 1:
-            self.current += 1
+        tokens = self.tokens
+        current = self.current
+        token = tokens[current] if current < len(tokens) else tokens[-1]
+        if token.type != TokenType.EOF and current < len(tokens) - 1:
+            self.current = current + 1
         return token
 
     def match(self, *token_types: TokenType) -> bool:
@@ -178,46 +174,47 @@ class Parser:
     def parse_primary(self) -> Node:
         """Analisa expressões primárias: literais, identificadores, keywords e parênteses."""
         token = self.peek()
+        tok_type = token.type
 
-        if token.type == TokenType.INT_LITERAL:
+        if tok_type == TokenType.INT_LITERAL:
             self.advance()
             val = token.literal if token.literal is not None else int(token.lexeme)
             return IntLiteralNode(value=int(val), line=token.line, column=token.column)
 
-        if token.type == TokenType.FLOAT_LITERAL:
+        if tok_type == TokenType.FLOAT_LITERAL:
             self.advance()
             val = token.literal if token.literal is not None else float(token.lexeme)
             return FloatLiteralNode(value=float(val), line=token.line, column=token.column)
 
-        if token.type == TokenType.STRING_LITERAL:
+        if tok_type == TokenType.STRING_LITERAL:
             self.advance()
             val = token.literal if token.literal is not None else token.lexeme
             return StringLiteralNode(value=str(val), line=token.line, column=token.column)
 
-        if token.type == TokenType.KW_TRUE:
+        if tok_type == TokenType.KW_TRUE:
             self.advance()
             return BoolLiteralNode(value=True, line=token.line, column=token.column)
 
-        if token.type == TokenType.KW_FALSE:
+        if tok_type == TokenType.KW_FALSE:
             self.advance()
             return BoolLiteralNode(value=False, line=token.line, column=token.column)
 
-        if token.type == TokenType.KW_NONE:
+        if tok_type == TokenType.KW_NONE:
             self.advance()
             return NoneLiteralNode(line=token.line, column=token.column)
 
-        if token.type == TokenType.IDENTIFIER:
+        if tok_type == TokenType.IDENTIFIER:
             self.advance()
             return IdentifierNode(name=token.lexeme, line=token.line, column=token.column)
 
-        if token.type == TokenType.LPAREN:
+        if tok_type == TokenType.LPAREN:
             self.advance()
             expr = self.parse_expression()
             self.expect(TokenType.RPAREN, "Esperado ')' após a expressão agrupada")
             return expr
 
         raise ParserError(
-            f"Token inesperado ao analisar expressão primária: '{token.lexeme}' ({token.type.name})",
+            f"Token inesperado ao analisar expressão primária: '{token.lexeme}' ({tok_type.name})",
             token.line,
             token.column,
         )
@@ -249,10 +246,11 @@ class Parser:
             Nó da AST representando a expressão analisada.
         """
         left = self.parse_unary()
+        prec_map = self.PRECEDENCE
 
         while True:
             token = self.peek()
-            op_precedence = self.PRECEDENCE.get(token.type)
+            op_precedence = prec_map.get(token.type)
             if op_precedence is None or op_precedence <= precedence:
                 break
 
@@ -284,6 +282,7 @@ class Parser:
                 qualquer violação gramatical nas instruções.
         """
         program = ProgramNode(line=1, column=1)
+        stmts_append = program.stmts.append
 
         while True:
             while self.match(TokenType.NEWLINE):
@@ -300,7 +299,7 @@ class Parser:
                     token.column,
                 )
 
-            program.stmts.append(self.parse_statement())
+            stmts_append(self.parse_statement())
 
     # ==========================================================================
     # Parsing de Estruturas de Controle de Fluxo
@@ -326,6 +325,7 @@ class Parser:
         self.expect(TokenType.INDENT, "Esperado bloco indentado após ':'")
 
         statements: list[Node] = []
+        append_stmt = statements.append
         while self.peek().type != TokenType.DEDENT:
             if self.peek().type == TokenType.EOF:
                 token = self.peek()
@@ -336,19 +336,13 @@ class Parser:
                 )
             if self.match(TokenType.NEWLINE):
                 continue
-            statements.append(self.parse_statement())
+            append_stmt(self.parse_statement())
 
         self.expect(TokenType.DEDENT, "Esperado DEDENT ao encerrar o bloco")
         return statements
 
     def parse_if_statement(self) -> IfNode:
-        """Analisa ``if``/``elif``/``else`` e devolve um ``IfNode``.
-
-        A condição do ``if`` é analisada por ``parse_expression()`` e o corpo
-        principal por ``parse_block()``. Em seguida, são processadas zero ou
-        mais cláusulas ``elif`` (cada uma como ``ElifClauseNode``) e o bloco
-        opcional ``else`` (armazenado em ``else_body``).
-        """
+        """Analisa ``if``/``elif``/``else`` e devolve um ``IfNode``."""
         keyword = self.expect(TokenType.KW_IF, "Esperado 'if'")
 
         condition = self.parse_expression()
@@ -382,11 +376,7 @@ class Parser:
         )
 
     def parse_while_statement(self) -> WhileNode:
-        """Analisa ``while`` e devolve um ``WhileNode``.
-
-        A condição é analisada por ``parse_expression()`` e o corpo do laço
-        por ``parse_block()``.
-        """
+        """Analisa ``while`` e devolve um ``WhileNode``."""
         keyword = self.expect(TokenType.KW_WHILE, "Esperado 'while'")
 
         condition = self.parse_expression()
@@ -404,36 +394,26 @@ class Parser:
     # ==========================================================================
 
     def parse_statement(self) -> Node:
-        """Identifica o tipo de instrução no token atual e delega o parsing.
-
-        - ``if`` → ``parse_if_statement()``;
-        - ``while`` → ``parse_while_statement()``;
-        - ``return`` → ``parse_return_statement()``;
-        - ``IDENTIFIER`` seguido de ``=``, ``+=`` ou ``-=`` → ``parse_assignment()``;
-        - qualquer outra construção é analisada como expressão.
-
-        Instruções compostas já consomem seu próprio ``NEWLINE`` e ``DEDENT``.
-        Para instruções simples, exige que terminem em ``NEWLINE`` (consumido),
-        ``DEDENT`` ou ``EOF`` (não consumidos).
-        """
+        """Identifica o tipo de instrução no token atual e delega o parsing."""
         token = self.peek()
+        tok_type = token.type
 
-        if token.type in (TokenType.KW_ELIF, TokenType.KW_ELSE):
+        if tok_type in (TokenType.KW_ELIF, TokenType.KW_ELSE):
             raise ParserError(
                 f"Cláusula '{token.lexeme}' sem 'if' correspondente",
                 token.line,
                 token.column,
             )
 
-        if token.type == TokenType.KW_IF:
+        if tok_type == TokenType.KW_IF:
             return self.parse_if_statement()
-        if token.type == TokenType.KW_WHILE:
+        if tok_type == TokenType.KW_WHILE:
             return self.parse_while_statement()
 
-        if token.type == TokenType.KW_RETURN:
-            node = self.parse_return_statement()
+        if tok_type == TokenType.KW_RETURN:
+            node: Node = self.parse_return_statement()
         elif (
-            token.type == TokenType.IDENTIFIER
+            tok_type == TokenType.IDENTIFIER
             and self.peek(1).type in self.ASSIGNMENT_OPERATORS
         ):
             node = self.parse_assignment()
@@ -444,12 +424,7 @@ class Parser:
         return node
 
     def parse_assignment(self) -> AssignNode:
-        """Analisa ``IDENTIFIER ("=" | "+=" | "-=") expressao``.
-
-        Returns:
-            ``AssignNode`` com o nome do alvo, o operador e a expressão
-            atribuída, posicionado no identificador de destino.
-        """
+        """Analisa ``IDENTIFIER ("=" | "+=" | "-=") expressao``."""
         target = self.expect(
             TokenType.IDENTIFIER, "Esperado identificador no início da atribuição"
         )
@@ -474,11 +449,7 @@ class Parser:
         )
 
     def parse_return_statement(self) -> ReturnNode:
-        """Analisa ``"return" expressao?``.
-
-        Se o token após ``return`` já encerrar a instrução, gera um retorno
-        vazio (``value=None``); caso contrário, analisa a expressão retornada.
-        """
+        """Analisa ``"return" expressao?``."""
         keyword = self.expect(TokenType.KW_RETURN, "Esperado 'return'")
 
         value = None

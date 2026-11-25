@@ -1,4 +1,9 @@
-# Analisador Léxico
+# Analisador Léxico — Especificação de Tokens
+
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 1 de 4 · Análise Léxica (Especificação Formal)</span>
+  <span class="phase-banner-meta">src/lexer/token_type.py · src/lexer/token.py · src/lexer/errors.py</span>
+</div>
 
 O **Analisador Léxico** é a **primeira fase** da pipeline do compilador **PyToJava**. Ele lê o código-fonte Python como uma sequência bruta de caracteres e o converte em uma sequência de **tokens** — unidades lexicais mínimas com significado para a linguagem —, cada uma com o seu tipo, o lexema original e a posição (linha e coluna).
 

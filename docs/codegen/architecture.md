@@ -1,5 +1,10 @@
 # Arquitetura do Gerador de Código
 
+<div class="phase-banner">
+  <span class="phase-banner-title">Fase 4 de 4 · Geração de Código Java (Arquitetura e Declarações)</span>
+  <span class="phase-banner-meta">src/codegen/code_generator.py · Emissão de public class Main</span>
+</div>
+
 O **Gerador de Código** é a fase final do compilador PyToJava. Ele recebe a
 Árvore Sintática Abstrata (AST) produzida pelo *Parser* — já validada pelo
 *Analisador Semântico* — e emite código-fonte **Java** estruturado e indentado.
