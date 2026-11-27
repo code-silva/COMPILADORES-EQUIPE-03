@@ -1,124 +1,153 @@
-# Documentação Oficial — PyToJava
+---
+hide:
+  - navigation
+---
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)
-![Language](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python)
-![Target](https://img.shields.io/badge/Java-17%2B-orange?style=flat-square&logo=openjdk)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen?style=flat-square)
+# PyToJava — Documentação Técnica
 
-<div class="banner-hero">
-  <img src="img/capa_java_to_python.jpg" class="banner-img" alt="Capa PyToJava" />
-  <div class="banner-overlay">
-    <div class="banner-content">
-      <span class="banner-subtitle">UnB · Engenharia de Software · Compiladores 1</span>
-      <h2 class="banner-title">PyToJava Compiler</h2>
+<div class="pj-doc-hero">
+  <div class="pj-doc-hero-grid">
+    <div>
+      <div class="pj-hero-badge">
+        <span class="pj-hero-badge-tag">Python -&gt; Java</span>
+        <span>Compiladores 1 · UnB · Equipe 03</span>
+      </div>
+      <h1>
+        Do seu Python procedural ao <span class="pj-highlight">Main.java</span> compilável
+      </h1>
+      <p class="pj-hero-lead">
+        O <strong>PyToJava</strong> é um compilador <em>source-to-source</em> desenvolvido na disciplina de Compiladores 1 (UnB). Ele percorre as quatro fases clássicas — Léxico, Sintático, Semântico e Geração de Código — para transformar scripts Python em código <strong>Java 17+</strong> limpo, tipado e validado com <code>javac</code>.
+      </p>
+      <div class="pj-hero-actions">
+        <a href="specs/lexico/" class="pj-btn pj-btn-amber">Especificação do Compilador</a>
+        <a href="usage/" class="pj-btn pj-btn-white">▶ Pipeline, CLI e Interface Web</a>
+      </div>
+      <div class="pj-hero-trust">
+        <span>● 4 fases reais sem dependências</span>
+        <span>● 700+ testes automatizados</span>
+        <span>● Validado com javac 17+</span>
+      </div>
     </div>
-    <span class="banner-badge">Python 3.10+ -> Java 17+</span>
+    <div class="pj-mascot-card">
+      <img class="pj-mascot-animated" src="img/cobra-coding.jpg" alt="Cobra verde de fone de ouvido programando no notebook com xícara de café" />
+      <span class="pj-mascot-caption">PyToJava · Python + Café</span>
+    </div>
   </div>
 </div>
 
-## Sobre o Projeto
-
-O **PyToJava** é um compilador/transpilador *source-to-source* desenvolvido na disciplina **Compiladores 1** (ministrada pelo professor **Sergio Freitas** na Universidade de Brasília — UnB). Seu objetivo é traduzir programas escritos em um **subconjunto procedural da linguagem Python** para código-fonte **Java 17+** (`public class Main`) estruturado, estaticamente tipado e diretamente compilável com `javac`.
-
-Para compreender a base teórica de compiladores aplicada neste projeto, acesse a seção [Conceitos de Compiladores](compiladores.md).
-
 ---
 
-## Mapa Visual da Pipeline de Compilação
+## Visão Geral da Arquitetura
 
-O código-fonte submetido ao **PyToJava** atravessa quatro fases sequenciais determinísticas, orquestradas pelo driver da **CLI** (`src/cli.py`) ou pela **Interface Web Local** (`src/web.py`):
+O código-fonte submetido ao **PyToJava** atravessa quatro estágios independentes, com contratos claros entre cada camada:
 
 ```mermaid
 flowchart LR
-    Py["Entrada (.py)<br/>Python Procedural"] --> F1["Fase 1 · Lexer<br/>Scanner + IndentManager"]
-    F1 -- "list[Token]" --> F2["Fase 2 · Parser<br/>Descida Recursiva + AST"]
-    F2 -- "ProgramNode" --> F3["Fase 3 · Semântico<br/>Visitor + SymbolTable"]
-    F3 -- "AST Validada" --> F4["Fase 4 · Codegen<br/>Emissão Java 17+"]
-    F4 --> Java["Saída (Main.java)<br/>Compilável via javac"]
+    Py["Código Python (.py)"] --> F1["F1 · Lexer<br/>Scanner + IndentManager"]
+    F1 -- "list[Token]" --> F2["F2 · Parser<br/>Precedence Climbing + AST"]
+    F2 -- "ProgramNode" --> F3["F3 · Semântico<br/>Visitor + SymbolTable"]
+    F3 -- "AST Validada" --> F4["F4 · Codegen<br/>Emissão Java 17+"]
+    F4 --> Java["Main.java<br/>Compilável com javac"]
 ```
 
-<div class="grid-cards">
-
-  <div class="card-fases">
+<div class="pj-cards-grid">
+  <div class="pj-card">
     <div>
-      <div class="card-header">
-        <div class="card-icon">F1</div>
-        <span class="badge badge-green">Fase 1 · Léxico</span>
-      </div>
-      <h3>Analisador Léxico</h3>
+      <span class="pj-tag pj-tag-green">F1 · Análise Léxica</span>
+      <h3>1. Scanner &amp; Indentação</h3>
       <p>
-        Varredura de caracteres via <code>CharStream</code>, agrupamento em <strong>Tokens</strong> pelo princípio do maior casamento (<em>maximal munch</em>) e controle da pilha de indentação (<code>INDENT</code>/<code>DEDENT</code>).
+        Varredura por fatias diretas via <code>CharStream</code>, maior casamento (<em>maximal munch</em>) e pilha de recuo para emissão de <code>INDENT</code> e <code>DEDENT</code>.
       </p>
     </div>
-    <div class="card-footer-action">
-      <div class="progress-bar"><div class="progress-fill green" style="width: 100%;"></div></div>
-      <span class="progress-text">src/lexer/ · Concluído (100%)</span>
-      <a href="specs/lexico/" class="btn-card-doc">Explorar Fase 1 -></a>
-    </div>
+    <a href="arch/scanner/" class="pj-card-link">Ver Lexer →</a>
   </div>
 
-  <div class="card-fases">
+  <div class="pj-card">
     <div>
-      <div class="card-header">
-        <div class="card-icon">F2</div>
-        <span class="badge badge-purple">Fase 2 · Sintático</span>
-      </div>
-      <h3>Analisador Sintático</h3>
+      <span class="pj-tag pj-tag-amber">F2 · Análise Sintática</span>
+      <h3>2. Parser &amp; AST</h3>
       <p>
-        Validação gramatical por descida recursiva e <em>Precedence Climbing</em>, convertendo a fila linear de tokens na <strong>Árvore Sintática Abstrata (AST)</strong>.
+        Descida recursiva combinada com <em>Precedence Climbing</em>, produzindo uma Árvore Sintática Abstrata (<code>ProgramNode</code>) rastreável por linha e coluna.
       </p>
     </div>
-    <div class="card-footer-action">
-      <div class="progress-bar"><div class="progress-fill green" style="width: 100%;"></div></div>
-      <span class="progress-text">src/parser/ · Concluído (100%)</span>
-      <a href="parser/" class="btn-card-doc">Explorar Fase 2 -></a>
-    </div>
+    <a href="parser/" class="pj-card-link">Ver Parser →</a>
   </div>
 
-  <div class="card-fases">
+  <div class="pj-card">
     <div>
-      <div class="card-header">
-        <div class="card-icon">F3</div>
-        <span class="badge badge-purple">Fase 3 · Semântico</span>
-      </div>
-      <h3>Analisador Semântico</h3>
+      <span class="pj-tag pj-tag-green">F3 · Análise Semântica</span>
+      <h3>3. Tipos &amp; Escopos</h3>
       <p>
-        Travessia da AST com o padrão <strong>Visitor</strong>, inferência estática de tipos, promoção numérica (<code>int -> float</code>) e isolamento de escopos na <code>SymbolTable</code>.
+        Travessia pelo padrão <strong>Visitor</strong> com despacho em tabela de classe, inferência estática, promoção <code>int -&gt; float</code> e isolamento por bloco na <code>SymbolTable</code>.
       </p>
     </div>
-    <div class="card-footer-action">
-      <div class="progress-bar"><div class="progress-fill green" style="width: 100%;"></div></div>
-      <span class="progress-text">src/semantic/ · Concluído (100%)</span>
-      <a href="semantic/analyzer/" class="btn-card-doc">Explorar Fase 3 -></a>
-    </div>
+    <a href="semantic/analyzer/" class="pj-card-link">Ver Semântico →</a>
   </div>
 
-  <div class="card-fases">
+  <div class="pj-card">
     <div>
-      <div class="card-header">
-        <div class="card-icon">F4</div>
-        <span class="badge badge-purple">Fase 4 · Codegen</span>
-      </div>
-      <h3>Gerador de Código</h3>
+      <span class="pj-tag pj-tag-coffee">F4 · Geração de Código</span>
+      <h3>4. Emissor Java 17+</h3>
       <p>
-        Tradução da AST validada para código-fonte <strong>Java</strong> indentado (<code>public class Main</code>), com declaração tipada automática na primeira atribuição.
+        Traduz a AST para <code>public class Main</code> indentada em 4 espaços, declarando tipos Java na 1ª atribuição de cada variável no escopo.
       </p>
     </div>
-    <div class="card-footer-action">
-      <div class="progress-bar"><div class="progress-fill green" style="width: 100%;"></div></div>
-      <span class="progress-text">src/codegen/ · Concluído (100%)</span>
-      <a href="codegen/architecture/" class="btn-card-doc">Explorar Fase 4 -></a>
-    </div>
+    <a href="codegen/architecture/" class="pj-card-link">Ver Codegen →</a>
   </div>
-
 </div>
 
 ---
 
-## Exemplo Didático: Transformação de Ponta a Ponta
+## Por Dentro do PyToJava (Interface & Fluxo Visual)
 
-Veja nas abas abaixo como um mesmo trecho de código Python é enxergado e transformado por cada fase do compilador **PyToJava**:
+A documentação reflete a identidade visual **neo-brutalista** do projeto — combinando fundo menta suave (`#F3FAF4`), verde cobra (`#1E7F4B`), amarelo destaque (`#FACC15`), café (`#C26D2D`) e bordas em tinta preta (`#111A14`):
+
+<div class="pj-showcase-grid">
+  <div class="pj-shot-card">
+    <div class="pj-showcase-preview">
+      <div class="line-accent">$ python -m src.web</div>
+      <div>PyToJava disponível em http://localhost:8000</div>
+      <div class="line-green">[POST /api/compile] NDJSON streaming:</div>
+      <div>  upload -&gt; lexer -&gt; parser -&gt; semantic -&gt; codegen</div>
+      <div class="line-coffee">status: complete · Main.java pronto</div>
+    </div>
+    <div class="pj-shot-body">
+      <strong>Interface Web Local em Tempo Real</strong>
+      <span>Upload <em>drag-and-drop</em> de arquivos <code>.py</code>, editor integrado com <code>Ctrl+Enter</code>, exemplos oficiais carregáveis com um clique, realce de sintaxe Java e download direto.</span>
+    </div>
+  </div>
+
+  <div class="pj-shot-card">
+    <div class="pj-showcase-preview">
+      <div class="line-accent"># Entrada Python</div>
+      <div>media = (n1 + n2) / 2.0</div>
+      <div>if media &gt;= 7.0: aprovado = True</div>
+      <div class="line-green">// Saída Java (Main.java)</div>
+      <div class="line-coffee">double media = ((n1 + n2) / 2.0);</div>
+    </div>
+    <div class="pj-shot-body">
+      <strong>Tradução Fiel Python para Java</strong>
+      <span>Mapeamento determinístico de literais, precedência parentizada, estruturas <code>if/elif/else</code> e laços <code>while</code> com chaves balanceadas e escopos isolados.</span>
+    </div>
+  </div>
+
+  <div class="pj-shot-card">
+    <div class="pj-showcase-preview">
+      <div class="line-accent">$ python -m pytest -v</div>
+      <div class="line-green">23 suítes · 700+ testes aprovados · 0 falhas</div>
+      <div>E2E: compile_source() -&gt; javac -&gt; java Main</div>
+      <div class="line-coffee">Erro [Linha X, Coluna Y] validado em todas as fases</div>
+    </div>
+    <div class="pj-shot-body">
+      <strong>Homologação Completa e Benchmarks</strong>
+      <span>Cobertura de caminhos felizes, casos de borda, integração HTTP da interface web, validação real na JVM com <code>javac</code> e otimizações verificadas por benchmark.</span>
+    </div>
+  </div>
+</div>
+
+---
+
+## Exemplo Didático: Evolução do Código nas 4 Fases
 
 === "1. Entrada Python (.py)"
 
@@ -133,7 +162,7 @@ Veja nas abas abaixo como um mesmo trecho de código Python é enxergado e trans
         aprovado = False
     ```
 
-=== "2. Fluxo de Tokens (Lexer)"
+=== "2. Tokens (Lexer)"
 
     ```text
     IDENTIFIER("nota_1")  OP_ASSIGN("=")  FLOAT_LITERAL(8.0)  NEWLINE
@@ -187,49 +216,26 @@ Veja nas abas abaixo como um mesmo trecho de código Python é enxergado e trans
     }
     ```
 
-!!! info "Contexto Acadêmico e Referência Teórica — [Consultar Repositório da Disciplina (COMP1)](https://github.com/sergioaafreitas/COMP1)"
-    Desenvolvido na disciplina de **Compiladores 1** do curso de Engenharia de Software (UnB). O projeto aplica na prática análise léxica determinística com pilha de recuo, gramáticas livres de contexto com subida de precedência (*Precedence Climbing*), verificação estática de tipos e escopos via padrão *Visitor* e geração de código Java validado com `javac`.
+---
+
+## Princípios Invioláveis do PyToJava
+
+| Princípio | Garantia Arquitetural | Como é Verificado |
+| :--- | :--- | :--- |
+| **Zero Dependências no Núcleo** | Todo o compilador, a CLI e o servidor web rodam apenas com a biblioteca padrão do **Python 3.10+**. | `pyproject.toml` com `dependencies = []`. |
+| **Diagnóstico Exato (*Fail-Fast*)** | Qualquer erro léxico, sintático ou semântico interrompe o pipeline imediatamente informando `[Linha X, Coluna Y]`. | Testes parametrizados em `test_lexer_edge_cases.py`, `test_parser_edge_cases.py` e `test_compiler_pipeline.py`. |
+| **Fidelidade Semântica no Java** | Condições estritamente booleanas, isolamento de escopos por bloco e precedência parentizada garantem compilação limpa no `javac`. | Validação End-to-End em `tests/test_e2e_javac.py`. |
+| **Segurança e Execução Local** | A interface web processa arquivos apenas em memória no `127.0.0.1`, sem executar o Python enviado nem o Java gerado, com validação de `Origin` e cabeçalhos de segurança. | Testes de integração HTTP em `tests/test_web.py`. |
 
 ---
 
-## Como Executar Rapidamente
+## Documentos Principais
 
-=== "Interface Web Local (Visual)"
-
-    Inicie o servidor HTTP local (sem dependências externas) para acompanhar as 5 etapas da compilação em tempo real no navegador:
-
-    ```bash
-    python -m src.web
-    ```
-
-    Acesse `http://localhost:8000`, envie um arquivo `.py` (ou escolha um exemplo integrado) e baixe o `Main.java` gerado.
-
-=== "Linha de Comando (CLI)"
-
-    Compile qualquer script Python procedural diretamente pelo terminal:
-
-    ```bash
-    python -m src.cli examples/calculator.py -o output/Main.java
-    javac output/Main.java
-    java -cp output Main
-    ```
-
-=== "Suíte de Testes (Pytest)"
-
-    Execute as 23 suítes de testes unitários, de integração HTTP e E2E:
-
-    ```bash
-    python -m pytest -v
-    ```
-
----
-
-## Objetivos e Tecnologias
-
-| Pilar do Projeto | Descrição Técnica |
-| :--- | :--- |
-| **Implementação das 4 Fases** | Construção modular de Lexer (`src/lexer`), Parser (`src/parser`), Semântico (`src/semantic`) e Codegen (`src/codegen`) em **Python 3.10+** puro. |
-| **Validação Real na JVM** | Emissão de código compatível com **Java 17+ (`javac`)**, garantindo chaves balanceadas, tipagem estática e precedência preservada. |
-| **Diagnósticos Precisos** | Erros léxicos, sintáticos e semânticos padronizados com **linha e coluna exatas** (`[Linha X, Coluna Y]`). |
-| **Dupla Interface de Uso** | Driver de linha de comando (`src/cli.py`) e Interface Web Local com streaming **NDJSON** (`src/web.py`). |
-| **Qualidade e Documentação** | Mais de 690 testes automatizados via **Pytest**, modelos teóricos baseados em **Flex & Bison** e documentação viva em **MkDocs Material**. |
+- **[Conceitos de Compiladores](compiladores.md)** — Front-End vs. Back-End e fundamentos teóricos aplicados no projeto.
+- **[Estrutura do Projeto](estrutura.md)** — Mapa de pacotes, módulos e organização dos diretórios.
+- **[Glossário Técnico](GLOSSARY.md)** — Definições de lexema, token, AST, Visitor, coerção e NDJSON.
+- **[Especificação Léxica](specs/lexico.md)** — Tabela completa de tokens, regras de indentação e erros léxicos.
+- **[Gramática e Precedência](parser/grammar.md)** — Regras EBNF, *Precedence Climbing* e controle de fluxo.
+- **[Tipos e Compatibilidade](semantic/types.md)** — Matriz de inferência, promoção numérica e escopos.
+- **[Geração de Código Java](codegen/control_flow.md)** — Tradução de expressões, declarações, `if/elif/else` e `while`.
+- **[Guia de Uso (CLI & Web)](usage.md)** — Como rodar no terminal, via API Python ou no navegador.
