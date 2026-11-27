@@ -24,8 +24,8 @@ hide:
       </div>
       <div class="pj-hero-trust">
         <span>● 4 fases reais sem dependências</span>
-        <span>✓ 691 testes automatizados</span>
-        <span>✓ Validado com javac 17+</span>
+        <span>● 700+ testes automatizados</span>
+        <span>● Validado com javac 17+</span>
       </div>
     </div>
     <div class="pj-mascot-card">
@@ -134,7 +134,7 @@ A documentação reflete a identidade visual **neo-brutalista** do projeto — c
   <div class="pj-shot-card">
     <div class="pj-showcase-preview">
       <div class="line-accent">$ python -m pytest -v</div>
-      <div class="line-green">23 suítes · 691 testes aprovados · 0 falhas</div>
+      <div class="line-green">23 suítes · 700+ testes aprovados · 0 falhas</div>
       <div>E2E: compile_source() -&gt; javac -&gt; java Main</div>
       <div class="line-coffee">Erro [Linha X, Coluna Y] validado em todas as fases</div>
     </div>
