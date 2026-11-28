@@ -1,71 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://documentacao.compiladores/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/GLOSSARY/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/GLOSSARY/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/compiladores/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/compiladores/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/estrutura/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/estrutura/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/usage/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/tests/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/arch/scanner/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/usage/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/codegen/architecture/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/arch/scanner/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/codegen/control_flow/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/codegen/architecture/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/codegen/expressions/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/codegen/control_flow/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/parser/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/codegen/expressions/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/parser/ast/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/parser/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/parser/errors/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/parser/ast/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/parser/grammar/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/parser/errors/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/semantic/analyzer/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/parser/grammar/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/semantic/symbol_table/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/semantic/analyzer/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/semantic/types/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/semantic/symbol_table/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
     <url>
-         <loc>https://documentacao.compiladores/specs/lexico/</loc>
-         <lastmod>2026-11-09</lastmod>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/semantic/types/</loc>
+         <lastmod>2026-11-28</lastmod>
+    </url>
+    <url>
+         <loc>https://code-silva.github.io/COMPILADORES-EQUIPE-03/specs/lexico/</loc>
+         <lastmod>2026-11-28</lastmod>
     </url>
 </urlset>

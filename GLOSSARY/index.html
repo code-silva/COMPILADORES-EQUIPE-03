@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://documentacao.compiladores/GLOSSARY/">
+        <link rel="canonical" href="https://code-silva.github.io/COMPILADORES-EQUIPE-03/GLOSSARY/">
       
       
         <link rel="prev" href="..">
@@ -20,12 +20,12 @@
         
       
       
-      <link rel="icon" href="../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+      <link rel="icon" href="../img/pytojava-logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
     
     
       
-        <title>Glossário - PyToJava</title>
+        <title>Glossário - PyToJava — Documentação Técnica</title>
       
     
     
@@ -46,12 +46,14 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Plus+Jakarta+Sans:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Plus Jakarta Sans";--md-code-font:"JetBrains Mono"}</style>
       
     
     
       <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../stylesheets/pytojava.css">
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -69,7 +71,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="green">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -78,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#glossario-de-termos" class="md-skip">
+        <a href="#glossario-visual-e-tecnico-de-compiladores" class="md-skip">
           Pular para conteúdo
         </a>
       
@@ -90,12 +92,13 @@
     
       
 
-<header class="md-header" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
-    <a href=".." title="PyToJava" class="md-header__button md-logo" aria-label="PyToJava" data-md-component="logo">
-      
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.25.18.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z"/></svg>
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="PyToJava — Documentação Técnica" class="md-header__button md-logo" aria-label="PyToJava — Documentação Técnica" data-md-component="logo">
+      
+  <img src="../img/pytojava-logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -106,7 +109,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            PyToJava
+            PyToJava — Documentação Técnica
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -125,7 +128,7 @@
     
     
     
-    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="green"  aria-label="Alterar para o modo escuro"  type="radio" name="__palette" id="__palette_0">
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Alterar para o modo escuro"  type="radio" name="__palette" id="__palette_0">
     
       <label class="md-header__button md-icon" title="Alterar para o modo escuro" for="__palette_1" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
@@ -135,9 +138,9 @@
     
     
     
-    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="green"  aria-label="Alterar para modo claro"  type="radio" name="__palette" id="__palette_1">
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Alterar para o modo claro"  type="radio" name="__palette" id="__palette_1">
     
-      <label class="md-header__button md-icon" title="Alterar para modo claro" for="__palette_0" hidden>
+      <label class="md-header__button md-icon" title="Alterar para o modo claro" for="__palette_0" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
       </label>
     
@@ -193,14 +196,8 @@
     
   </nav>
   
-</header>
     
-    <div class="md-container" data-md-component="container">
       
-      
-        
-          
-            
 <nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
   <div class="md-grid">
     <ul class="md-tabs__list">
@@ -217,7 +214,7 @@
   
     
   
-  Home
+  Início
 
       </a>
     </li>
@@ -284,10 +281,35 @@
   
 
       
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tests/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Testes
+
+      </a>
+    </li>
+  
+
+      
     </ul>
   </div>
 </nav>
-          
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
         
       
       <main class="md-main" data-md-component="main">
@@ -304,17 +326,14 @@
   
 
 
-  
-
-<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navegação" data-md-level="0">
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="PyToJava" class="md-nav__button md-logo" aria-label="PyToJava" data-md-component="logo">
+    <a href=".." title="PyToJava — Documentação Técnica" class="md-nav__button md-logo" aria-label="PyToJava — Documentação Técnica" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.25.18.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z"/></svg>
+  <img src="../img/pytojava-logo.svg" alt="logo">
 
     </a>
-    PyToJava
+    PyToJava — Documentação Técnica
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -333,7 +352,7 @@
   <span class="md-ellipsis">
     
   
-    Home
+    Início
   
 
     
@@ -362,6 +381,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Glossário
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -378,6 +415,69 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#como-os-termos-se-conectam-na-pratica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como os Termos se Conectam na Prática?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-termos-da-analise-lexica-srclexer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Termos da Análise Léxica (src/lexer/)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-termos-da-analise-sintatica-e-gramaticas-srcparser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Termos da Análise Sintática e Gramáticas (src/parser/)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-termos-da-analise-semantica-geracao-de-codigo-e-driver-srcsemantic-srccodegen-srcwebpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Termos da Análise Semântica, Geração de Código e Driver (src/semantic/, src/codegen/, src/web.py)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -421,6 +521,8 @@
     
     
       
+      
+        
       
     
     
@@ -499,6 +601,8 @@
     
     
       
+      
+        
       
     
     
@@ -613,6 +717,8 @@
     
     
       
+      
+        
       
     
     
@@ -784,6 +890,8 @@
     
       
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -925,6 +1033,8 @@
     
     
       
+      
+        
       
     
     
@@ -1070,7 +1180,7 @@
   <span class="md-ellipsis">
     
   
-    Pipeline e CLI (Driver)
+    Pipeline, CLI e Interface Web
   
 
     
@@ -1091,12 +1201,109 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
                 </div>
               </div>
             
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#como-os-termos-se-conectam-na-pratica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como os Termos se Conectam na Prática?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-termos-da-analise-lexica-srclexer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Termos da Análise Léxica (src/lexer/)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-termos-da-analise-sintatica-e-gramaticas-srcparser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Termos da Análise Sintática e Gramáticas (src/parser/)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-termos-da-analise-semantica-geracao-de-codigo-e-driver-srcsemantic-srccodegen-srcwebpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Termos da Análise Semântica, Geração de Código e Driver (src/semantic/, src/codegen/, src/web.py)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
             
           
           
@@ -1108,102 +1315,207 @@
 
 
 
-<h1 id="glossario-de-termos">Glossário de Termos</h1>
-<p>Esta documentação reúne os termos e conceitos utilizados no desenvolvimento do <strong>PyToJava</strong>, com o objetivo de centralizar e organizar essas definições em um único material de consulta. Assim, busca-se facilitar o entendimento dos conceitos empregados no projeto e servir como apoio para o esclarecimento de dúvidas durante o desenvolvimento.</p>
+<h1 id="glossario-visual-e-tecnico-de-compiladores">Glossário Visual e Técnico de Compiladores<a class="headerlink" href="#glossario-visual-e-tecnico-de-compiladores" title="Permanent link">&para;</a></h1>
+<div class="phase-banner">
+  <span class="phase-banner-title">Referência Conceitual · Terminologia do PyToJava</span>
+  <span class="phase-banner-meta">Léxico · Sintático · Semântico · Geração de Código · Driver</span>
+</div>
+
+<p>Esta página centraliza os conceitos teóricos e os termos de implementação adotados ao longo do desenvolvimento do <strong>PyToJava</strong>. Utilize as seções abaixo para consultar rapidamente o significado, a categoria e exemplos práticos de cada termo.</p>
+<hr />
+<h2 id="como-os-termos-se-conectam-na-pratica">Como os Termos se Conectam na Prática?<a class="headerlink" href="#como-os-termos-se-conectam-na-pratica" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph Lex["1. Léxico"]
+        L1["Lexema"] --&gt; L2["Token + Literal"]
+        L2 --&gt; L3["INDENT / DEDENT"]
+    end
+    subgraph Syn["2. Sintático"]
+        S1["Terminais / Não-Terminais"] --&gt; S2["Precedence Climbing"]
+        S2 --&gt; S3["AST (ProgramNode)"]
+    end
+    subgraph Sem["3. Semântico"]
+        M1["Padrão Visitor"] --&gt; M2["SymbolTable (Escopos)"]
+        M2 --&gt; M3["Coerção Numérica"]
+    end
+    subgraph Gen["4. Codegen &amp; Web"]
+        G1["Transpilação Java"] --&gt; G2["Streaming NDJSON"]
+    end
+    Lex --&gt; Syn --&gt; Sem --&gt; Gen</code></pre>
+<hr />
+<h2 id="1-termos-da-analise-lexica-srclexer">1. Termos da Análise Léxica (<code>src/lexer/</code>)<a class="headerlink" href="#1-termos-da-analise-lexica-srclexer" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Termo</th>
 <th style="text-align: left;">Categoria</th>
-<th style="text-align: left;">Descrição</th>
-<th style="text-align: left;">Exemplo Válido</th>
-<th style="text-align: left;">Observação</th>
+<th style="text-align: left;">Descrição Didática</th>
+<th style="text-align: left;">Exemplo no PyToJava</th>
+<th style="text-align: left;">Observação Técnica</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;"><strong>Lexema</strong></td>
 <td style="text-align: left;">Estrutura Léxica</td>
-<td style="text-align: left;">Texto literal do código-fonte que corresponde a um padrão reconhecido pelo analisador léxico.</td>
-<td style="text-align: left;"><code>str lexema = "Olá mundo"</code><br> os lexemas são: <code>str</code>, <code>lexema</code>, <code>=</code>, <code>"Olá mundo"</code>.</td>
-<td style="text-align: left;">Vários lexemas diferentes podem gerar o mesmo tipo de token.</td>
+<td style="text-align: left;">Trecho exato de texto extraído do código-fonte que casa com o padrão de um token.</td>
+<td style="text-align: left;">Em <code>taxa = 2.5</code>, os lexemas são <code>"taxa"</code>, <code>"="</code> e <code>"2.5"</code>.</td>
+<td style="text-align: left;">Guardado no atributo <code>token.lexeme</code> sempre como <code>str</code>.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>Literal</strong></td>
 <td style="text-align: left;">Estrutura Léxica</td>
-<td style="text-align: left;">Valor nativo extraído do lexema, sem a sintaxe da linguagem (sem aspas, sem escapes). Representa o dado real contido no token.</td>
-<td style="text-align: left;"><code>x = "Olá mundo"</code><br><code>literal = Olá mundo</code> (sem aspas)<br><code>y = 42</code><br><code>lexeme = "42"</code> <code>literal = 42</code> (int)</td>
-<td style="text-align: left;">Fica <code>None</code> para tokens que não carregam valor, como palavras reservadas e operadores.</td>
+<td style="text-align: left;">Valor nativo convertido a partir do lexema, livre de pontuação sintática (sem aspas em strings, já convertido para <code>int</code> ou <code>float</code> em números).</td>
+<td style="text-align: left;">Em <code>x = "Olá"</code>, <code>lexeme</code> é <code>"Olá"</code> e <code>literal</code> é a string <code>'Olá'</code>; em <code>y = 42</code>, <code>literal</code> é <code>42</code> (<code>int</code>).</td>
+<td style="text-align: left;">Fica <code>None</code> para tokens que não carregam valor próprio (palavras reservadas, operadores e delimitadores).</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>Token</strong></td>
 <td style="text-align: left;">Estrutura Léxica</td>
-<td style="text-align: left;">Sequência de caracteres que contém um nome abstrato representando o grupo do lexema reconhecível com significado.</td>
-<td style="text-align: left;"><code>token_if = Token(type=TokenType.KW_IF, lexeme="if", literal=None, line=2, column=1)</code></td>
-<td style="text-align: left;">Linha e coluna começam em 1. O <code>lexeme</code> guarda o texto exato; o <code>literal</code>, o valor nativo; e ambos podem ser <code>None</code> conforme o tipo.</td>
+<td style="text-align: left;">Unidade léxica imutável emitida pelo <code>Scanner</code>, combinando categoria (<code>TokenType</code>), lexema, literal e coordenadas (<code>line</code>, <code>column</code>).</td>
+<td style="text-align: left;"><code>Token(type=TokenType.KW_IF, lexeme="if", literal=None, line=2, column=1)</code></td>
+<td style="text-align: left;">Linha e coluna são baseadas em <code>1</code> (1-based) para exibição direta em mensagens de erro.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>INDENT</strong></td>
-<td style="text-align: left;">Estrutura Léxica</td>
-<td style="text-align: left;">Token artificial gerado pelo lexer (não existe no texto-fonte) quando há aumento de indentação. Sinaliza ao parser o início de um novo bloco.</td>
-<td style="text-align: left;"><code>if True:</code><br> <code>␣␣␣␣print("oi")</code><br> o lexer emite <code>INDENT</code> antes de <code>print</code>.</td>
-<td style="text-align: left;">Injetado pelo lexer; é token, não nó sintático.</td>
+<td style="text-align: left;">Controle de Bloco</td>
+<td style="text-align: left;">Token sintético emitido pelo <code>IndentManager</code> quando o recuo à esquerda aumenta em relação à linha lógica anterior.</td>
+<td style="text-align: left;"><code>if True:</code><br><code>␣␣␣␣x = 1</code><br>Emite <code>INDENT</code> antes de <code>x = 1</code>.</td>
+<td style="text-align: left;">Substitui a chave de abertura <code>{</code> durante a análise do Python.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>DEDENT</strong></td>
-<td style="text-align: left;">Estrutura Léxica</td>
-<td style="text-align: left;">Token artificial gerado pelo lexer (não existe no texto-fonte) quando há redução de indentação. Sinaliza ao parser o fim de um bloco.</td>
-<td style="text-align: left;"><code>if True:</code><br> <code>␣␣␣␣print("oi")</code><br><code>print("fim")</code><br> o lexer emite <code>DEDENT</code> antes de <code>print("fim")</code>.</td>
-<td style="text-align: left;">Sempre pareado com um INDENT anterior. Pode emitir vários ao final do arquivo.</td>
+<td style="text-align: left;">Controle de Bloco</td>
+<td style="text-align: left;">Token sintético emitido pelo <code>IndentManager</code> quando o recuo diminui, sinalizando o fechamento de um ou mais blocos.</td>
+<td style="text-align: left;"><code>if True:</code><br><code>␣␣␣␣x = 1</code><br><code>y = 2</code><br>Emite <code>DEDENT</code> antes de <code>y = 2</code>.</td>
+<td style="text-align: left;">Sempre pareado com um <code>INDENT</code> anterior; no <code>EOF</code>, fecha todos os blocos ainda abertos.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>Lookahead</strong></td>
-<td style="text-align: left;">Estrutura Léxica</td>
-<td style="text-align: left;">Técnica em que o analisador examina o próximo símbolo sem consumi-lo, para decidir qual regra aplicar.</td>
-<td style="text-align: left;"><code>x = 1</code><br><code>y = 2</code><br>ao ler <code>=</code>, o lexer olha o próximo caractere: se for outro <code>=</code>, forma <code>==</code>, senão, mantém <code>=</code>.</td>
-<td style="text-align: left;">O símbolo observado não é consumido: continua disponível para leitura posterior. Só após a decisão o cursor avança.</td>
+<td style="text-align: left;">Reconhecimento</td>
+<td style="text-align: left;">Inspecionar o próximo caractere (<code>CharStream.peek()</code>) ou o próximo token (<code>Parser.peek(1)</code>) sem avançar o cursor de leitura.</td>
+<td style="text-align: left;">Ao ler <code>=</code>, o lexer verifica se o próximo caractere também é <code>=</code> para decidir entre <code>OP_ASSIGN</code> (<code>=</code>) e <code>OP_EQ</code> (<code>==</code>).</td>
+<td style="text-align: left;">Garante a regra do <strong>maior casamento</strong> (<em>maximal munch</em>) sem consumir caracteres indevidamente.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-termos-da-analise-sintatica-e-gramaticas-srcparser">2. Termos da Análise Sintática e Gramáticas (<code>src/parser/</code>)<a class="headerlink" href="#2-termos-da-analise-sintatica-e-gramaticas-srcparser" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Termo</th>
+<th style="text-align: left;">Categoria</th>
+<th style="text-align: left;">Descrição Didática</th>
+<th style="text-align: left;">Exemplo no PyToJava</th>
+<th style="text-align: left;">Observação Técnica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Símbolo Terminal</strong></td>
+<td style="text-align: left;">Gramática Formal</td>
+<td style="text-align: left;">Elemento atômico da gramática que corresponde diretamente a um <code>TokenType</code> produzido pelo lexer.</td>
+<td style="text-align: left;">Em <code>1 + 2</code>, os terminais são <code>INT_LITERAL</code> (<code>1</code>), <code>OP_PLUS</code> (<code>+</code>) e <code>INT_LITERAL</code> (<code>2</code>).</td>
+<td style="text-align: left;">Não pode ser expandido por outras regras; forma as folhas da árvore sintática.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Símbolo Não-Terminal</strong></td>
+<td style="text-align: left;">Gramática Formal</td>
+<td style="text-align: left;">Variável gramatical abstrata que representa uma construção composta e pode ser expandida em outras produções.</td>
+<td style="text-align: left;"><code>statement</code>, <code>expression</code>, <code>comparison</code>, <code>block</code>, <code>if_stmt</code>.</td>
+<td style="text-align: left;">Na descida recursiva, cada não-terminal vira um método do <code>Parser</code> (ex.: <code>parse_statement()</code>).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Regra Gramatical (Produção)</strong></td>
+<td style="text-align: left;">Gramática Formal</td>
+<td style="text-align: left;">Definição formal (em EBNF ou Bison/Yacc) de como símbolos não-terminais se decompõem em sequências de terminais e não-terminais.</td>
+<td style="text-align: left;"><code>assignment ::= IDENTIFIER ( "=" \| "+=" \| "-=" ) expression ;</code></td>
+<td style="text-align: left;">Uma mesma regra pode possuir várias alternativas separadas por <code>\|</code> ("ou").</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>Associatividade</strong></td>
-<td style="text-align: left;">Análise Sintática</td>
-<td style="text-align: left;">Especifica a ordem de avaliação de operadores em situações de precedência igual (esquerda, direita ou nenhuma).</td>
-<td style="text-align: left;"><code>%left PLUS MINUS</code><br><code>%left TIMES DIVIDE</code><br><br>Conta: <code>x + 2 / 3</code><br> como <code>TIMES DIVIDE</code> têm precedência maior, o parser avalia primeiro <code>2 / 3</code>:<br><code>x + (2 / 3)</code></td>
-<td style="text-align: left;">No Yacc, é declarada com <code>%left</code> (esquerda), <code>%right</code> (direita) ou <code>%nonassoc</code> (nenhuma), bem como é definida pela ordem das linhas: quanto mais abaixo, maior a precedência.</td>
+<td style="text-align: left;">Expressões</td>
+<td style="text-align: left;">Define a ordem de agrupamento quando dois operadores de <strong>mesma precedência</strong> aparecem em sequência.</td>
+<td style="text-align: left;"><code>10 - 3 - 2</code> é agrupado à esquerda como <code>(10 - 3) - 2 = 5</code>, e não <code>10 - (3 - 2) = 9</code>.</td>
+<td style="text-align: left;">No Bison é declarada com <code>%left</code>, <code>%right</code> ou <code>%nonassoc</code>; no <code>Parser</code>, é garantida pela condição <code>op_precedence &lt;= precedence</code>.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Símbolo terminal</strong></td>
-<td style="text-align: left;">Análise Sintática</td>
-<td style="text-align: left;">Símbolo básico da gramática, equivalente a um token reconhecido pelo analisador léxico.</td>
-<td style="text-align: left;"><code>1 + 2</code><br> terminais: <code>NUM</code> (<code>1</code>), <code>PLUS</code> (<code>+</code>), <code>NUM</code> (<code>2</code>).</td>
-<td style="text-align: left;">Não pode ser expandido. Representa a folha da árvore sintática.</td>
+<td style="text-align: left;"><strong>Precedence Climbing</strong></td>
+<td style="text-align: left;">Algoritmo Sintático</td>
+<td style="text-align: left;">Técnica recursiva que constrói árvores de expressões binárias guiada por uma tabela numérica de pesos (<code>PRECEDENCE</code>).</td>
+<td style="text-align: left;">Em <code>2 + 3 * 4</code>, como <code>*</code> tem peso <code>30</code> e <code>+</code> tem peso <code>20</code>, <code>3 * 4</code> é agrupado primeiro na sub-árvore direita.</td>
+<td style="text-align: left;">Evita criar dezenas de chamadas recursivas intermediárias para expressões simples.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Símbolo não terminal</strong></td>
-<td style="text-align: left;">Análise Sintática</td>
-<td style="text-align: left;">Símbolo abstrato utilizado para definir regras gramaticais, representando construções complexas da linguagem.</td>
-<td style="text-align: left;"><code>1 + 2</code><br> não terminal envolvido: <code>expr</code>.</td>
-<td style="text-align: left;">Precisa ser expandido por regras até virar terminais. Nunca aparece no código-fonte.</td>
+<td style="text-align: left;"><strong>AST (Árvore Sintática Abstrata)</strong></td>
+<td style="text-align: left;">Estrutura de Dados</td>
+<td style="text-align: left;">Representação hierárquica em árvore do programa, mantendo apenas a estrutura semântica e descartando pontuação (<code>:</code>, parênteses, <code>INDENT</code>/<code>DEDENT</code>).</td>
+<td style="text-align: left;"><code>AssignNode(target="x", op="=", value=IntLiteralNode(value=10))</code></td>
+<td style="text-align: left;">Todos os nós herdam <code>line</code> e <code>column</code> da superclasse <code>Node</code>, tendo <code>ProgramNode</code> como raiz.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong><code>$$</code>, <code>$1</code>, <code>$2</code>...</strong></td>
-<td style="text-align: left;">Análise Sintática</td>
-<td style="text-align: left;">Referências aos valores envolvidos em uma regra gramatical durante a ação semântica. <code>$$</code> representa o resultado da produção; <code>$1</code>, <code>$2</code>, ... representam os valores dos símbolos do lado direito, na ordem em que aparecem.</td>
-<td style="text-align: left;"><code>expr : expr PLUS expr</code><br><code>$1</code> = valor do 1º <code>expr</code>; <code>$2</code> = valor do <code>PLUS</code>; <code>$3</code> = valor do 2º <code>expr</code>; <code>$$</code> = resultado.</td>
-<td style="text-align: left;">A contagem inclui todos os símbolos do lado direito, mesmo os não usados no cálculo.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Regra gramatical</strong></td>
-<td style="text-align: left;">Análise Sintática</td>
-<td style="text-align: left;">Descrição formal que define como sentenças são formadas a partir de símbolos terminais e não terminais.</td>
-<td style="text-align: left;">Regra: <code>expr: expr PLUS expr { $$ = $1 + $3; }</code><br>Instância: <code>x = 1 + 2</code></td>
-<td style="text-align: left;">Uma mesma regra pode ter <strong>várias alternativas</strong> para o lado direito, separadas pelo operador "|" (equivalente a "ou"). Cada alternativa pode ter sua própria ação semântica.</td>
+<td style="text-align: left;">Modelo Bison/Yacc</td>
+<td style="text-align: left;">Notação usada em ações semânticas de geradores LR (Bison): <code>$$</code> é o valor resultante da regra e <code>$1</code>, <code>$2</code>... são os valores dos símbolos à direita.</td>
+<td style="text-align: left;"><code>expr : expr PLUS expr { $$ = $1 + $3; }</code></td>
+<td style="text-align: left;">A contagem inclui todos os símbolos do lado direito da produção, inclusive delimitadores.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong><code>yyparse()</code></strong></td>
-<td style="text-align: left;">Análise Sintática</td>
-<td style="text-align: left;">Função gerada pelo Bison que realiza a análise sintática com base na gramática definida.</td>
+<td style="text-align: left;">Modelo Bison/Yacc</td>
+<td style="text-align: left;">Função principal gerada pelo Bison que executa o autômato sintático invocando o lexer (<code>yylex()</code>) sob demanda.</td>
 <td style="text-align: left;"><code>int main(void) { return yyparse(); }</code></td>
-<td style="text-align: left;">Chama o lexer (<code>yylex</code>) repetidamente e aplica as regras da gramática.</td>
+<td style="text-align: left;">No PyToJava (implementado em Python puro), o papel equivalente é desempenhado por <code>Parser.parse()</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-termos-da-analise-semantica-geracao-de-codigo-e-driver-srcsemantic-srccodegen-srcwebpy">3. Termos da Análise Semântica, Geração de Código e Driver (<code>src/semantic/</code>, <code>src/codegen/</code>, <code>src/web.py</code>)<a class="headerlink" href="#3-termos-da-analise-semantica-geracao-de-codigo-e-driver-srcsemantic-srccodegen-srcwebpy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Termo</th>
+<th style="text-align: left;">Categoria</th>
+<th style="text-align: left;">Descrição Didática</th>
+<th style="text-align: left;">Exemplo no PyToJava</th>
+<th style="text-align: left;">Observação Técnica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Tabela de Símbolos (<code>SymbolTable</code>)</strong></td>
+<td style="text-align: left;">Análise Semântica</td>
+<td style="text-align: left;">Dicionário encadeado por escopos (<code>parent</code>) que registra cada variável declarada (<code>Symbol</code>), seu tipo inferido e a posição da 1ª definição.</td>
+<td style="text-align: left;"><code>scope.define(Symbol(name="x", type="int", line=1))</code></td>
+<td style="text-align: left;">Permite busca hierárquica de dentro para fora (<code>lookup</code>) e impede que variáveis locais de um bloco vazem para fora dele.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Padrão Visitor</strong></td>
+<td style="text-align: left;">Arquitetura AST</td>
+<td style="text-align: left;">Padrão de projeto que separa a estrutura dos nós da AST dos algoritmos que operam sobre eles, despachando cada nó para <code>visit_&lt;TipoDoNo&gt;(node)</code>.</td>
+<td style="text-align: left;"><code>SemanticAnalyzer.visit_AssignNode(node)</code> e <code>CodeGenerator.visit_IfNode(node)</code></td>
+<td style="text-align: left;">Otimizado no PyToJava com a tabela de classe <code>_VISITOR_DISPATCH</code> para despacho em $O(1)$.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Coerção / Promoção Numérica</strong></td>
+<td style="text-align: left;">Sistema de Tipos</td>
+<td style="text-align: left;">Conversão implícita segura de um tipo numérico mais restrito (<code>int</code>) para um tipo mais amplo (<code>float</code>, emitido como <code>double</code> em Java).</td>
+<td style="text-align: left;"><code>taxa = 2.5</code> (<code>float</code>) seguido de <code>taxa = 10</code> (<code>int</code>) é válido; <code>taxa</code> permanece <code>float</code>.</td>
+<td style="text-align: left;">O sentido inverso (<code>float -&gt; int</code>) é bloqueado com <code>SemanticError</code> para impedir truncamento silencioso.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Transpilação (<code>CodeGenerator</code>)</strong></td>
+<td style="text-align: left;">Geração de Código</td>
+<td style="text-align: left;">Tradução <em>source-to-source</em> da AST validada para código-fonte estruturado em outra linguagem de alto nível (Java 17+).</td>
+<td style="text-align: left;"><code>x = 10</code> (1ª vez) -&gt; <code>int x = 10;</code><br><code>x += 5</code> (2ª vez) -&gt; <code>x += 5;</code></td>
+<td style="text-align: left;">Controla variáveis já declaradas por escopo (<code>_scope_stack</code>) para emitir o tipo Java apenas na primeira atribuição.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>NDJSON</strong></td>
+<td style="text-align: left;">Interface Web</td>
+<td style="text-align: left;">Formato <em>Newline Delimited JSON</em> (<code>application/x-ndjson</code>) em que cada linha do streaming HTTP representa um evento JSON completo.</td>
+<td style="text-align: left;"><code>{"stage": "lexer", "status": "done"}</code></td>
+<td style="text-align: left;">Permite que a interface web (<code>src/web.py</code>) atualize a barra de progresso etapa por etapa em tempo real.</td>
 </tr>
 </tbody>
 </table>
@@ -1262,12 +1574,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
-      
-        <script src="../javascripts/extra.js"></script>
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
   </body>

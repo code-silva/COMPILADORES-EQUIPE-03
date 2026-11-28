@@ -1,0 +1,753 @@
+/* ==========================================================================
+   PyToJava — Identidade Visual Neo-Brutalista (Paleta Cobra & Café)
+   Baseada no layout editorial neo-brutalista (navbar limpa, abas em pílula,
+   hero com textura de bolinhas, destaque inclinado e sombras sólidas).
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --pj-bg: #F3FAF4;
+  --pj-surface: #FFFFFF;
+  --pj-surface-alt: #E7F6EC;
+  --pj-ink: #111A14;
+  --pj-muted: #425548;
+  --pj-primary: #1E7F4B;
+  --pj-primary-bright: #22A05B;
+  --pj-secondary: #FACC15;
+  --pj-coffee: #C26D2D;
+  --pj-border: 2px solid #111A14;
+  --pj-shadow-sm: 3px 3px 0 #111A14;
+  --pj-shadow-md: 5px 5px 0 #111A14;
+  --pj-radius: 22px;
+  --md-text-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --md-code-font: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+
+  /* Tema Mermaid alinhado à paleta de cobra */
+  --md-mermaid-node-bg-color: #1E7F4B;
+  --md-mermaid-node-fg-color: #111A14;
+  --md-mermaid-label-fg-color: #FFFFFF;
+  --md-mermaid-edge-color: #1E7F4B;
+}
+
+/* ==========================================================================
+   PALETA DO TEMA CLARO (PADRÃO — IDENTIDADE PYTOJAVA)
+   ========================================================================== */
+[data-md-color-scheme="default"] {
+  --md-default-bg-color: var(--pj-bg);
+  --md-default-fg-color: var(--pj-ink);
+  --md-default-fg-color--light: var(--pj-muted);
+  --md-primary-fg-color: #FFFFFF;
+  --md-primary-fg-color--light: var(--pj-secondary);
+  --md-primary-fg-color--dark: var(--pj-primary);
+  --md-primary-bg-color: var(--pj-ink);
+  --md-accent-fg-color: var(--pj-primary);
+  --md-typeset-color: var(--pj-ink);
+  --md-typeset-a-color: #146C3E;
+  --md-code-bg-color: #FFFFFF;
+  --md-code-fg-color: var(--pj-ink);
+}
+
+/* ==========================================================================
+   PALETA DO TEMA ESCURO (SLATE COM ACENTOS VERDE E AMARELO)
+   ========================================================================== */
+[data-md-color-scheme="slate"] {
+  --pj-bg: #0D1510;
+  --pj-surface: #142119;
+  --pj-surface-alt: #1B2E23;
+  --pj-ink: #F3FAF4;
+  --pj-muted: #9EB5A5;
+  --pj-primary: #1E7F4B;
+  --pj-primary-bright: #4ADE80;
+  --pj-secondary: #FACC15;
+  --pj-coffee: #E08E45;
+  --pj-border: 2px solid #2D4A37;
+  --pj-shadow-sm: 3px 3px 0 #050907;
+  --pj-shadow-md: 5px 5px 0 #050907;
+
+  --md-default-bg-color: #0D1510;
+  --md-default-fg-color: #F3FAF4;
+  --md-default-fg-color--light: #9EB5A5;
+  --md-primary-fg-color: #142119;
+  --md-primary-bg-color: #F3FAF4;
+  --md-accent-fg-color: var(--pj-secondary);
+  --md-typeset-a-color: var(--pj-secondary);
+  --md-code-bg-color: #142119;
+}
+
+/* ==========================================================================
+   CABEÇALHO E NAVEGAÇÃO ESTILO NAVBAR NEO-BRUTALISTA
+   ========================================================================== */
+.md-header {
+  background-color: #FFFFFF !important;
+  color: var(--pj-ink) !important;
+  box-shadow: none !important;
+  border-bottom: 2px solid var(--pj-ink);
+}
+
+[data-md-color-scheme="slate"] .md-header {
+  background-color: #142119 !important;
+  color: #F3FAF4 !important;
+  border-bottom: 2px solid var(--pj-primary-bright);
+}
+
+.md-header__button.md-logo {
+  padding: 0.2rem;
+  margin-right: 0.4rem;
+}
+
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 38px;
+  width: 38px;
+  border-radius: 10px;
+  border: 2px solid #111A14;
+  background: var(--pj-secondary);
+  object-fit: contain;
+  box-shadow: 2px 2px 0 #111A14;
+}
+
+.md-header__title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  color: var(--pj-ink);
+}
+
+[data-md-color-scheme="slate"] .md-header__title {
+  color: #F3FAF4;
+}
+
+.md-tabs {
+  background-color: #FFFFFF !important;
+  color: var(--pj-ink) !important;
+  border-bottom: 3px solid var(--pj-ink);
+  padding: 0.25rem 0;
+}
+
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: #142119 !important;
+  color: #F3FAF4 !important;
+  border-bottom: 3px solid var(--pj-primary-bright);
+}
+
+.md-tabs__list {
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.md-tabs__item {
+  height: auto;
+  padding: 0.35rem 0;
+}
+
+.md-tabs__link {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.84rem;
+  color: var(--pj-ink) !important;
+  opacity: 0.9;
+  padding: 0.42rem 0.95rem;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  margin-top: 0;
+  transition: all 0.14s ease;
+}
+
+[data-md-color-scheme="slate"] .md-tabs__link {
+  color: #F3FAF4 !important;
+}
+
+.md-tabs__link:hover {
+  background: var(--pj-bg);
+  border-color: var(--pj-ink);
+  opacity: 1;
+}
+
+[data-md-color-scheme="slate"] .md-tabs__link:hover {
+  background: #1B2E23;
+  border-color: var(--pj-secondary);
+}
+
+.md-tabs__item--active .md-tabs__link,
+.md-tabs__link--active {
+  background: var(--pj-secondary) !important;
+  color: #111A14 !important;
+  border: 2px solid #111A14 !important;
+  box-shadow: 2px 2px 0 #111A14;
+  opacity: 1;
+}
+
+/* Barra de busca em pílula */
+.md-search__form {
+  background-color: var(--pj-bg) !important;
+  border: 2px solid #111A14;
+  border-radius: 999px !important;
+  box-shadow: 2px 2px 0 #111A14;
+}
+
+[data-md-color-scheme="slate"] .md-search__form {
+  background-color: #1B2E23 !important;
+  border-color: #2D4A37;
+}
+
+.md-search__input {
+  color: var(--pj-ink) !important;
+  font-weight: 600;
+}
+
+.md-search__input::placeholder,
+.md-search__icon {
+  color: var(--pj-ink) !important;
+}
+
+/* ==========================================================================
+   TIPOGRAFIA DE CONTEÚDO E CABEÇALHOS
+   ========================================================================== */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset h1 {
+  font-weight: 900;
+  font-size: 2.2rem;
+  line-height: 1.1;
+}
+
+.md-typeset h2 {
+  font-weight: 800;
+  border-bottom: 3px solid var(--pj-ink);
+  padding-bottom: 0.35rem;
+  margin-top: 2rem;
+}
+
+[data-md-color-scheme="slate"] .md-typeset h2 {
+  border-bottom-color: var(--pj-primary-bright);
+}
+
+/* ==========================================================================
+   HERO NEO-BRUTALISTA DA PÁGINA INICIAL (VERDE COM BOLINHAS + MASCOTE)
+   ========================================================================== */
+.pj-doc-hero {
+  position: relative;
+  background-color: var(--pj-primary);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.22) 1.7px, transparent 1.7px);
+  background-size: 22px 22px;
+  color: #FFFFFF;
+  border: 3px solid #111A14;
+  border-radius: 28px;
+  box-shadow: 6px 6px 0 #111A14;
+  padding: 2.4rem 2.2rem;
+  margin: 0.5rem 0 2.2rem;
+  overflow: hidden;
+}
+
+.pj-doc-hero-grid {
+  display: grid;
+  grid-template-columns: 1.35fr minmax(210px, 275px);
+  gap: 1.75rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .pj-doc-hero-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+.pj-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  border: 2px solid #111A14;
+  border-radius: 999px;
+  padding: 0.25rem 0.85rem 0.25rem 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 1rem;
+  box-shadow: 2px 2px 0 #111A14;
+}
+
+.pj-hero-badge-tag {
+  background: #111A14;
+  color: var(--pj-secondary);
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pj-doc-hero h1 {
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 900 !important;
+  font-size: clamp(1.75rem, 3.1vw, 2.45rem) !important;
+  line-height: 1.12 !important;
+  text-transform: uppercase;
+  color: #FFFFFF !important;
+  margin: 0 0 1rem !important;
+}
+
+.pj-highlight {
+  display: inline-block;
+  background: var(--pj-secondary);
+  color: #111A14 !important;
+  border: 3px solid #111A14;
+  border-radius: 14px;
+  padding: 0.04em 0.32em;
+  box-shadow: 4px 4px 0 #111A14;
+  transform: rotate(-1.2deg);
+  margin-top: 0.2rem;
+}
+
+.pj-hero-lead {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+  margin: 0 0 1.35rem;
+}
+
+.pj-hero-lead code {
+  background: rgba(17, 26, 20, 0.35) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  padding: 0.1em 0.35em;
+}
+
+.pj-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.pj-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.62rem 1.25rem;
+  border-radius: 999px;
+  border: 2px solid #111A14;
+  box-shadow: 3px 3px 0 #111A14;
+  text-decoration: none !important;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.pj-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 #111A14;
+}
+
+.pj-btn-amber {
+  background: var(--pj-secondary);
+  color: #111A14 !important;
+}
+
+.pj-btn-white {
+  background: #FFFFFF;
+  color: #111A14 !important;
+}
+
+.pj-hero-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+/* Card do Mascote dentro do Hero */
+.pj-mascot-card {
+  background: #FFFFFF;
+  border: 3px solid #111A14;
+  border-radius: 24px;
+  box-shadow: 5px 5px 0 #111A14;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.pj-mascot-card img {
+  width: 100%;
+  max-width: 220px;
+  border-radius: 14px;
+  display: block;
+}
+
+.pj-mascot-animated {
+  animation: pj-cobra-bob 2.6s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+@keyframes pj-cobra-bob {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-4px) rotate(-0.8deg) scale(1.012);
+  }
+  50% {
+    transform: translateY(-2px) rotate(0.6deg) scale(1.004);
+  }
+  75% {
+    transform: translateY(-5px) rotate(-0.5deg) scale(1.015);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pj-mascot-animated {
+    animation: none;
+  }
+}
+
+.pj-mascot-caption {
+  margin-top: 0.55rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #111A14;
+  background: var(--pj-secondary);
+  border: 1.5px solid #111A14;
+  border-radius: 999px;
+  padding: 0.18rem 0.75rem;
+}
+
+/* ==========================================================================
+   CARDS DE ARQUITETURA (4 FASES) E VITRINE VISUAL
+   ========================================================================== */
+.pj-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.1rem;
+  margin: 1.25rem 0 2rem;
+}
+
+.pj-card {
+  background: var(--pj-surface);
+  border: 2px solid #111A14;
+  border-radius: 22px;
+  padding: 1.25rem 1.3rem;
+  box-shadow: 4px 4px 0 #111A14;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.85rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+[data-md-color-scheme="slate"] .pj-card {
+  border-color: #2D4A37;
+  box-shadow: 4px 4px 0 #050907;
+}
+
+.pj-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0 #111A14;
+}
+
+[data-md-color-scheme="slate"] .pj-card:hover {
+  box-shadow: 6px 6px 0 #050907;
+}
+
+.pj-card h3 {
+  margin-top: 0.45rem !important;
+  margin-bottom: 0.45rem !important;
+  font-size: 1.08rem !important;
+}
+
+.pj-card p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--md-default-fg-color--light);
+  margin: 0;
+}
+
+.pj-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.18rem 0.65rem;
+  border-radius: 999px;
+  border: 1.5px solid #111A14;
+}
+
+.pj-tag-green {
+  background: #DCFCE7;
+  color: #14532D;
+}
+
+.pj-tag-amber {
+  background: var(--pj-secondary);
+  color: #111A14;
+}
+
+.pj-tag-coffee {
+  background: #FFEDD5;
+  color: #9A3412;
+}
+
+.pj-card-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  padding: 0.35rem 0.85rem;
+  border: 1.5px solid #111A14;
+  border-radius: 999px;
+  background: var(--pj-surface-alt);
+  color: var(--pj-ink) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-decoration: none !important;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.pj-card-link:hover {
+  background: var(--pj-primary);
+  color: #FFFFFF !important;
+}
+
+/* Showcase Visual (3 colunas) */
+.pj-showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin: 1.25rem 0 2rem;
+}
+
+.pj-shot-card {
+  background: var(--pj-surface);
+  border: 2.5px solid #111A14;
+  border-radius: 22px;
+  box-shadow: 5px 5px 0 #111A14;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+[data-md-color-scheme="slate"] .pj-shot-card {
+  border-color: #2D4A37;
+  box-shadow: 5px 5px 0 #050907;
+}
+
+.pj-showcase-preview {
+  padding: 1.1rem 1.15rem;
+  background: #111A14;
+  color: #D1FAE5;
+  border-bottom: 2px solid #111A14;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  line-height: 1.58;
+  min-height: 132px;
+}
+
+.pj-showcase-preview .line-accent {
+  color: #FACC15;
+  font-weight: 700;
+}
+
+.pj-showcase-preview .line-green {
+  color: #4ADE80;
+}
+
+.pj-showcase-preview .line-coffee {
+  color: #FDBA74;
+}
+
+.pj-shot-body {
+  padding: 0.95rem 1.15rem;
+}
+
+.pj-shot-body strong {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 800;
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--md-default-fg-color);
+}
+
+.pj-shot-body span {
+  font-size: 0.82rem;
+  color: var(--md-default-fg-color--light);
+  line-height: 1.45;
+  display: block;
+}
+
+/* ==========================================================================
+   TABELAS, ADMONITIONS E BLOCOS DE CÓDIGO
+   ========================================================================== */
+.md-typeset table:not([class]) {
+  background: var(--pj-surface);
+  border: 2px solid #111A14;
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 #111A14;
+  overflow: hidden;
+}
+
+[data-md-color-scheme="slate"] .md-typeset table:not([class]) {
+  border-color: #2D4A37;
+  box-shadow: 4px 4px 0 #050907;
+}
+
+.md-typeset table:not([class]) th {
+  background: var(--pj-secondary) !important;
+  color: #111A14 !important;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  border-bottom: 2px solid #111A14;
+}
+
+.md-typeset .admonition,
+.md-typeset details {
+  border: 2px solid #111A14 !important;
+  border-radius: 16px !important;
+  box-shadow: 4px 4px 0 #111A14 !important;
+  background: var(--pj-surface) !important;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .admonition,
+[data-md-color-scheme="slate"] .md-typeset details {
+  border-color: #2D4A37 !important;
+  box-shadow: 4px 4px 0 #050907 !important;
+}
+
+.md-typeset pre > code {
+  border: 2px solid #111A14;
+  border-radius: 14px;
+  box-shadow: 3px 3px 0 #111A14;
+}
+
+[data-md-color-scheme="slate"] .md-typeset pre > code {
+  border-color: #2D4A37;
+  box-shadow: 3px 3px 0 #050907;
+}
+
+/* ==========================================================================
+   COMPATIBILIDADE COM PÁGINAS INTERNAS (.phase-banner, .grid-cards, .card-fases)
+   ========================================================================== */
+.phase-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.9rem 1.15rem;
+  margin: 0.75rem 0 1.35rem 0;
+  border-radius: 16px;
+  background: var(--pj-surface-alt);
+  border: 2px solid #111A14;
+  box-shadow: 4px 4px 0 #111A14;
+}
+
+.phase-banner-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--pj-primary);
+}
+
+.phase-banner-meta {
+  font-size: 0.74rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--pj-muted);
+}
+
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.1rem;
+  margin: 1rem 0;
+}
+
+.card-fases {
+  background: var(--pj-surface);
+  border: 2px solid #111A14;
+  border-radius: 22px;
+  box-shadow: 4px 4px 0 #111A14;
+  padding: 1.15rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-fases:hover {
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0 #111A14;
+}
+
+.card-fases .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.55rem;
+}
+
+.card-fases .card-icon {
+  background: var(--pj-primary);
+  color: #FFFFFF;
+  border: 1.5px solid #111A14;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.card-fases .badge {
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1.5px solid #111A14;
+  text-transform: uppercase;
+}
+
+.badge-green {
+  background: var(--pj-secondary);
+  color: #111A14;
+}
+
+.badge-purple {
+  background: var(--pj-surface-alt);
+  color: var(--pj-ink);
+}
+
+.card-fases h3 {
+  margin: 0 0 0.35rem 0 !important;
+  font-size: 1rem !important;
+}
+
+.card-fases p {
+  font-size: 0.82rem;
+  color: var(--md-default-fg-color--light);
+  line-height: 1.48;
+  margin-bottom: 0.75rem;
+}

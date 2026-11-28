@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="PyToJava Cobra Mascote">
+  <rect x="4" y="4" width="56" height="56" rx="12" fill="#1E7F4B" stroke="#111A14" stroke-width="4"/>
+  <!-- Cabeca da cobra estilizada -->
+  <path d="M16 38c0-11 7-18 17-18 7 0 12 4 12 10 0 5-4 8-10 8h-5c-3 0-5 2-5 5v5h-9V38z" fill="#A7F3D0" stroke="#111A14" stroke-width="3" stroke-linejoin="round"/>
+  <!-- Olho -->
+  <circle cx="35" cy="27" r="2.8" fill="#111A14"/>
+  <!-- Xicara de cafe -->
+  <rect x="34" y="38" width="16" height="12" rx="3" fill="#FACC15" stroke="#111A14" stroke-width="3"/>
+  <path d="M50 41h3a3 3 0 0 1 0 6h-3" fill="none" stroke="#111A14" stroke-width="3" stroke-linecap="round"/>
+  <!-- Vapor do cafe -->
+  <path d="M39 34c0-2 2-2 2-4M44 34c0-2 2-2 2-4" fill="none" stroke="#FACC15" stroke-width="2.2" stroke-linecap="round"/>
+</svg>
