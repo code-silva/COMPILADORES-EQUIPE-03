@@ -1,7 +1,7 @@
 # Suítes de Testes — Cobertura Completa do PyToJava
 
 <div class="phase-banner">
-  <span class="phase-banner-title">Cobertura · 26 suítes · 727 testes automatizados · 2 falhas conhecidas</span>
+  <span class="phase-banner-title"> Cobertura · 26 suítes · 727 testes automatizados · 2 falhas conhecidas</span>
   <span class="phase-banner-meta">tests/ · pytest · Python 3.10+</span>
 </div>
 
